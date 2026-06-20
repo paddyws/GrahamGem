@@ -445,6 +445,40 @@
       color: var(--danger);
     }
 
+    .quote-box {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #fffaf1;
+      border: 1px solid #ead8bd;
+      line-height: 1.6;
+    }
+
+    .quote-box.show {
+      display: block;
+    }
+
+    .quote-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .quote-line strong {
+      color: var(--ink);
+    }
+
+    .quote-total {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ead8bd;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
     .reviews {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -601,6 +635,8 @@
         <div id="availabilityMessage" class="availability-message">
           Select your dates below or click available dates on the calendar.
         </div>
+
+        <div id="quoteBox" class="quote-box"></div>
       </div>
 
       <form id="bookingForm">
@@ -626,7 +662,8 @@
         <button type="submit">Request Date Hold</button>
 
         <p class="section-text" style="font-size:.9rem;">
-          Your dates will be temporarily held on this website. Final booking is confirmed manually.
+          Three-night minimum. Your dates will be temporarily held on this website.
+          Final booking is confirmed manually.
         </p>
       </form>
     </div>
@@ -668,6 +705,13 @@
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
 
     let blockedDateSet = new Set();
+    let ratesByDate = {};
+
+    let defaultNightlyRate = 400;
+    let minimumNights = 3;
+    let cleaningFee = 250;
+    let taxRate = 0.1275;
+
     let currentMonthDate = new Date();
     currentMonthDate.setDate(1);
 
@@ -675,10 +719,13 @@
     const calendarTitle = document.getElementById('calendarTitle');
     const availabilityStatus = document.getElementById('availabilityStatus');
     const availabilityMessage = document.getElementById('availabilityMessage');
+    const quoteBox = document.getElementById('quoteBox');
 
     const checkInInput = document.getElementById('checkIn');
     const checkOutInput = document.getElementById('checkOut');
     const bookingForm = document.getElementById('bookingForm');
+
+    setDateInputMinimums();
 
     document.getElementById('prevMonth').addEventListener('click', () => {
       currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
@@ -691,8 +738,15 @@
     });
 
     checkInInput.addEventListener('change', () => {
-      if (checkInInput.value && (!checkOutInput.value || checkOutInput.value <= checkInInput.value)) {
-        checkOutInput.value = addDaysToKey(checkInInput.value, 1);
+      if (
+        checkInInput.value &&
+        (
+          !checkOutInput.value ||
+          checkOutInput.value <= checkInInput.value ||
+          countNights(checkInInput.value, checkOutInput.value) < minimumNights
+        )
+      ) {
+        checkOutInput.value = addDaysToKey(checkInInput.value, minimumNights);
       }
 
       updateAvailabilityMessage();
@@ -711,6 +765,7 @@
 
       if (!result.ok) {
         setAvailabilityMessage(result.message, 'bad');
+        hideQuote();
         return;
       }
 
@@ -737,6 +792,7 @@
         }
 
         bookingForm.reset();
+        hideQuote();
 
         const refreshedAvailability = await loadAvailability();
         applyAvailabilityData(refreshedAvailability);
@@ -796,12 +852,20 @@
       }
 
       blockedDateSet = new Set(data.blockedDates || []);
+      ratesByDate = data.ratesByDate || {};
+
+      defaultNightlyRate = Number(data.defaultNightlyRate || 400);
+      minimumNights = Number(data.minimumNights || 3);
+      cleaningFee = Number(data.cleaningFee || 250);
+      taxRate = Number(data.taxRate || 0.1275);
 
       availabilityStatus.textContent =
         `Updated ${new Date(data.updatedAt).toLocaleString()}. ` +
         `${data.blockedDateCount || blockedDateSet.size} unavailable nights currently shown.`;
 
+      setDateInputMinimums();
       renderCalendar();
+      updateAvailabilityMessage();
     }
 
     function renderCalendar() {
@@ -877,11 +941,13 @@
       if (!checkInInput.value || (checkInInput.value && checkOutInput.value)) {
         checkInInput.value = dateKey;
         checkOutInput.value = '';
+        hideQuote();
         setAvailabilityMessage('Now choose a check-out date.', '');
       } else {
         if (dateKey <= checkInInput.value) {
           checkInInput.value = dateKey;
           checkOutInput.value = '';
+          hideQuote();
           setAvailabilityMessage('Now choose a check-out date.', '');
         } else {
           checkOutInput.value = dateKey;
@@ -897,10 +963,17 @@
 
       if (!checkInInput.value && !checkOutInput.value) {
         setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
+        hideQuote();
         return;
       }
 
       setAvailabilityMessage(result.message, result.ok ? 'good' : 'bad');
+
+      if (result.ok && result.quote) {
+        showQuote(result.quote);
+      } else {
+        hideQuote();
+      }
     }
 
     function getDateRangeStatus(checkIn, checkOut) {
@@ -920,6 +993,15 @@
         return { ok: false, message: 'Please choose a future check-in date.' };
       }
 
+      const nights = countNights(checkIn, checkOut);
+
+      if (nights < minimumNights) {
+        return {
+          ok: false,
+          message: `Please choose at least ${minimumNights} nights.`
+        };
+      }
+
       const blockedNights = getBlockedNightsInRange(checkIn, checkOut);
 
       if (blockedNights.length > 0) {
@@ -929,11 +1011,12 @@
         };
       }
 
-      const nights = countNights(checkIn, checkOut);
+      const quote = buildQuote(checkIn, checkOut);
 
       return {
         ok: true,
-        message: `Great news — those ${nights} night${nights === 1 ? '' : 's'} appear available. Submit to temporarily hold the dates.`
+        quote,
+        message: `Great news — those ${nights} nights appear available. Estimated total: ${formatMoney(quote.totalWithTax)} including taxes.`
       };
     }
 
@@ -953,6 +1036,55 @@
       }
 
       return blocked;
+    }
+
+    function getNightlyRate(dateKey) {
+      return Number(ratesByDate[dateKey] || defaultNightlyRate);
+    }
+
+    function buildQuote(checkIn, checkOut) {
+      let nightlySubtotal = 0;
+      let current = keyToDate(checkIn);
+      const end = keyToDate(checkOut);
+
+      while (current < end) {
+        const key = dateToKey(current);
+        nightlySubtotal += getNightlyRate(key);
+        current.setDate(current.getDate() + 1);
+      }
+
+      const nights = countNights(checkIn, checkOut);
+      const preTaxTotal = nightlySubtotal + cleaningFee;
+      const taxAmount = roundMoney(preTaxTotal * taxRate);
+      const totalWithTax = roundMoney(preTaxTotal + taxAmount);
+
+      return {
+        checkIn,
+        checkOut,
+        nights,
+        nightlySubtotal: roundMoney(nightlySubtotal),
+        cleaningFee: roundMoney(cleaningFee),
+        preTaxTotal: roundMoney(preTaxTotal),
+        taxAmount,
+        totalWithTax
+      };
+    }
+
+    function showQuote(quote) {
+      quoteBox.innerHTML = `
+        <div class="quote-line"><span>${quote.nights} nights</span><strong>${formatMoney(quote.nightlySubtotal)}</strong></div>
+        <div class="quote-line"><span>Cleaning fee</span><strong>${formatMoney(quote.cleaningFee)}</strong></div>
+        <div class="quote-line"><span>Subtotal before tax</span><strong>${formatMoney(quote.preTaxTotal)}</strong></div>
+        <div class="quote-line"><span>Taxes / fees 12.75%</span><strong>${formatMoney(quote.taxAmount)}</strong></div>
+        <div class="quote-line quote-total"><span>Estimated total</span><strong>${formatMoney(quote.totalWithTax)}</strong></div>
+      `;
+
+      quoteBox.classList.add('show');
+    }
+
+    function hideQuote() {
+      quoteBox.innerHTML = '';
+      quoteBox.classList.remove('show');
     }
 
     function countNights(checkIn, checkOut) {
@@ -991,6 +1123,23 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return keyToDate(key) < today;
+    }
+
+    function setDateInputMinimums() {
+      const todayKey = dateToKey(new Date());
+      checkInInput.min = todayKey;
+      checkOutInput.min = todayKey;
+    }
+
+    function roundMoney(value) {
+      return Math.round(Number(value || 0) * 100) / 100;
+    }
+
+    function formatMoney(value) {
+      return '$' + Number(value || 0).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
 
     loadAvailability()
