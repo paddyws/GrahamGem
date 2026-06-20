@@ -1066,6 +1066,7 @@
 
     let ratesByDate = {};
     let defaultNightlyRate = 400;
+    let cleaningFee = 250;
     let taxRate = 0.1275;
     let minimumNights = 3;
 
@@ -1246,6 +1247,7 @@
       blockedDateSet = new Set(data.blockedDates || []);
       ratesByDate = data.ratesByDate || {};
       defaultNightlyRate = Number(data.defaultNightlyRate || 400);
+      cleaningFee = Number(data.cleaningFee || 250);
       taxRate = Number(data.taxRate || 0.1275);
       minimumNights = Number(data.minimumNights || 3);
 
@@ -1326,11 +1328,6 @@
 
         const isPast = isDateKeyPast(dateKey);
         const isBooked = blockedDateSet.has(dateKey);
-        const canBeCheckout =
-          checkInInput.value &&
-          dateKey > checkInInput.value &&
-          getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
-
         const isSelected =
           dateKey === checkInInput.value ||
           dateKey === checkOutInput.value;
@@ -1341,10 +1338,27 @@
           dateKey > checkInInput.value &&
           dateKey < checkOutInput.value;
 
+        const canBeCheckoutForCurrentSelection =
+          checkInInput.value &&
+          dateKey > checkInInput.value &&
+          getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
+
+        const looksCheckoutOnly =
+          isBooked &&
+          !checkInInput.value &&
+          isGlobalCheckoutOnlyDate(dateKey);
+
+        const shouldShowCheckoutOnly =
+          isBooked &&
+          (
+            canBeCheckoutForCurrentSelection ||
+            looksCheckoutOnly
+          );
+
         if (isPast) {
           cell.classList.add('past');
           cell.title = 'Past date';
-        } else if (isBooked && canBeCheckout) {
+        } else if (shouldShowCheckoutOnly) {
           cell.classList.add('checkout-only');
           cell.title = 'Checkout only';
           cell.addEventListener('click', () => {
@@ -1376,7 +1390,12 @@
 
       if (!checkInInput.value) {
         if (isBooked) {
-          setAvailabilityMessage('That date is checkout only. Please choose an available check-in date first.', 'bad');
+          setAvailabilityMessage(
+            isGlobalCheckoutOnlyDate(dateKey)
+              ? 'That date is checkout only. Please choose an available check-in date first.'
+              : 'That date is unavailable for check-in.',
+            'bad'
+          );
           return;
         }
 
@@ -1497,16 +1516,18 @@
 
       nightlySubtotal = roundCurrency(nightlySubtotal);
 
-      const preTaxTotal = nightlySubtotal;
-      const taxAmount = roundCurrency(preTaxTotal * taxRate);
-      const totalWithTax = roundCurrency(preTaxTotal + taxAmount);
-      const averageNightlyRate = roundCurrency(nightlySubtotal / nights);
+      const staySubtotal = roundCurrency(nightlySubtotal + cleaningFee);
+      const taxAmount = roundCurrency(staySubtotal * taxRate);
+      const totalWithTax = roundCurrency(staySubtotal + taxAmount);
+      const averageNightlyRate = roundCurrency(staySubtotal / nights);
 
       return {
         nights,
         averageNightlyRate,
         nightlySubtotal,
-        preTaxTotal,
+        cleaningFee,
+        staySubtotal,
+        preTaxTotal: staySubtotal,
         taxAmount,
         totalWithTax
       };
@@ -1514,7 +1535,9 @@
 
     function getSavingsText(quote) {
       if (!quote || !quote.preTaxTotal) return '';
+
       const savedAmount = roundCurrency(quote.preTaxTotal * 0.10);
+
       return `You will save ${formatMoney(savedAmount)} by booking directly with us!*`;
     }
 
@@ -1522,7 +1545,7 @@
       quoteSummary.innerHTML = `
         <div class="quote-row">
           <span>${quote.nights} night${quote.nights === 1 ? '' : 's'} × ${formatMoney(quote.averageNightlyRate)}</span>
-          <strong>${formatMoney(quote.nightlySubtotal)}</strong>
+          <strong>${formatMoney(quote.staySubtotal)}</strong>
         </div>
         <div class="quote-row">
           <span>Taxes</span>
@@ -1562,6 +1585,14 @@
       }
 
       return blocked;
+    }
+
+    function isGlobalCheckoutOnlyDate(dateKey) {
+      if (!blockedDateSet.has(dateKey)) return false;
+
+      const previousDateKey = addDaysToKey(dateKey, -1);
+
+      return !blockedDateSet.has(previousDateKey);
     }
 
     function updateGuestCount(type, delta) {
