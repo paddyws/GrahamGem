@@ -26,9 +26,7 @@
 
     * { box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -42,10 +40,7 @@
       font-weight: 500;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
     nav {
       position: fixed;
@@ -64,9 +59,7 @@
       letter-spacing: .03em;
     }
 
-    .brand span {
-      color: var(--gold);
-    }
+    .brand span { color: var(--gold); }
 
     .nav-links {
       display: flex;
@@ -86,9 +79,7 @@
       color: var(--white);
     }
 
-    .hero-content {
-      max-width: 780px;
-    }
+    .hero-content { max-width: 780px; }
 
     .eyebrow {
       color: #f3cf86;
@@ -126,15 +117,8 @@
       box-shadow: 0 14px 35px rgba(0,0,0,.2);
     }
 
-    .primary {
-      background: var(--teal);
-      color: white;
-    }
-
-    .secondary {
-      background: rgba(255,250,241,.92);
-      color: var(--ink);
-    }
+    .primary { background: var(--teal); color: white; }
+    .secondary { background: rgba(255,250,241,.92); color: var(--ink); }
 
     .stats {
       width: min(1100px, 86vw);
@@ -153,9 +137,7 @@
       border-right: 1px solid #e4d2b7;
     }
 
-    .stat:last-child {
-      border-right: 0;
-    }
+    .stat:last-child { border-right: 0; }
 
     .stat strong {
       display: block;
@@ -169,9 +151,7 @@
       font-size: .95rem;
     }
 
-    section {
-      padding: 80px 8vw;
-    }
+    section { padding: 80px 8vw; }
 
     .intro {
       display: grid;
@@ -225,9 +205,7 @@
       margin: 0;
     }
 
-    .gallery {
-      background: #efe0c8;
-    }
+    .gallery { background: #efe0c8; }
 
     .photo-grid {
       display: grid;
@@ -279,9 +257,7 @@
       background: white;
     }
 
-    textarea {
-      min-height: 120px;
-    }
+    textarea { min-height: 120px; }
 
     button {
       border: 0;
@@ -298,9 +274,7 @@
       font-weight: 900;
     }
 
-    .submit-btn:hover {
-      filter: brightness(.96);
-    }
+    .submit-btn:hover { filter: brightness(.96); }
 
     .submit-btn:disabled {
       opacity: .65;
@@ -313,9 +287,7 @@
       gap: 14px;
     }
 
-    .availability-card {
-      padding: 28px;
-    }
+    .availability-card { padding: 28px; }
 
     .availability-top {
       display: flex;
@@ -463,9 +435,7 @@
       border-bottom: 1px solid #f0ece6;
     }
 
-    .guest-row:last-child {
-      border-bottom: 0;
-    }
+    .guest-row:last-child { border-bottom: 0; }
 
     .guest-row strong {
       display: block;
@@ -602,63 +572,15 @@
 
     .day.checkout-only {
       background: white;
-      border-color: transparent;
       color: var(--ink);
+      border-color: #ead8bd;
       cursor: pointer;
       text-decoration: none;
     }
 
     .day.checkout-only:hover {
-      border-color: var(--teal);
-      box-shadow: 0 8px 18px rgba(31,170,166,.14);
-    }
-
-    .day.checkout-only::after {
-      content: "Checkout only";
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 8px);
-      transform: translateX(-50%) translateY(4px);
-      background: #222;
-      color: white;
-      font-size: .74rem;
-      line-height: 1;
-      white-space: nowrap;
-      padding: 7px 9px;
-      border-radius: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .15s ease, transform .15s ease;
-      z-index: 30;
-      box-shadow: 0 8px 18px rgba(0,0,0,.16);
-    }
-
-    .day.checkout-only::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 3px);
-      transform: translateX(-50%);
-      border: 5px solid transparent;
-      border-top-color: #222;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .15s ease;
-      z-index: 30;
-    }
-
-    .day.checkout-only:hover::after,
-    .day.checkout-only:hover::before {
-      opacity: 1;
-    }
-
-    .day.checkout-only:hover::after {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .day.checkout-only.selected::after,
-    .day.checkout-only.selected::before {
-      display: none;
+      border-color: var(--gold);
+      box-shadow: 0 8px 18px rgba(201,155,74,.15);
     }
 
     .day.available:hover {
@@ -672,14 +594,12 @@
       color: var(--ink);
     }
 
-    .day.selected,
-    .day.checkout-only.selected {
+    .day.selected {
       background: var(--teal);
       color: white;
       border-color: var(--teal);
       text-decoration: none;
       cursor: pointer;
-      box-shadow: none;
     }
 
     .legend {
@@ -725,6 +645,20 @@
       font-size: .95rem;
     }
 
+    .availability-message.inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .availability-message .message-main,
+    .availability-message .message-savings {
+      display: inline-block;
+      font: inherit;
+      color: inherit;
+    }
+
     .availability-message.good {
       background: #dff3e9;
       color: var(--success);
@@ -740,7 +674,7 @@
       border: 1px solid var(--airbnb-border);
       border-radius: 18px;
       background: white;
-      padding: 18px;
+      padding: 18px 18px 14px;
     }
 
     .quote-placeholder {
@@ -759,9 +693,7 @@
       font-size: 1rem;
     }
 
-    .quote-row span {
-      color: var(--muted);
-    }
+    .quote-row span { color: var(--muted); }
 
     .quote-total {
       margin-top: 8px;
@@ -772,21 +704,11 @@
       color: var(--ink);
     }
 
-    .direct-savings {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: #e6f6ef;
-      color: #1f7a57;
-      font-weight: 800;
+    .quote-footnote {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .86rem;
       line-height: 1.45;
-    }
-
-    .direct-savings small {
-      display: block;
-      margin-top: 4px;
-      font-weight: 500;
-      color: #3e7f66;
     }
 
     .form-card-title {
@@ -813,10 +735,7 @@
       border: 1px solid #ead8bd;
     }
 
-    .stars {
-      color: var(--gold);
-      letter-spacing: .08em;
-    }
+    .stars { color: var(--gold); letter-spacing: .08em; }
 
     footer {
       padding: 36px 8vw;
@@ -832,13 +751,8 @@
     }
 
     @media (max-width: 850px) {
-      nav {
-        position: absolute;
-      }
-
-      .nav-links {
-        display: none;
-      }
+      nav { position: absolute; }
+      .nav-links { display: none; }
 
       .stats,
       .features,
@@ -1078,7 +992,7 @@
 
         <div id="quoteCard" class="quote-card">
           <div id="quoteSummary" class="quote-placeholder">
-            Select valid dates to see an estimated total.
+            Select dates to see an estimated total.
           </div>
         </div>
       </div>
@@ -1152,7 +1066,6 @@
 
     let ratesByDate = {};
     let defaultNightlyRate = 400;
-    let cleaningFee = 250;
     let taxRate = 0.1275;
     let minimumNights = 3;
 
@@ -1333,7 +1246,6 @@
       blockedDateSet = new Set(data.blockedDates || []);
       ratesByDate = data.ratesByDate || {};
       defaultNightlyRate = Number(data.defaultNightlyRate || 400);
-      cleaningFee = Number(data.cleaningFee || 0);
       taxRate = Number(data.taxRate || 0.1275);
       minimumNights = Number(data.minimumNights || 3);
 
@@ -1414,6 +1326,10 @@
 
         const isPast = isDateKeyPast(dateKey);
         const isBooked = blockedDateSet.has(dateKey);
+        const canBeCheckout =
+          checkInInput.value &&
+          dateKey > checkInInput.value &&
+          getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
 
         const isSelected =
           dateKey === checkInInput.value ||
@@ -1424,11 +1340,6 @@
           checkOutInput.value &&
           dateKey > checkInInput.value &&
           dateKey < checkOutInput.value;
-
-        const canBeCheckout =
-          checkInInput.value &&
-          dateKey > checkInInput.value &&
-          getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
 
         if (isPast) {
           cell.classList.add('past');
@@ -1441,7 +1352,7 @@
           });
         } else if (isBooked) {
           cell.classList.add('booked');
-          cell.title = 'Unavailable as a night';
+          cell.title = 'Unavailable';
         } else {
           cell.classList.add('available');
           cell.title = 'Available';
@@ -1450,7 +1361,7 @@
           });
         }
 
-        if (isInRange && !isBooked) cell.classList.add('in-range');
+        if (isInRange) cell.classList.add('in-range');
         if (isSelected) cell.classList.add('selected');
 
         daysGrid.appendChild(cell);
@@ -1464,7 +1375,10 @@
       const isBooked = blockedDateSet.has(dateKey);
 
       if (!checkInInput.value) {
-        if (isBooked) return;
+        if (isBooked) {
+          setAvailabilityMessage('That date is checkout only. Please choose an available check-in date first.', 'bad');
+          return;
+        }
 
         checkInInput.value = dateKey;
         checkOutInput.value = '';
@@ -1483,7 +1397,10 @@
 
         checkOutInput.value = dateKey;
       } else {
-        if (isBooked) return;
+        if (isBooked) {
+          setAvailabilityMessage('That date is unavailable for check-in.', 'bad');
+          return;
+        }
 
         checkInInput.value = dateKey;
         checkOutInput.value = '';
@@ -1511,14 +1428,16 @@
         return;
       }
 
-      setAvailabilityMessage(result.message, result.ok ? 'good' : 'bad');
-
       if (!result.ok) {
+        setAvailabilityMessage(result.message, 'bad');
         renderQuotePlaceholder();
         return;
       }
 
       const quote = buildQuote(checkInInput.value, checkOutInput.value);
+      const savingsText = getSavingsText(quote);
+
+      setAvailabilityMessage(result.message, 'good', savingsText);
       renderQuote(quote);
     }
 
@@ -1566,60 +1485,55 @@
     function buildQuote(checkIn, checkOut) {
       const nights = countNights(checkIn, checkOut);
 
-      let rawNightlySubtotal = 0;
+      let nightlySubtotal = 0;
       let current = keyToDate(checkIn);
       const end = keyToDate(checkOut);
 
       while (current < end) {
         const key = dateToKey(current);
-        rawNightlySubtotal += Number(ratesByDate[key] || defaultNightlyRate);
+        nightlySubtotal += Number(ratesByDate[key] || defaultNightlyRate);
         current.setDate(current.getDate() + 1);
       }
 
-      rawNightlySubtotal = roundCurrency(rawNightlySubtotal);
+      nightlySubtotal = roundCurrency(nightlySubtotal);
 
-      const staySubtotal = roundCurrency(rawNightlySubtotal + cleaningFee);
-      const averageNightlyRate = nights > 0
-        ? roundCurrency(staySubtotal / nights)
-        : 0;
-
-      const taxAmount = roundCurrency(staySubtotal * taxRate);
-      const totalWithTax = roundCurrency(staySubtotal + taxAmount);
-
-      const bookingSiteBeforeTax = roundCurrency(staySubtotal * 1.1);
-      const directSavings = roundCurrency(bookingSiteBeforeTax - staySubtotal);
+      const preTaxTotal = nightlySubtotal;
+      const taxAmount = roundCurrency(preTaxTotal * taxRate);
+      const totalWithTax = roundCurrency(preTaxTotal + taxAmount);
+      const averageNightlyRate = roundCurrency(nightlySubtotal / nights);
 
       return {
         nights,
-        rawNightlySubtotal,
-        staySubtotal,
         averageNightlyRate,
+        nightlySubtotal,
+        preTaxTotal,
         taxAmount,
-        totalWithTax,
-        directSavings
+        totalWithTax
       };
+    }
+
+    function getSavingsText(quote) {
+      if (!quote || !quote.preTaxTotal) return '';
+      const savedAmount = roundCurrency(quote.preTaxTotal * 0.10);
+      return `You will save ${formatMoney(savedAmount)} by booking directly with us!*`;
     }
 
     function renderQuote(quote) {
       quoteSummary.innerHTML = `
         <div class="quote-row">
           <span>${quote.nights} night${quote.nights === 1 ? '' : 's'} × ${formatMoney(quote.averageNightlyRate)}</span>
-          <strong>${formatMoney(quote.staySubtotal)}</strong>
+          <strong>${formatMoney(quote.nightlySubtotal)}</strong>
         </div>
-
         <div class="quote-row">
           <span>Taxes</span>
           <strong>${formatMoney(quote.taxAmount)}</strong>
         </div>
-
         <div class="quote-total">
           <span>Total</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
         </div>
-
-        <div class="direct-savings">
-          You will save ${formatMoney(quote.directSavings)} by booking directly with us!*
-          <small>*Compared with booking sites like Airbnb.</small>
+        <div class="quote-footnote">
+          *Compared with booking sites like Airbnb.
         </div>
       `;
     }
@@ -1713,12 +1627,21 @@
       checkOutMirror.value = checkOutInput.value || '';
     }
 
-    function setAvailabilityMessage(message, type) {
-      availabilityMessage.textContent = message;
+    function setAvailabilityMessage(message, type, savingsText = '') {
       availabilityMessage.className = 'availability-message';
 
       if (type === 'good') availabilityMessage.classList.add('good');
       if (type === 'bad') availabilityMessage.classList.add('bad');
+
+      if (message && savingsText) {
+        availabilityMessage.classList.add('inline');
+        availabilityMessage.innerHTML = `
+          <span class="message-main">${message}</span>
+          <span class="message-savings">${savingsText}</span>
+        `;
+      } else {
+        availabilityMessage.textContent = message;
+      }
     }
 
     function countNights(checkIn, checkOut) {
