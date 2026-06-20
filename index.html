@@ -350,9 +350,10 @@
     .booking-fields {
       border: 1px solid var(--airbnb-border);
       border-radius: 18px;
-      overflow: hidden;
+      overflow: visible;
       background: white;
       margin-bottom: 18px;
+      position: relative;
     }
 
     .booking-fields-top {
@@ -403,6 +404,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      border-radius: 0 0 18px 18px;
     }
 
     .guest-button .guest-copy {
@@ -439,7 +441,7 @@
       top: calc(100% + 10px);
       left: 0;
       right: 0;
-      z-index: 5;
+      z-index: 20;
       background: white;
       border: 1px solid var(--airbnb-border);
       border-radius: 24px;
@@ -598,14 +600,65 @@
       text-decoration: line-through;
     }
 
-    .day.booked.checkout-only {
+    .day.checkout-only {
+      background: white;
+      border-color: transparent;
+      color: var(--ink);
       cursor: pointer;
       text-decoration: none;
-      box-shadow: inset 0 0 0 2px var(--teal);
     }
 
-    .day.booked.checkout-only:hover {
-      filter: brightness(.98);
+    .day.checkout-only:hover {
+      border-color: var(--teal);
+      box-shadow: 0 8px 18px rgba(31,170,166,.14);
+    }
+
+    .day.checkout-only::after {
+      content: "Checkout only";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      transform: translateX(-50%) translateY(4px);
+      background: #222;
+      color: white;
+      font-size: .74rem;
+      line-height: 1;
+      white-space: nowrap;
+      padding: 7px 9px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s ease, transform .15s ease;
+      z-index: 30;
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+    }
+
+    .day.checkout-only::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 3px);
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #222;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s ease;
+      z-index: 30;
+    }
+
+    .day.checkout-only:hover::after,
+    .day.checkout-only:hover::before {
+      opacity: 1;
+    }
+
+    .day.checkout-only:hover::after {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .day.checkout-only.selected::after,
+    .day.checkout-only.selected::before {
+      display: none;
     }
 
     .day.available:hover {
@@ -620,8 +673,7 @@
     }
 
     .day.selected,
-    .day.booked.selected,
-    .day.booked.checkout-only.selected {
+    .day.checkout-only.selected {
       background: var(--teal);
       color: white;
       border-color: var(--teal);
@@ -688,7 +740,7 @@
       border: 1px solid var(--airbnb-border);
       border-radius: 18px;
       background: white;
-      padding: 18px 18px 10px;
+      padding: 18px;
     }
 
     .quote-placeholder {
@@ -718,6 +770,23 @@
       font-size: 1.14rem;
       font-weight: 900;
       color: var(--ink);
+    }
+
+    .direct-savings {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #e6f6ef;
+      color: #1f7a57;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .direct-savings small {
+      display: block;
+      margin-top: 4px;
+      font-weight: 500;
+      color: #3e7f66;
     }
 
     .form-card-title {
@@ -1009,7 +1078,7 @@
 
         <div id="quoteCard" class="quote-card">
           <div id="quoteSummary" class="quote-placeholder">
-            Select dates to see an estimated total.
+            Select valid dates to see an estimated total.
           </div>
         </div>
       </div>
@@ -1350,12 +1419,6 @@
           dateKey === checkInInput.value ||
           dateKey === checkOutInput.value;
 
-        const isCheckoutSelection =
-          checkInInput.value &&
-          checkOutInput.value &&
-          dateKey === checkOutInput.value &&
-          dateKey > checkInInput.value;
-
         const isInRange =
           checkInInput.value &&
           checkOutInput.value &&
@@ -1364,31 +1427,30 @@
 
         const canBeCheckout =
           checkInInput.value &&
-          !checkOutInput.value &&
           dateKey > checkInInput.value &&
           getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
 
         if (isPast) {
           cell.classList.add('past');
           cell.title = 'Past date';
-        } else if (isBooked && !canBeCheckout && !isCheckoutSelection) {
+        } else if (isBooked && canBeCheckout) {
+          cell.classList.add('checkout-only');
+          cell.title = 'Checkout only';
+          cell.addEventListener('click', () => {
+            handleCalendarDateClick(dateKey);
+          });
+        } else if (isBooked) {
           cell.classList.add('booked');
           cell.title = 'Unavailable as a night';
         } else {
-          if (isBooked && (canBeCheckout || isCheckoutSelection)) {
-            cell.classList.add('booked', 'checkout-only');
-            cell.title = 'Available as check-out date';
-          } else {
-            cell.classList.add('available');
-            cell.title = 'Available';
-          }
-
+          cell.classList.add('available');
+          cell.title = 'Available';
           cell.addEventListener('click', () => {
             handleCalendarDateClick(dateKey);
           });
         }
 
-        if (isInRange) cell.classList.add('in-range');
+        if (isInRange && !isBooked) cell.classList.add('in-range');
         if (isSelected) cell.classList.add('selected');
 
         daysGrid.appendChild(cell);
@@ -1399,20 +1461,34 @@
     }
 
     function handleCalendarDateClick(dateKey) {
-      if (!checkInInput.value || (checkInInput.value && checkOutInput.value)) {
+      const isBooked = blockedDateSet.has(dateKey);
+
+      if (!checkInInput.value) {
+        if (isBooked) return;
+
         checkInInput.value = dateKey;
         checkOutInput.value = '';
         checkOutInput.min = addDaysToKey(dateKey, 1);
         setAvailabilityMessage('Now choose a check-out date.', '');
-      } else {
-        if (dateKey <= checkInInput.value) {
-          checkInInput.value = dateKey;
-          checkOutInput.value = '';
-          checkOutInput.min = addDaysToKey(dateKey, 1);
-          setAvailabilityMessage('Now choose a check-out date.', '');
-        } else {
-          checkOutInput.value = dateKey;
+      } else if (dateKey > checkInInput.value) {
+        const blockedNights = getBlockedNightsInRange(checkInInput.value, dateKey);
+
+        if (blockedNights.length > 0) {
+          setAvailabilityMessage(
+            `Those dates are not available. Blocked night: ${blockedNights[0]}`,
+            'bad'
+          );
+          return;
         }
+
+        checkOutInput.value = dateKey;
+      } else {
+        if (isBooked) return;
+
+        checkInInput.value = dateKey;
+        checkOutInput.value = '';
+        checkOutInput.min = addDaysToKey(dateKey, 1);
+        setAvailabilityMessage('Now choose a check-out date.', '');
       }
 
       syncMirrors();
@@ -1510,13 +1586,17 @@
       const taxAmount = roundCurrency(staySubtotal * taxRate);
       const totalWithTax = roundCurrency(staySubtotal + taxAmount);
 
+      const bookingSiteBeforeTax = roundCurrency(staySubtotal * 1.1);
+      const directSavings = roundCurrency(bookingSiteBeforeTax - staySubtotal);
+
       return {
         nights,
         rawNightlySubtotal,
         staySubtotal,
         averageNightlyRate,
         taxAmount,
-        totalWithTax
+        totalWithTax,
+        directSavings
       };
     }
 
@@ -1526,13 +1606,20 @@
           <span>${quote.nights} night${quote.nights === 1 ? '' : 's'} × ${formatMoney(quote.averageNightlyRate)}</span>
           <strong>${formatMoney(quote.staySubtotal)}</strong>
         </div>
+
         <div class="quote-row">
           <span>Taxes</span>
           <strong>${formatMoney(quote.taxAmount)}</strong>
         </div>
+
         <div class="quote-total">
           <span>Total</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
+        </div>
+
+        <div class="direct-savings">
+          You will save ${formatMoney(quote.directSavings)} by booking directly with us!*
+          <small>*Compared with booking sites like Airbnb.</small>
         </div>
       `;
     }
