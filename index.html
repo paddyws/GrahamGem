@@ -19,7 +19,6 @@
       --shadow: 0 24px 70px rgba(0,0,0,.18);
       --radius: 28px;
       --airbnb-border: #ded8cf;
-      --airbnb-soft: #f8f6f2;
       --airbnb-booked: #f5d8d2;
       --airbnb-booked-border: #e2aba1;
       --airbnb-range: #ddeeed;
@@ -43,7 +42,10 @@
       font-weight: 500;
     }
 
-    a { color: inherit; text-decoration: none; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
     nav {
       position: fixed;
@@ -62,7 +64,9 @@
       letter-spacing: .03em;
     }
 
-    .brand span { color: var(--gold); }
+    .brand span {
+      color: var(--gold);
+    }
 
     .nav-links {
       display: flex;
@@ -122,8 +126,15 @@
       box-shadow: 0 14px 35px rgba(0,0,0,.2);
     }
 
-    .primary { background: var(--teal); color: white; }
-    .secondary { background: rgba(255,250,241,.92); color: var(--ink); }
+    .primary {
+      background: var(--teal);
+      color: white;
+    }
+
+    .secondary {
+      background: rgba(255,250,241,.92);
+      color: var(--ink);
+    }
 
     .stats {
       width: min(1100px, 86vw);
@@ -142,7 +153,9 @@
       border-right: 1px solid #e4d2b7;
     }
 
-    .stat:last-child { border-right: 0; }
+    .stat:last-child {
+      border-right: 0;
+    }
 
     .stat strong {
       display: block;
@@ -266,7 +279,9 @@
       background: white;
     }
 
-    textarea { min-height: 120px; }
+    textarea {
+      min-height: 120px;
+    }
 
     button {
       border: 0;
@@ -298,7 +313,6 @@
       gap: 14px;
     }
 
-    /* Airbnb-ish booking card */
     .availability-card {
       padding: 28px;
     }
@@ -599,16 +613,21 @@
       box-shadow: 0 8px 18px rgba(31,170,166,.14);
     }
 
-    .day.selected {
-      background: var(--teal);
-      color: white;
-      border-color: var(--teal);
-    }
-
     .day.in-range {
       background: var(--airbnb-range);
       border-color: #c8dfdc;
       color: var(--ink);
+    }
+
+    .day.selected,
+    .day.booked.selected,
+    .day.booked.checkout-only.selected {
+      background: var(--teal);
+      color: white;
+      border-color: var(--teal);
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: none;
     }
 
     .legend {
@@ -701,13 +720,6 @@
       color: var(--ink);
     }
 
-    .quote-footnote {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: .86rem;
-      line-height: 1.45;
-    }
-
     .form-card-title {
       margin: 0 0 8px;
       font-size: 1.6rem;
@@ -732,7 +744,10 @@
       border: 1px solid #ead8bd;
     }
 
-    .stars { color: var(--gold); letter-spacing: .08em; }
+    .stars {
+      color: var(--gold);
+      letter-spacing: .08em;
+    }
 
     footer {
       padding: 36px 8vw;
@@ -748,8 +763,13 @@
     }
 
     @media (max-width: 850px) {
-      nav { position: absolute; }
-      .nav-links { display: none; }
+      nav {
+        position: absolute;
+      }
+
+      .nav-links {
+        display: none;
+      }
 
       .stats,
       .features,
@@ -1172,6 +1192,7 @@
         }
 
         bookingForm.reset();
+
         guestState.adults = 1;
         guestState.children = 0;
         guestState.infants = 0;
@@ -1329,6 +1350,12 @@
           dateKey === checkInInput.value ||
           dateKey === checkOutInput.value;
 
+        const isCheckoutSelection =
+          checkInInput.value &&
+          checkOutInput.value &&
+          dateKey === checkOutInput.value &&
+          dateKey > checkInInput.value;
+
         const isInRange =
           checkInInput.value &&
           checkOutInput.value &&
@@ -1344,11 +1371,11 @@
         if (isPast) {
           cell.classList.add('past');
           cell.title = 'Past date';
-        } else if (isBooked && !canBeCheckout) {
+        } else if (isBooked && !canBeCheckout && !isCheckoutSelection) {
           cell.classList.add('booked');
-          cell.title = 'Unavailable';
+          cell.title = 'Unavailable as a night';
         } else {
-          if (isBooked && canBeCheckout) {
+          if (isBooked && (canBeCheckout || isCheckoutSelection)) {
             cell.classList.add('booked', 'checkout-only');
             cell.title = 'Available as check-out date';
           } else {
@@ -1361,8 +1388,8 @@
           });
         }
 
-        if (isSelected) cell.classList.add('selected');
         if (isInRange) cell.classList.add('in-range');
+        if (isSelected) cell.classList.add('selected');
 
         daysGrid.appendChild(cell);
       }
@@ -1463,26 +1490,32 @@
     function buildQuote(checkIn, checkOut) {
       const nights = countNights(checkIn, checkOut);
 
-      let nightlySubtotal = 0;
+      let rawNightlySubtotal = 0;
       let current = keyToDate(checkIn);
       const end = keyToDate(checkOut);
 
       while (current < end) {
         const key = dateToKey(current);
-        nightlySubtotal += Number(ratesByDate[key] || defaultNightlyRate);
+        rawNightlySubtotal += Number(ratesByDate[key] || defaultNightlyRate);
         current.setDate(current.getDate() + 1);
       }
 
-      nightlySubtotal = roundCurrency(nightlySubtotal);
+      rawNightlySubtotal = roundCurrency(rawNightlySubtotal);
 
-      const preTaxTotal = roundCurrency(nightlySubtotal + cleaningFee);
-      const taxAmount = roundCurrency(preTaxTotal * taxRate);
-      const totalWithTax = roundCurrency(preTaxTotal + taxAmount);
+      const staySubtotal = roundCurrency(rawNightlySubtotal + cleaningFee);
+      const averageNightlyRate = nights > 0
+        ? roundCurrency(staySubtotal / nights)
+        : 0;
+
+      const taxAmount = roundCurrency(staySubtotal * taxRate);
+      const totalWithTax = roundCurrency(staySubtotal + taxAmount);
 
       return {
         nights,
-        nightlySubtotal,
-        taxesAndFees: roundCurrency(totalWithTax - nightlySubtotal),
+        rawNightlySubtotal,
+        staySubtotal,
+        averageNightlyRate,
+        taxAmount,
         totalWithTax
       };
     }
@@ -1490,19 +1523,16 @@
     function renderQuote(quote) {
       quoteSummary.innerHTML = `
         <div class="quote-row">
-          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'}</span>
-          <strong>${formatMoney(quote.nightlySubtotal)}</strong>
+          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'} × ${formatMoney(quote.averageNightlyRate)}</span>
+          <strong>${formatMoney(quote.staySubtotal)}</strong>
         </div>
         <div class="quote-row">
           <span>Taxes</span>
-          <strong>${formatMoney(quote.taxesAndFees)}</strong>
+          <strong>${formatMoney(quote.taxAmount)}</strong>
         </div>
         <div class="quote-total">
-          <span>Estimated total</span>
+          <span>Total</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
-        </div>
-        <div class="quote-footnote">
-          Includes taxes and any standard cleaning charge.
         </div>
       `;
     }
