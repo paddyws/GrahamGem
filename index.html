@@ -14,11 +14,17 @@
       --teal: #1faaa6;
       --gold: #c99b4a;
       --white: #fffaf1;
+      --danger: #b54b3a;
+      --success: #2d7a5f;
       --shadow: 0 24px 70px rgba(0,0,0,.18);
       --radius: 28px;
     }
 
     * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
@@ -232,11 +238,17 @@
       align-items: start;
     }
 
-    form {
+    form, .availability-card {
       background: #fffaf1;
       padding: 34px;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      border: 1px solid #ead8bd;
+    }
+
+    .booking-stack {
+      display: grid;
+      gap: 22px;
     }
 
     input, select, textarea {
@@ -261,6 +273,171 @@
       background: var(--teal);
       color: white;
       font-weight: 900;
+    }
+
+    button:hover {
+      filter: brightness(.96);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .availability-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .availability-header h3 {
+      font-size: 1.7rem;
+      margin: 0;
+    }
+
+    .availability-status {
+      font-size: .92rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0 0 18px;
+    }
+
+    .calendar-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .calendar-controls button {
+      width: auto;
+      min-width: 46px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #ead8bd;
+      color: var(--ink);
+      box-shadow: none;
+    }
+
+    .calendar-title {
+      font-family: Georgia, serif;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .weekday {
+      text-align: center;
+      font-size: .78rem;
+      font-weight: 900;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding-bottom: 4px;
+    }
+
+    .day {
+      aspect-ratio: 1;
+      border-radius: 14px;
+      border: 1px solid #ead8bd;
+      background: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: .92rem;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .day.empty {
+      background: transparent;
+      border: 0;
+      cursor: default;
+    }
+
+    .day.past {
+      color: #b9a993;
+      background: #f3eadc;
+      cursor: not-allowed;
+    }
+
+    .day.booked {
+      background: #f5d8d2;
+      border-color: #e1a59a;
+      color: var(--danger);
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .day.available:hover {
+      border-color: var(--teal);
+      box-shadow: 0 8px 18px rgba(31,170,166,.15);
+    }
+
+    .day.selected {
+      background: var(--teal);
+      color: white;
+      border-color: var(--teal);
+    }
+
+    .day.in-range {
+      background: #dff3ef;
+      border-color: #b9dfd8;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 5px;
+      border: 1px solid #d8c5a9;
+      background: white;
+    }
+
+    .swatch.booked { background: #f5d8d2; border-color: #e1a59a; }
+    .swatch.selected { background: var(--teal); border-color: var(--teal); }
+
+    .availability-message {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #f3eadc;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: .95rem;
+    }
+
+    .availability-message.good {
+      background: #dff3e9;
+      color: var(--success);
+    }
+
+    .availability-message.bad {
+      background: #f5d8d2;
+      color: var(--danger);
     }
 
     .reviews {
@@ -288,11 +465,13 @@
     @media (max-width: 850px) {
       nav { position: absolute; }
       .nav-links { display: none; }
-      .stats, .features, .reviews, .intro, .booking, .photo-grid {
+      .stats, .features, .reviews, .intro, .booking, .photo-grid, .form-row {
         grid-template-columns: 1fr;
       }
       .stat { border-right: 0; border-bottom: 1px solid #e4d2b7; }
       .photo-grid img, .photo-grid img:first-child { height: 260px; }
+      .calendar-grid { gap: 6px; }
+      .day { border-radius: 11px; font-size: .84rem; }
     }
   </style>
 </head>
@@ -382,28 +561,70 @@
     <div>
       <h2 class="section-title">Request your stay</h2>
       <p class="section-text">
-        Submit your preferred dates and we’ll confirm availability manually.
-        No surprise platform fees — just a simple direct-booking request.
+        Check the live availability calendar, then submit your preferred dates.
+        Requests are not confirmed until we reply and block the dates.
+      </p>
+      <p class="section-text">
+        The calendar below is pulled from our current Evolve availability feed and updates automatically.
       </p>
     </div>
 
-    <form>
-      <input type="text" placeholder="Name">
-      <input type="email" placeholder="Email">
-      <input type="tel" placeholder="Phone">
-      <input type="text" placeholder="Check-in">
-      <input type="text" placeholder="Check-out">
-      <select>
-        <option>Select guests</option>
-        <option>1–4</option>
-        <option>5–8</option>
-        <option>9–12</option>
-        <option>13–16</option>
-      </select>
-      <textarea placeholder="Anything we should know?"></textarea>
-      <button type="submit">Send Booking Request</button>
-      <p class="section-text" style="font-size:.9rem;">Requests are not confirmed until we reply and block the dates.</p>
-    </form>
+    <div class="booking-stack">
+      <div class="availability-card">
+        <div class="availability-header">
+          <h3>Live availability</h3>
+        </div>
+
+        <p id="availabilityStatus" class="availability-status">
+          Loading current availability...
+        </p>
+
+        <div class="calendar-controls">
+          <button type="button" id="prevMonth" aria-label="Previous month">‹</button>
+          <div id="calendarTitle" class="calendar-title">Calendar</div>
+          <button type="button" id="nextMonth" aria-label="Next month">›</button>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+
+        <div class="legend">
+          <span class="legend-item"><span class="swatch"></span> Available</span>
+          <span class="legend-item"><span class="swatch booked"></span> Unavailable</span>
+          <span class="legend-item"><span class="swatch selected"></span> Selected</span>
+        </div>
+
+        <div id="availabilityMessage" class="availability-message">
+          Select your dates below or click available dates on the calendar.
+        </div>
+      </div>
+
+      <form id="bookingForm">
+        <input id="guestName" type="text" placeholder="Name" required>
+        <input id="guestEmail" type="email" placeholder="Email" required>
+        <input id="guestPhone" type="tel" placeholder="Phone">
+
+        <div class="form-row">
+          <input id="checkIn" type="date" required>
+          <input id="checkOut" type="date" required>
+        </div>
+
+        <select id="guestCount" required>
+          <option value="">Select guests</option>
+          <option>1–4</option>
+          <option>5–8</option>
+          <option>9–12</option>
+          <option>13–16</option>
+        </select>
+
+        <textarea id="guestMessage" placeholder="Anything we should know?"></textarea>
+
+        <button type="submit">Send Booking Request</button>
+
+        <p class="section-text" style="font-size:.9rem;">
+          Direct booking inquiries only. Final availability is confirmed manually.
+        </p>
+      </form>
+    </div>
   </section>
 
   <section id="location">
@@ -437,5 +658,317 @@
     Graham Gem • Graham, North Carolina<br>
     Direct booking inquiries only. Final availability confirmed manually.
   </footer>
+
+  <script>
+    const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
+
+    // Replace this with the email address that should receive booking inquiries.
+    const BOOKING_EMAIL = 'YOUR_EMAIL_HERE@example.com';
+
+    let blockedDateSet = new Set();
+    let currentMonthDate = new Date();
+    currentMonthDate.setDate(1);
+
+    const calendarGrid = document.getElementById('calendarGrid');
+    const calendarTitle = document.getElementById('calendarTitle');
+    const availabilityStatus = document.getElementById('availabilityStatus');
+    const availabilityMessage = document.getElementById('availabilityMessage');
+
+    const checkInInput = document.getElementById('checkIn');
+    const checkOutInput = document.getElementById('checkOut');
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    checkInInput.addEventListener('change', () => {
+      if (checkInInput.value && (!checkOutInput.value || checkOutInput.value <= checkInInput.value)) {
+        checkOutInput.value = addDaysToKey(checkInInput.value, 1);
+      }
+
+      updateAvailabilityMessage();
+      renderCalendar();
+    });
+
+    checkOutInput.addEventListener('change', () => {
+      updateAvailabilityMessage();
+      renderCalendar();
+    });
+
+    document.getElementById('bookingForm').addEventListener('submit', event => {
+      event.preventDefault();
+
+      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
+
+      if (!result.ok) {
+        setAvailabilityMessage(result.message, 'bad');
+        return;
+      }
+
+      const name = document.getElementById('guestName').value.trim();
+      const email = document.getElementById('guestEmail').value.trim();
+      const phone = document.getElementById('guestPhone').value.trim();
+      const guests = document.getElementById('guestCount').value;
+      const notes = document.getElementById('guestMessage').value.trim();
+
+      const subject = `Graham Gem booking request: ${checkInInput.value} to ${checkOutInput.value}`;
+
+      const body = [
+        'Hello,',
+        '',
+        'I would like to request a stay at Graham Gem.',
+        '',
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Phone: ${phone || 'Not provided'}`,
+        `Check-in: ${checkInInput.value}`,
+        `Check-out: ${checkOutInput.value}`,
+        `Guests: ${guests}`,
+        '',
+        `Notes: ${notes || 'None'}`,
+        '',
+        'I understand this request is not confirmed until availability is manually confirmed.'
+      ].join('\n');
+
+      const mailtoUrl =
+        `mailto:${encodeURIComponent(BOOKING_EMAIL)}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+
+      window.location.href = mailtoUrl;
+    });
+
+    function loadAvailability() {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'grahamGemAvailability_' + Date.now();
+
+        window[callbackName] = function(data) {
+          delete window[callbackName];
+          script.remove();
+
+          if (!data || !data.ok) {
+            reject(data && data.error ? data.error : 'Availability failed to load');
+            return;
+          }
+
+          resolve(data);
+        };
+
+        const script = document.createElement('script');
+        script.src = AVAILABILITY_API + '?callback=' + encodeURIComponent(callbackName);
+        script.onerror = () => reject('Could not load availability script');
+        document.body.appendChild(script);
+      });
+    }
+
+    function renderCalendar() {
+      calendarGrid.innerHTML = '';
+
+      const year = currentMonthDate.getFullYear();
+      const month = currentMonthDate.getMonth();
+
+      calendarTitle.textContent = currentMonthDate.toLocaleDateString(undefined, {
+        month: 'long',
+        year: 'numeric'
+      });
+
+      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+      weekdays.forEach(day => {
+        const weekday = document.createElement('div');
+        weekday.className = 'weekday';
+        weekday.textContent = day;
+        calendarGrid.appendChild(weekday);
+      });
+
+      const firstDay = new Date(year, month, 1);
+      const startDay = firstDay.getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day empty';
+        calendarGrid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dateKey = dateToKey(date);
+
+        const cell = document.createElement('div');
+        cell.className = 'day';
+        cell.textContent = day;
+        cell.dataset.date = dateKey;
+
+        const isPast = isDateKeyPast(dateKey);
+        const isBooked = blockedDateSet.has(dateKey);
+        const isSelected = dateKey === checkInInput.value || dateKey === checkOutInput.value;
+        const isInRange = checkInInput.value && checkOutInput.value && dateKey > checkInInput.value && dateKey < checkOutInput.value;
+
+        if (isPast) {
+          cell.classList.add('past');
+        } else if (isBooked) {
+          cell.classList.add('booked');
+          cell.title = 'Unavailable';
+        } else {
+          cell.classList.add('available');
+          cell.title = 'Available';
+
+          cell.addEventListener('click', () => {
+            handleCalendarDateClick(dateKey);
+          });
+        }
+
+        if (isSelected) cell.classList.add('selected');
+        if (isInRange) cell.classList.add('in-range');
+
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    function handleCalendarDateClick(dateKey) {
+      if (!checkInInput.value || (checkInInput.value && checkOutInput.value)) {
+        checkInInput.value = dateKey;
+        checkOutInput.value = '';
+        setAvailabilityMessage('Now choose a check-out date.', '');
+      } else {
+        if (dateKey <= checkInInput.value) {
+          checkInInput.value = dateKey;
+          checkOutInput.value = '';
+          setAvailabilityMessage('Now choose a check-out date.', '');
+        } else {
+          checkOutInput.value = dateKey;
+          updateAvailabilityMessage();
+        }
+      }
+
+      renderCalendar();
+    }
+
+    function updateAvailabilityMessage() {
+      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
+
+      if (!checkInInput.value && !checkOutInput.value) {
+        setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
+        return;
+      }
+
+      setAvailabilityMessage(result.message, result.ok ? 'good' : 'bad');
+    }
+
+    function getDateRangeStatus(checkIn, checkOut) {
+      if (!checkIn) {
+        return { ok: false, message: 'Please select a check-in date.' };
+      }
+
+      if (!checkOut) {
+        return { ok: false, message: 'Please select a check-out date.' };
+      }
+
+      if (checkOut <= checkIn) {
+        return { ok: false, message: 'Check-out must be after check-in.' };
+      }
+
+      if (isDateKeyPast(checkIn)) {
+        return { ok: false, message: 'Please choose a future check-in date.' };
+      }
+
+      const blockedNights = getBlockedNightsInRange(checkIn, checkOut);
+
+      if (blockedNights.length > 0) {
+        return {
+          ok: false,
+          message: `Those dates are not available. Blocked night: ${blockedNights[0]}`
+        };
+      }
+
+      const nights = countNights(checkIn, checkOut);
+
+      return {
+        ok: true,
+        message: `Great news — those ${nights} night${nights === 1 ? '' : 's'} appear available. Submit the request and we’ll confirm manually.`
+      };
+    }
+
+    function getBlockedNightsInRange(checkIn, checkOut) {
+      const blocked = [];
+      let current = keyToDate(checkIn);
+      const end = keyToDate(checkOut);
+
+      while (current < end) {
+        const key = dateToKey(current);
+        if (blockedDateSet.has(key)) {
+          blocked.push(key);
+        }
+        current.setDate(current.getDate() + 1);
+      }
+
+      return blocked;
+    }
+
+    function countNights(checkIn, checkOut) {
+      const start = keyToDate(checkIn);
+      const end = keyToDate(checkOut);
+      return Math.round((end - start) / 86400000);
+    }
+
+    function setAvailabilityMessage(message, type) {
+      availabilityMessage.textContent = message;
+      availabilityMessage.className = 'availability-message';
+
+      if (type === 'good') availabilityMessage.classList.add('good');
+      if (type === 'bad') availabilityMessage.classList.add('bad');
+    }
+
+    function dateToKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function keyToDate(key) {
+      const [year, month, day] = key.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    function addDaysToKey(key, days) {
+      const date = keyToDate(key);
+      date.setDate(date.getDate() + days);
+      return dateToKey(date);
+    }
+
+    function isDateKeyPast(key) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return keyToDate(key) < today;
+    }
+
+    loadAvailability()
+      .then(data => {
+        blockedDateSet = new Set(data.blockedDates || []);
+
+        availabilityStatus.textContent =
+          `Updated ${new Date(data.updatedAt).toLocaleString()}. ` +
+          `${data.blockedDateCount || blockedDateSet.size} unavailable nights currently shown.`;
+
+        renderCalendar();
+      })
+      .catch(error => {
+        availabilityStatus.textContent =
+          'Availability could not be loaded right now. Please submit your dates and we will confirm manually.';
+
+        console.error('Availability error:', error);
+        renderCalendar();
+      });
+
+    renderCalendar();
+  </script>
 </body>
 </html>
