@@ -18,6 +18,11 @@
       --success: #2d7a5f;
       --shadow: 0 24px 70px rgba(0,0,0,.18);
       --radius: 28px;
+      --airbnb-border: #ded8cf;
+      --airbnb-soft: #f8f6f2;
+      --airbnb-booked: #f5d8d2;
+      --airbnb-booked-border: #e2aba1;
+      --airbnb-range: #ddeeed;
     }
 
     * { box-sizing: border-box; }
@@ -233,9 +238,14 @@
 
     .booking {
       display: grid;
-      grid-template-columns: .9fr 1.1fr;
+      grid-template-columns: .82fr 1.18fr;
       gap: 40px;
       align-items: start;
+    }
+
+    .booking-stack {
+      display: grid;
+      gap: 22px;
     }
 
     form, .availability-card {
@@ -246,12 +256,7 @@
       border: 1px solid #ead8bd;
     }
 
-    .booking-stack {
-      display: grid;
-      gap: 22px;
-    }
-
-    input, select, textarea {
+    input, textarea {
       width: 100%;
       padding: 15px;
       margin-bottom: 14px;
@@ -264,10 +269,13 @@
     textarea { min-height: 120px; }
 
     button {
-      width: 100%;
       border: 0;
       cursor: pointer;
       font: inherit;
+    }
+
+    .submit-btn {
+      width: 100%;
       padding: 16px;
       border-radius: 999px;
       background: var(--teal);
@@ -275,11 +283,11 @@
       font-weight: 900;
     }
 
-    button:hover {
+    .submit-btn:hover {
       filter: brightness(.96);
     }
 
-    button:disabled {
+    .submit-btn:disabled {
       opacity: .65;
       cursor: not-allowed;
     }
@@ -290,24 +298,198 @@
       gap: 14px;
     }
 
-    .availability-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 18px;
+    /* Airbnb-ish booking card */
+    .availability-card {
+      padding: 28px;
     }
 
-    .availability-header h3 {
-      font-size: 1.7rem;
-      margin: 0;
+    .availability-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .availability-top h3 {
+      font-size: 1.9rem;
+      margin: 4px 0 0;
+    }
+
+    .availability-label {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .75rem;
+      font-weight: 800;
+      color: var(--muted);
     }
 
     .availability-status {
       font-size: .92rem;
       color: var(--muted);
-      line-height: 1.5;
-      margin: 0 0 18px;
+      line-height: 1.45;
+      margin: 0;
+      text-align: right;
+      max-width: 260px;
+    }
+
+    .booking-fields {
+      border: 1px solid var(--airbnb-border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: white;
+      margin-bottom: 18px;
+    }
+
+    .booking-fields-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--airbnb-border);
+    }
+
+    .field-block {
+      padding: 12px 14px;
+    }
+
+    .field-block:first-child {
+      border-right: 1px solid var(--airbnb-border);
+    }
+
+    .field-block label {
+      display: block;
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: #000;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .field-block input {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      font-size: .96rem;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .guest-field-wrap {
+      position: relative;
+    }
+
+    .guest-button {
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .guest-button .guest-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .guest-button .guest-label {
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    .guest-button .guest-value {
+      font-size: .96rem;
+      color: var(--ink);
+    }
+
+    .guest-chevron {
+      font-size: 1rem;
+      color: var(--muted);
+      transition: transform .18s ease;
+    }
+
+    .guest-field-wrap.open .guest-chevron {
+      transform: rotate(180deg);
+    }
+
+    .guest-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      right: 0;
+      z-index: 5;
+      background: white;
+      border: 1px solid var(--airbnb-border);
+      border-radius: 24px;
+      box-shadow: 0 16px 36px rgba(0,0,0,.12);
+      padding: 12px 18px;
+      display: none;
+    }
+
+    .guest-field-wrap.open .guest-popover {
+      display: block;
+    }
+
+    .guest-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0ece6;
+    }
+
+    .guest-row:last-child {
+      border-bottom: 0;
+    }
+
+    .guest-row strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+
+    .guest-row span {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .guest-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .counter-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid #cbbba5;
+      background: white;
+      color: var(--ink);
+      font-size: 1.1rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .counter-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .guest-note {
+      margin-top: 10px;
+      font-size: .84rem;
+      color: var(--muted);
+      line-height: 1.45;
     }
 
     .calendar-controls {
@@ -315,26 +497,44 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .calendar-controls button {
-      width: auto;
-      min-width: 46px;
-      padding: 10px 14px;
+      min-width: 44px;
+      height: 44px;
       border-radius: 999px;
       background: #ead8bd;
       color: var(--ink);
-      box-shadow: none;
+      font-size: 1.15rem;
+    }
+
+    .calendar-range-title {
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .calendar-months {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .calendar-month {
+      padding: 4px 0 0;
     }
 
     .calendar-title {
-      font-family: Georgia, serif;
-      font-size: 1.4rem;
       text-align: center;
+      font-family: Georgia, serif;
+      font-size: 1.45rem;
+      margin-bottom: 14px;
     }
 
-    .calendar-grid {
+    .month-weekdays,
+    .month-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 8px;
@@ -342,25 +542,26 @@
 
     .weekday {
       text-align: center;
-      font-size: .78rem;
+      font-size: .72rem;
       font-weight: 900;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .08em;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
     }
 
     .day {
       aspect-ratio: 1;
-      border-radius: 14px;
-      border: 1px solid #ead8bd;
+      border-radius: 16px;
+      border: 1px solid transparent;
       background: white;
       display: grid;
       place-items: center;
-      font-weight: 800;
-      font-size: .92rem;
+      font-weight: 700;
+      font-size: .95rem;
       position: relative;
       cursor: pointer;
+      transition: all .15s ease;
     }
 
     .day.empty {
@@ -370,22 +571,32 @@
     }
 
     .day.past {
-      color: #b9a993;
+      color: #c3b6a3;
       background: #f3eadc;
       cursor: not-allowed;
     }
 
     .day.booked {
-      background: #f5d8d2;
-      border-color: #e1a59a;
+      background: var(--airbnb-booked);
+      border-color: var(--airbnb-booked-border);
       color: var(--danger);
       cursor: not-allowed;
       text-decoration: line-through;
     }
 
+    .day.booked.checkout-only {
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: inset 0 0 0 2px var(--teal);
+    }
+
+    .day.booked.checkout-only:hover {
+      filter: brightness(.98);
+    }
+
     .day.available:hover {
       border-color: var(--teal);
-      box-shadow: 0 8px 18px rgba(31,170,166,.15);
+      box-shadow: 0 8px 18px rgba(31,170,166,.14);
     }
 
     .day.selected {
@@ -395,15 +606,16 @@
     }
 
     .day.in-range {
-      background: #dff3ef;
-      border-color: #b9dfd8;
+      background: var(--airbnb-range);
+      border-color: #c8dfdc;
+      color: var(--ink);
     }
 
     .legend {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 16px;
+      margin-top: 18px;
       color: var(--muted);
       font-size: .9rem;
     }
@@ -422,11 +634,18 @@
       background: white;
     }
 
-    .swatch.booked { background: #f5d8d2; border-color: #e1a59a; }
-    .swatch.selected { background: var(--teal); border-color: var(--teal); }
+    .swatch.booked {
+      background: var(--airbnb-booked);
+      border-color: var(--airbnb-booked-border);
+    }
+
+    .swatch.selected {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
 
     .availability-message {
-      margin-top: 16px;
+      margin-top: 18px;
       padding: 14px 16px;
       border-radius: 16px;
       background: #f3eadc;
@@ -445,38 +664,59 @@
       color: var(--danger);
     }
 
-    .quote-box {
-      display: none;
+    .quote-card {
       margin-top: 16px;
-      padding: 16px;
-      border-radius: 16px;
-      background: #fffaf1;
-      border: 1px solid #ead8bd;
-      line-height: 1.6;
+      border: 1px solid var(--airbnb-border);
+      border-radius: 18px;
+      background: white;
+      padding: 18px 18px 10px;
     }
 
-    .quote-box.show {
-      display: block;
-    }
-
-    .quote-line {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
+    .quote-placeholder {
       color: var(--muted);
+      line-height: 1.55;
       font-size: .95rem;
     }
 
-    .quote-line strong {
-      color: var(--ink);
+    .quote-row,
+    .quote-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 7px 0;
+      font-size: 1rem;
+    }
+
+    .quote-row span {
+      color: var(--muted);
     }
 
     .quote-total {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #ead8bd;
+      margin-top: 8px;
+      padding-top: 14px;
+      border-top: 1px solid #ebe5dc;
+      font-size: 1.14rem;
       font-weight: 900;
       color: var(--ink);
+    }
+
+    .quote-footnote {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    .form-card-title {
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+    }
+
+    .form-card-subtitle {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.6;
     }
 
     .reviews {
@@ -501,16 +741,58 @@
       background: #ead8bd;
     }
 
+    @media (max-width: 1100px) {
+      .calendar-months {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 850px) {
       nav { position: absolute; }
       .nav-links { display: none; }
-      .stats, .features, .reviews, .intro, .booking, .photo-grid, .form-row {
+
+      .stats,
+      .features,
+      .reviews,
+      .intro,
+      .booking,
+      .photo-grid,
+      .form-row {
         grid-template-columns: 1fr;
       }
-      .stat { border-right: 0; border-bottom: 1px solid #e4d2b7; }
-      .photo-grid img, .photo-grid img:first-child { height: 260px; }
-      .calendar-grid { gap: 6px; }
-      .day { border-radius: 11px; font-size: .84rem; }
+
+      .stat {
+        border-right: 0;
+        border-bottom: 1px solid #e4d2b7;
+      }
+
+      .photo-grid img,
+      .photo-grid img:first-child {
+        height: 260px;
+      }
+
+      .availability-top {
+        flex-direction: column;
+      }
+
+      .availability-status {
+        text-align: left;
+        max-width: none;
+      }
+
+      .booking-fields-top {
+        grid-template-columns: 1fr;
+      }
+
+      .field-block:first-child {
+        border-right: 0;
+        border-bottom: 1px solid var(--airbnb-border);
+      }
+
+      .day {
+        border-radius: 12px;
+        font-size: .86rem;
+      }
     }
   </style>
 </head>
@@ -610,21 +892,90 @@
 
     <div class="booking-stack">
       <div class="availability-card">
-        <div class="availability-header">
-          <h3>Live availability</h3>
+        <div class="availability-top">
+          <div>
+            <div class="availability-label">Live availability</div>
+            <h3>Select your stay</h3>
+          </div>
+
+          <p id="availabilityStatus" class="availability-status">
+            Loading current availability...
+          </p>
         </div>
 
-        <p id="availabilityStatus" class="availability-status">
-          Loading current availability...
-        </p>
+        <div class="booking-fields">
+          <div class="booking-fields-top">
+            <div class="field-block">
+              <label for="checkIn">Check-in</label>
+              <input id="checkIn" type="date" required>
+            </div>
+
+            <div class="field-block">
+              <label for="checkOut">Check-out</label>
+              <input id="checkOut" type="date" required>
+            </div>
+          </div>
+
+          <div class="guest-field-wrap" id="guestFieldWrap">
+            <button type="button" class="guest-button" id="guestButton">
+              <div class="guest-copy">
+                <span class="guest-label">Guests</span>
+                <span class="guest-value" id="guestButtonText">1 guest</span>
+              </div>
+              <span class="guest-chevron">⌄</span>
+            </button>
+
+            <div class="guest-popover" id="guestPopover">
+              <div class="guest-row">
+                <div>
+                  <strong>Adults</strong>
+                  <span>Ages 13+</span>
+                </div>
+                <div class="guest-controls">
+                  <button type="button" class="counter-btn" data-type="adults" data-delta="-1">−</button>
+                  <span id="adultsCount">1</span>
+                  <button type="button" class="counter-btn" data-type="adults" data-delta="1">+</button>
+                </div>
+              </div>
+
+              <div class="guest-row">
+                <div>
+                  <strong>Children</strong>
+                  <span>Ages 2–12</span>
+                </div>
+                <div class="guest-controls">
+                  <button type="button" class="counter-btn" data-type="children" data-delta="-1">−</button>
+                  <span id="childrenCount">0</span>
+                  <button type="button" class="counter-btn" data-type="children" data-delta="1">+</button>
+                </div>
+              </div>
+
+              <div class="guest-row">
+                <div>
+                  <strong>Infants</strong>
+                  <span>Under 2</span>
+                </div>
+                <div class="guest-controls">
+                  <button type="button" class="counter-btn" data-type="infants" data-delta="-1">−</button>
+                  <span id="infantsCount">0</span>
+                  <button type="button" class="counter-btn" data-type="infants" data-delta="1">+</button>
+                </div>
+              </div>
+
+              <div class="guest-note">
+                Maximum 16 guests. Infants are not counted toward the 16-guest limit.
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="calendar-controls">
           <button type="button" id="prevMonth" aria-label="Previous month">‹</button>
-          <div id="calendarTitle" class="calendar-title">Calendar</div>
+          <div class="calendar-range-title">Click your check-in, then your check-out</div>
           <button type="button" id="nextMonth" aria-label="Next month">›</button>
         </div>
 
-        <div class="calendar-grid" id="calendarGrid"></div>
+        <div id="calendarMonths" class="calendar-months"></div>
 
         <div class="legend">
           <span class="legend-item"><span class="swatch"></span> Available</span>
@@ -636,34 +987,36 @@
           Select your dates below or click available dates on the calendar.
         </div>
 
-        <div id="quoteBox" class="quote-box"></div>
+        <div id="quoteCard" class="quote-card">
+          <div id="quoteSummary" class="quote-placeholder">
+            Select dates to see an estimated total.
+          </div>
+        </div>
       </div>
 
       <form id="bookingForm">
+        <h3 class="form-card-title">Request a temporary hold</h3>
+        <p class="form-card-subtitle">
+          We’ll receive your request right away and confirm the booking manually.
+        </p>
+
         <input id="guestName" type="text" placeholder="Name" required>
         <input id="guestEmail" type="email" placeholder="Email" required>
         <input id="guestPhone" type="tel" placeholder="Phone">
 
         <div class="form-row">
-          <input id="checkIn" type="date" required>
-          <input id="checkOut" type="date" required>
+          <input id="checkInMirror" type="text" placeholder="Check-in" readonly>
+          <input id="checkOutMirror" type="text" placeholder="Check-out" readonly>
         </div>
 
-        <select id="guestCount" required>
-          <option value="">Select guests</option>
-          <option>1–4</option>
-          <option>5–8</option>
-          <option>9–12</option>
-          <option>13–16</option>
-        </select>
+        <input id="guestCount" type="text" placeholder="Guests" readonly>
 
         <textarea id="guestMessage" placeholder="Anything we should know?"></textarea>
 
-        <button type="submit">Request Date Hold</button>
+        <button class="submit-btn" type="submit">Request Date Hold</button>
 
-        <p class="section-text" style="font-size:.9rem;">
-          Three-night minimum. Your dates will be temporarily held on this website.
-          Final booking is confirmed manually.
+        <p class="section-text" style="font-size:.9rem; margin-top: 14px;">
+          Your dates will be temporarily held on this website. Final booking is confirmed manually.
         </p>
       </form>
     </div>
@@ -705,27 +1058,38 @@
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
 
     let blockedDateSet = new Set();
-    let ratesByDate = {};
-
-    let defaultNightlyRate = 400;
-    let minimumNights = 3;
-    let cleaningFee = 250;
-    let taxRate = 0.1275;
-
     let currentMonthDate = new Date();
     currentMonthDate.setDate(1);
 
-    const calendarGrid = document.getElementById('calendarGrid');
-    const calendarTitle = document.getElementById('calendarTitle');
+    let ratesByDate = {};
+    let defaultNightlyRate = 400;
+    let cleaningFee = 250;
+    let taxRate = 0.1275;
+    let minimumNights = 3;
+
+    const guestState = {
+      adults: 1,
+      children: 0,
+      infants: 0
+    };
+
+    const calendarMonths = document.getElementById('calendarMonths');
     const availabilityStatus = document.getElementById('availabilityStatus');
     const availabilityMessage = document.getElementById('availabilityMessage');
-    const quoteBox = document.getElementById('quoteBox');
+    const quoteSummary = document.getElementById('quoteSummary');
 
     const checkInInput = document.getElementById('checkIn');
     const checkOutInput = document.getElementById('checkOut');
-    const bookingForm = document.getElementById('bookingForm');
+    const checkInMirror = document.getElementById('checkInMirror');
+    const checkOutMirror = document.getElementById('checkOutMirror');
+    const guestCountInput = document.getElementById('guestCount');
 
-    setDateInputMinimums();
+    const guestButton = document.getElementById('guestButton');
+    const guestButtonText = document.getElementById('guestButtonText');
+    const guestFieldWrap = document.getElementById('guestFieldWrap');
+    const guestPopover = document.getElementById('guestPopover');
+
+    const bookingForm = document.getElementById('bookingForm');
 
     document.getElementById('prevMonth').addEventListener('click', () => {
       currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
@@ -737,24 +1101,41 @@
       renderCalendar();
     });
 
+    guestButton.addEventListener('click', () => {
+      guestFieldWrap.classList.toggle('open');
+    });
+
+    document.addEventListener('click', event => {
+      if (!guestFieldWrap.contains(event.target)) {
+        guestFieldWrap.classList.remove('open');
+      }
+    });
+
+    guestPopover.querySelectorAll('.counter-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const type = button.dataset.type;
+        const delta = Number(button.dataset.delta);
+        updateGuestCount(type, delta);
+      });
+    });
+
     checkInInput.addEventListener('change', () => {
-      if (
-        checkInInput.value &&
-        (
-          !checkOutInput.value ||
-          checkOutInput.value <= checkInInput.value ||
-          countNights(checkInInput.value, checkOutInput.value) < minimumNights
-        )
-      ) {
-        checkOutInput.value = addDaysToKey(checkInInput.value, minimumNights);
+      if (checkInInput.value) {
+        checkOutInput.min = addDaysToKey(checkInInput.value, 1);
       }
 
-      updateAvailabilityMessage();
+      if (checkOutInput.value && checkOutInput.value <= checkInInput.value) {
+        checkOutInput.value = '';
+      }
+
+      syncMirrors();
+      updateAvailabilityMessageAndQuote();
       renderCalendar();
     });
 
     checkOutInput.addEventListener('change', () => {
-      updateAvailabilityMessage();
+      syncMirrors();
+      updateAvailabilityMessageAndQuote();
       renderCalendar();
     });
 
@@ -765,7 +1146,6 @@
 
       if (!result.ok) {
         setAvailabilityMessage(result.message, 'bad');
-        hideQuote();
         return;
       }
 
@@ -783,7 +1163,7 @@
           phone: document.getElementById('guestPhone').value.trim(),
           checkIn: checkInInput.value,
           checkOut: checkOutInput.value,
-          guests: document.getElementById('guestCount').value,
+          guests: guestCountInput.value,
           notes: document.getElementById('guestMessage').value.trim()
         });
 
@@ -792,7 +1172,14 @@
         }
 
         bookingForm.reset();
-        hideQuote();
+        guestState.adults = 1;
+        guestState.children = 0;
+        guestState.infants = 0;
+        syncGuestUI();
+
+        checkInInput.value = '';
+        checkOutInput.value = '';
+        syncMirrors();
 
         const refreshedAvailability = await loadAvailability();
         applyAvailabilityData(refreshedAvailability);
@@ -801,6 +1188,8 @@
           data.message || 'Your dates have been received and temporarily held. We will confirm manually.',
           'good'
         );
+
+        renderQuotePlaceholder();
 
       } catch (error) {
         setAvailabilityMessage(String(error && error.message ? error.message : error), 'bad');
@@ -853,40 +1242,66 @@
 
       blockedDateSet = new Set(data.blockedDates || []);
       ratesByDate = data.ratesByDate || {};
-
       defaultNightlyRate = Number(data.defaultNightlyRate || 400);
-      minimumNights = Number(data.minimumNights || 3);
-      cleaningFee = Number(data.cleaningFee || 250);
+      cleaningFee = Number(data.cleaningFee || 0);
       taxRate = Number(data.taxRate || 0.1275);
+      minimumNights = Number(data.minimumNights || 3);
 
       availabilityStatus.textContent =
         `Updated ${new Date(data.updatedAt).toLocaleString()}. ` +
         `${data.blockedDateCount || blockedDateSet.size} unavailable nights currently shown.`;
 
-      setDateInputMinimums();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayKey = dateToKey(today);
+
+      checkInInput.min = todayKey;
+      checkOutInput.min = todayKey;
+
       renderCalendar();
-      updateAvailabilityMessage();
+      updateAvailabilityMessageAndQuote();
     }
 
     function renderCalendar() {
-      calendarGrid.innerHTML = '';
+      calendarMonths.innerHTML = '';
 
-      const year = currentMonthDate.getFullYear();
-      const month = currentMonthDate.getMonth();
+      const monthOne = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth(), 1);
+      const monthTwo = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1);
 
-      calendarTitle.textContent = currentMonthDate.toLocaleDateString(undefined, {
+      [monthOne, monthTwo].forEach(monthDate => {
+        calendarMonths.appendChild(buildMonthCalendar(monthDate));
+      });
+    }
+
+    function buildMonthCalendar(monthDate) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'calendar-month';
+
+      const title = document.createElement('div');
+      title.className = 'calendar-title';
+      title.textContent = monthDate.toLocaleDateString(undefined, {
         month: 'long',
         year: 'numeric'
       });
+      wrapper.appendChild(title);
 
-      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const weekdays = document.createElement('div');
+      weekdays.className = 'month-weekdays';
 
-      weekdays.forEach(day => {
+      ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
         const weekday = document.createElement('div');
         weekday.className = 'weekday';
         weekday.textContent = day;
-        calendarGrid.appendChild(weekday);
+        weekdays.appendChild(weekday);
       });
+
+      wrapper.appendChild(weekdays);
+
+      const daysGrid = document.createElement('div');
+      daysGrid.className = 'month-days';
+
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
 
       const firstDay = new Date(year, month, 1);
       const startDay = firstDay.getDay();
@@ -895,7 +1310,7 @@
       for (let i = 0; i < startDay; i++) {
         const empty = document.createElement('div');
         empty.className = 'day empty';
-        calendarGrid.appendChild(empty);
+        daysGrid.appendChild(empty);
       }
 
       for (let day = 1; day <= daysInMonth; day++) {
@@ -909,21 +1324,37 @@
 
         const isPast = isDateKeyPast(dateKey);
         const isBooked = blockedDateSet.has(dateKey);
-        const isSelected = dateKey === checkInInput.value || dateKey === checkOutInput.value;
+
+        const isSelected =
+          dateKey === checkInInput.value ||
+          dateKey === checkOutInput.value;
+
         const isInRange =
           checkInInput.value &&
           checkOutInput.value &&
           dateKey > checkInInput.value &&
           dateKey < checkOutInput.value;
 
+        const canBeCheckout =
+          checkInInput.value &&
+          !checkOutInput.value &&
+          dateKey > checkInInput.value &&
+          getBlockedNightsInRange(checkInInput.value, dateKey).length === 0;
+
         if (isPast) {
           cell.classList.add('past');
-        } else if (isBooked) {
+          cell.title = 'Past date';
+        } else if (isBooked && !canBeCheckout) {
           cell.classList.add('booked');
           cell.title = 'Unavailable';
         } else {
-          cell.classList.add('available');
-          cell.title = 'Available';
+          if (isBooked && canBeCheckout) {
+            cell.classList.add('booked', 'checkout-only');
+            cell.title = 'Available as check-out date';
+          } else {
+            cell.classList.add('available');
+            cell.title = 'Available';
+          }
 
           cell.addEventListener('click', () => {
             handleCalendarDateClick(dateKey);
@@ -933,47 +1364,59 @@
         if (isSelected) cell.classList.add('selected');
         if (isInRange) cell.classList.add('in-range');
 
-        calendarGrid.appendChild(cell);
+        daysGrid.appendChild(cell);
       }
+
+      wrapper.appendChild(daysGrid);
+      return wrapper;
     }
 
     function handleCalendarDateClick(dateKey) {
       if (!checkInInput.value || (checkInInput.value && checkOutInput.value)) {
         checkInInput.value = dateKey;
         checkOutInput.value = '';
-        hideQuote();
+        checkOutInput.min = addDaysToKey(dateKey, 1);
         setAvailabilityMessage('Now choose a check-out date.', '');
       } else {
         if (dateKey <= checkInInput.value) {
           checkInInput.value = dateKey;
           checkOutInput.value = '';
-          hideQuote();
+          checkOutInput.min = addDaysToKey(dateKey, 1);
           setAvailabilityMessage('Now choose a check-out date.', '');
         } else {
           checkOutInput.value = dateKey;
-          updateAvailabilityMessage();
         }
       }
 
+      syncMirrors();
+      updateAvailabilityMessageAndQuote();
       renderCalendar();
     }
 
-    function updateAvailabilityMessage() {
+    function updateAvailabilityMessageAndQuote() {
       const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
 
       if (!checkInInput.value && !checkOutInput.value) {
         setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
-        hideQuote();
+        renderQuotePlaceholder();
+        return;
+      }
+
+      if (checkInInput.value && !checkOutInput.value) {
+        setAvailabilityMessage('Now choose a check-out date.', '');
+        renderQuotePlaceholder();
         return;
       }
 
       setAvailabilityMessage(result.message, result.ok ? 'good' : 'bad');
 
-      if (result.ok && result.quote) {
-        showQuote(result.quote);
-      } else {
-        hideQuote();
+      if (!result.ok) {
+        renderQuotePlaceholder();
+        return;
       }
+
+      const quote = buildQuote(checkInInput.value, checkOutInput.value);
+      renderQuote(quote);
     }
 
     function getDateRangeStatus(checkIn, checkOut) {
@@ -993,15 +1436,6 @@
         return { ok: false, message: 'Please choose a future check-in date.' };
       }
 
-      const nights = countNights(checkIn, checkOut);
-
-      if (nights < minimumNights) {
-        return {
-          ok: false,
-          message: `Please choose at least ${minimumNights} nights.`
-        };
-      }
-
       const blockedNights = getBlockedNightsInRange(checkIn, checkOut);
 
       if (blockedNights.length > 0) {
@@ -1011,13 +1445,74 @@
         };
       }
 
-      const quote = buildQuote(checkIn, checkOut);
+      const nights = countNights(checkIn, checkOut);
+
+      if (nights < minimumNights) {
+        return {
+          ok: false,
+          message: `Please choose at least ${minimumNights} nights.`
+        };
+      }
 
       return {
         ok: true,
-        quote,
-        message: `Great news — those ${nights} nights appear available. Estimated total: ${formatMoney(quote.totalWithTax)} including taxes.`
+        message: `Great news — those ${nights} night${nights === 1 ? '' : 's'} appear available.`
       };
+    }
+
+    function buildQuote(checkIn, checkOut) {
+      const nights = countNights(checkIn, checkOut);
+
+      let nightlySubtotal = 0;
+      let current = keyToDate(checkIn);
+      const end = keyToDate(checkOut);
+
+      while (current < end) {
+        const key = dateToKey(current);
+        nightlySubtotal += Number(ratesByDate[key] || defaultNightlyRate);
+        current.setDate(current.getDate() + 1);
+      }
+
+      nightlySubtotal = roundCurrency(nightlySubtotal);
+
+      const preTaxTotal = roundCurrency(nightlySubtotal + cleaningFee);
+      const taxAmount = roundCurrency(preTaxTotal * taxRate);
+      const totalWithTax = roundCurrency(preTaxTotal + taxAmount);
+
+      return {
+        nights,
+        nightlySubtotal,
+        taxesAndFees: roundCurrency(totalWithTax - nightlySubtotal),
+        totalWithTax
+      };
+    }
+
+    function renderQuote(quote) {
+      quoteSummary.innerHTML = `
+        <div class="quote-row">
+          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'}</span>
+          <strong>${formatMoney(quote.nightlySubtotal)}</strong>
+        </div>
+        <div class="quote-row">
+          <span>Taxes</span>
+          <strong>${formatMoney(quote.taxesAndFees)}</strong>
+        </div>
+        <div class="quote-total">
+          <span>Estimated total</span>
+          <strong>${formatMoney(quote.totalWithTax)}</strong>
+        </div>
+        <div class="quote-footnote">
+          Includes taxes and any standard cleaning charge.
+        </div>
+      `;
+    }
+
+    function renderQuotePlaceholder() {
+      quoteSummary.innerHTML = `
+        <div class="quote-placeholder">
+          Select valid dates to see an estimated total.
+        </div>
+      `;
     }
 
     function getBlockedNightsInRange(checkIn, checkOut) {
@@ -1038,59 +1533,67 @@
       return blocked;
     }
 
-    function getNightlyRate(dateKey) {
-      return Number(ratesByDate[dateKey] || defaultNightlyRate);
+    function updateGuestCount(type, delta) {
+      const currentValue = guestState[type];
+      const nextValue = currentValue + delta;
+
+      if (type === 'adults' && nextValue < 1) return;
+      if (type !== 'adults' && nextValue < 0) return;
+
+      const totalGuestsNow = guestState.adults + guestState.children;
+      const totalGuestsNext =
+        totalGuestsNow +
+        (type === 'infants' ? 0 : delta);
+
+      if (type !== 'infants' && totalGuestsNext > 16) return;
+
+      guestState[type] = nextValue;
+      syncGuestUI();
     }
 
-    function buildQuote(checkIn, checkOut) {
-      let nightlySubtotal = 0;
-      let current = keyToDate(checkIn);
-      const end = keyToDate(checkOut);
+    function syncGuestUI() {
+      document.getElementById('adultsCount').textContent = guestState.adults;
+      document.getElementById('childrenCount').textContent = guestState.children;
+      document.getElementById('infantsCount').textContent = guestState.infants;
 
-      while (current < end) {
-        const key = dateToKey(current);
-        nightlySubtotal += getNightlyRate(key);
-        current.setDate(current.getDate() + 1);
-      }
+      const totalGuests = guestState.adults + guestState.children;
+      const guestLabel = `${totalGuests} guest${totalGuests === 1 ? '' : 's'}`;
+      const infantLabel =
+        guestState.infants > 0
+          ? `, ${guestState.infants} infant${guestState.infants === 1 ? '' : 's'}`
+          : '';
 
-      const nights = countNights(checkIn, checkOut);
-      const preTaxTotal = nightlySubtotal + cleaningFee;
-      const taxAmount = roundMoney(preTaxTotal * taxRate);
-      const totalWithTax = roundMoney(preTaxTotal + taxAmount);
+      guestButtonText.textContent = guestLabel + infantLabel;
+      guestCountInput.value = guestLabel + infantLabel;
 
-      return {
-        checkIn,
-        checkOut,
-        nights,
-        nightlySubtotal: roundMoney(nightlySubtotal),
-        cleaningFee: roundMoney(cleaningFee),
-        preTaxTotal: roundMoney(preTaxTotal),
-        taxAmount,
-        totalWithTax
-      };
+      guestPopover.querySelectorAll('.counter-btn').forEach(button => {
+        const type = button.dataset.type;
+        const delta = Number(button.dataset.delta);
+        const value = guestState[type];
+
+        if (type === 'adults' && delta === -1) {
+          button.disabled = value <= 1;
+          return;
+        }
+
+        if (type !== 'adults' && delta === -1) {
+          button.disabled = value <= 0;
+          return;
+        }
+
+        if (delta === 1 && type !== 'infants') {
+          const totalGuests = guestState.adults + guestState.children;
+          button.disabled = totalGuests >= 16;
+          return;
+        }
+
+        button.disabled = false;
+      });
     }
 
-    function showQuote(quote) {
-      quoteBox.innerHTML = `
-        <div class="quote-line"><span>${quote.nights} nights</span><strong>${formatMoney(quote.nightlySubtotal)}</strong></div>
-        <div class="quote-line"><span>Cleaning fee</span><strong>${formatMoney(quote.cleaningFee)}</strong></div>
-        <div class="quote-line"><span>Subtotal before tax</span><strong>${formatMoney(quote.preTaxTotal)}</strong></div>
-        <div class="quote-line"><span>Taxes / fees 12.75%</span><strong>${formatMoney(quote.taxAmount)}</strong></div>
-        <div class="quote-line quote-total"><span>Estimated total</span><strong>${formatMoney(quote.totalWithTax)}</strong></div>
-      `;
-
-      quoteBox.classList.add('show');
-    }
-
-    function hideQuote() {
-      quoteBox.innerHTML = '';
-      quoteBox.classList.remove('show');
-    }
-
-    function countNights(checkIn, checkOut) {
-      const start = keyToDate(checkIn);
-      const end = keyToDate(checkOut);
-      return Math.round((end - start) / 86400000);
+    function syncMirrors() {
+      checkInMirror.value = checkInInput.value || '';
+      checkOutMirror.value = checkOutInput.value || '';
     }
 
     function setAvailabilityMessage(message, type) {
@@ -1099,6 +1602,12 @@
 
       if (type === 'good') availabilityMessage.classList.add('good');
       if (type === 'bad') availabilityMessage.classList.add('bad');
+    }
+
+    function countNights(checkIn, checkOut) {
+      const start = keyToDate(checkIn);
+      const end = keyToDate(checkOut);
+      return Math.round((end - start) / 86400000);
     }
 
     function dateToKey(date) {
@@ -1125,13 +1634,7 @@
       return keyToDate(key) < today;
     }
 
-    function setDateInputMinimums() {
-      const todayKey = dateToKey(new Date());
-      checkInInput.min = todayKey;
-      checkOutInput.min = todayKey;
-    }
-
-    function roundMoney(value) {
+    function roundCurrency(value) {
       return Math.round(Number(value || 0) * 100) / 100;
     }
 
@@ -1141,6 +1644,9 @@
         maximumFractionDigits: 2
       });
     }
+
+    syncGuestUI();
+    syncMirrors();
 
     loadAvailability()
       .then(data => {
@@ -1152,9 +1658,11 @@
 
         console.error('Availability error:', error);
         renderCalendar();
+        renderQuotePlaceholder();
       });
 
     renderCalendar();
+    renderQuotePlaceholder();
   </script>
 </body>
 </html>
