@@ -279,6 +279,11 @@
       filter: brightness(.96);
     }
 
+    button:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -561,11 +566,11 @@
     <div>
       <h2 class="section-title">Request your stay</h2>
       <p class="section-text">
-        Check the live availability calendar, then submit your preferred dates.
-        Requests are not confirmed until we reply and block the dates.
+        Check the live availability calendar, then request a temporary date hold.
+        Your dates will be held on this website immediately, but final booking is confirmed manually.
       </p>
       <p class="section-text">
-        The calendar below is pulled from our current Evolve availability feed and updates automatically.
+        The calendar below combines our current Evolve availability feed with direct website holds.
       </p>
     </div>
 
@@ -618,10 +623,10 @@
 
         <textarea id="guestMessage" placeholder="Anything we should know?"></textarea>
 
-        <button type="submit">Send Booking Request</button>
+        <button type="submit">Request Date Hold</button>
 
         <p class="section-text" style="font-size:.9rem;">
-          Direct booking inquiries only. Final availability is confirmed manually.
+          Your dates will be temporarily held on this website. Final booking is confirmed manually.
         </p>
       </form>
     </div>
@@ -662,9 +667,6 @@
   <script>
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
 
-    // Replace this with the email address that should receive booking inquiries.
-    const BOOKING_EMAIL = 'paddyws@gmail.com';
-
     let blockedDateSet = new Set();
     let currentMonthDate = new Date();
     currentMonthDate.setDate(1);
@@ -676,6 +678,7 @@
 
     const checkInInput = document.getElementById('checkIn');
     const checkOutInput = document.getElementById('checkOut');
+    const bookingForm = document.getElementById('bookingForm');
 
     document.getElementById('prevMonth').addEventListener('click', () => {
       currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
@@ -701,7 +704,7 @@
       renderCalendar();
     });
 
-    document.getElementById('bookingForm').addEventListener('submit', event => {
+    bookingForm.addEventListener('submit', async event => {
       event.preventDefault();
 
       const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
@@ -711,60 +714,94 @@
         return;
       }
 
-      const name = document.getElementById('guestName').value.trim();
-      const email = document.getElementById('guestEmail').value.trim();
-      const phone = document.getElementById('guestPhone').value.trim();
-      const guests = document.getElementById('guestCount').value;
-      const notes = document.getElementById('guestMessage').value.trim();
+      const submitButton = bookingForm.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
 
-      const subject = `Graham Gem booking request: ${checkInInput.value} to ${checkOutInput.value}`;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Holding dates...';
 
-      const body = [
-        'Hello,',
-        '',
-        'I would like to request a stay at Graham Gem.',
-        '',
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone || 'Not provided'}`,
-        `Check-in: ${checkInInput.value}`,
-        `Check-out: ${checkOutInput.value}`,
-        `Guests: ${guests}`,
-        '',
-        `Notes: ${notes || 'None'}`,
-        '',
-        'I understand this request is not confirmed until availability is manually confirmed.'
-      ].join('\n');
+      try {
+        const data = await callAvailabilityApi({
+          action: 'book',
+          name: document.getElementById('guestName').value.trim(),
+          email: document.getElementById('guestEmail').value.trim(),
+          phone: document.getElementById('guestPhone').value.trim(),
+          checkIn: checkInInput.value,
+          checkOut: checkOutInput.value,
+          guests: document.getElementById('guestCount').value,
+          notes: document.getElementById('guestMessage').value.trim()
+        });
 
-      const mailtoUrl =
-        `mailto:${encodeURIComponent(BOOKING_EMAIL)}` +
-        `?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(body)}`;
+        if (!data || !data.ok) {
+          throw new Error(data && data.error ? data.error : 'Could not save booking hold.');
+        }
 
-      window.location.href = mailtoUrl;
+        bookingForm.reset();
+
+        const refreshedAvailability = await loadAvailability();
+        applyAvailabilityData(refreshedAvailability);
+
+        setAvailabilityMessage(
+          data.message || 'Your dates have been received and temporarily held. We will confirm manually.',
+          'good'
+        );
+
+      } catch (error) {
+        setAvailabilityMessage(String(error && error.message ? error.message : error), 'bad');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
     });
 
-    function loadAvailability() {
+    function callAvailabilityApi(params = {}) {
       return new Promise((resolve, reject) => {
-        const callbackName = 'grahamGemAvailability_' + Date.now();
+        const callbackName =
+          'grahamGemAvailability_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+
+        let script;
 
         window[callbackName] = function(data) {
           delete window[callbackName];
-          script.remove();
-
-          if (!data || !data.ok) {
-            reject(data && data.error ? data.error : 'Availability failed to load');
-            return;
-          }
-
+          if (script) script.remove();
           resolve(data);
         };
 
-        const script = document.createElement('script');
-        script.src = AVAILABILITY_API + '?callback=' + encodeURIComponent(callbackName);
-        script.onerror = () => reject('Could not load availability script');
+        script = document.createElement('script');
+
+        const query = new URLSearchParams({
+          ...params,
+          callback: callbackName
+        });
+
+        script.src = AVAILABILITY_API + '?' + query.toString();
+
+        script.onerror = () => {
+          delete window[callbackName];
+          if (script) script.remove();
+          reject(new Error('Could not reach availability service.'));
+        };
+
         document.body.appendChild(script);
       });
+    }
+
+    function loadAvailability() {
+      return callAvailabilityApi();
+    }
+
+    function applyAvailabilityData(data) {
+      if (!data || !data.ok) {
+        throw new Error(data && data.error ? data.error : 'Availability failed to load.');
+      }
+
+      blockedDateSet = new Set(data.blockedDates || []);
+
+      availabilityStatus.textContent =
+        `Updated ${new Date(data.updatedAt).toLocaleString()}. ` +
+        `${data.blockedDateCount || blockedDateSet.size} unavailable nights currently shown.`;
+
+      renderCalendar();
     }
 
     function renderCalendar() {
@@ -809,7 +846,11 @@
         const isPast = isDateKeyPast(dateKey);
         const isBooked = blockedDateSet.has(dateKey);
         const isSelected = dateKey === checkInInput.value || dateKey === checkOutInput.value;
-        const isInRange = checkInInput.value && checkOutInput.value && dateKey > checkInInput.value && dateKey < checkOutInput.value;
+        const isInRange =
+          checkInInput.value &&
+          checkOutInput.value &&
+          dateKey > checkInInput.value &&
+          dateKey < checkOutInput.value;
 
         if (isPast) {
           cell.classList.add('past');
@@ -892,7 +933,7 @@
 
       return {
         ok: true,
-        message: `Great news — those ${nights} night${nights === 1 ? '' : 's'} appear available. Submit the request and we’ll confirm manually.`
+        message: `Great news — those ${nights} night${nights === 1 ? '' : 's'} appear available. Submit to temporarily hold the dates.`
       };
     }
 
@@ -903,9 +944,11 @@
 
       while (current < end) {
         const key = dateToKey(current);
+
         if (blockedDateSet.has(key)) {
           blocked.push(key);
         }
+
         current.setDate(current.getDate() + 1);
       }
 
@@ -952,17 +995,11 @@
 
     loadAvailability()
       .then(data => {
-        blockedDateSet = new Set(data.blockedDates || []);
-
-        availabilityStatus.textContent =
-          `Updated ${new Date(data.updatedAt).toLocaleString()}. ` +
-          `${data.blockedDateCount || blockedDateSet.size} unavailable nights currently shown.`;
-
-        renderCalendar();
+        applyAvailabilityData(data);
       })
       .catch(error => {
         availabilityStatus.textContent =
-          'Availability could not be loaded right now. Please submit your dates and we will confirm manually.';
+          'Availability could not be loaded right now. Please contact us and we will confirm manually.';
 
         console.error('Availability error:', error);
         renderCalendar();
