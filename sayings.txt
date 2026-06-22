@@ -1,161 +1,150 @@
-“This too shall pass.”
-“Know thyself.”
-“Fortune favors the bold.”
-“Less is more.”
-“Begin anywhere.”
-“Still waters run deep.”
-“Make it happen.”
-"You make my day a little brighter."
-"This is not the end."
-“Do no harm.”
-"Cracks are how the light gets in."
-“Choose joy.”
-"Your soul is worth remembering."
-"I love when you do something brave."
-“Stay curious.”
-"Never forget who you are and what you stand for."
-"Believe in the mystery."
-"Hold on!  Don't give up."
-"I believe in you."
-"There's no one in the world just like you."
-“Love wins.”
-"Try your best, your best is just what we need!"
-“Time tells all.”"
-"I love you."
-"Time to smile!"
-"Eat your veggies!"
-“Be here now.”
-"There's no time like the present."
-"Where would we be without you?"
-"The present is a gift."
-"Every moment counts."
-"Our lives are special."
-"Just keep swimming."
-"Your personality is contagious!"
-"Someone is proud of you."
-"The future is waiting for you."
-“Courage, dear heart.”
-"I'm glad you're here on planet Earth."
-"The Dawn is Coming"
-"The world is better with you in it."
-"Come lets listen to the storm."
-“Hope is stubborn.”
-"somebody misses you."
-"I like you most when you're exactly who you are."
-"Live life to its fullest!"
-"Face your fears!"
-“Don't be afraid!.”
-"Become what you've always wanted to be."
-“Truth endures.”
-"You're on the right track."
-"Someone is dying to see you."
-"I know our lives have purpose."
-"Keep thinking smartypants!"
-"Stay on the path."
-"Let your soul prevail."
-“Kindness is strength.”
-"The universe runs deep you know?"
-“Peace begins within.”
-“Create yourself.”
-“Rise anyway.”
-"It's gonna be a bumpy ride."
-"How exciting!!!!"
-"Jump right in!"
-"Immerse yourself!"
-"Almost there."
-"Stray wondrously."
-"Promise me you will keep on trying?"
-“Keep moving.”
-"You're almost there!!"
-"Keep following those dreams!"
-“Dream bigger.”
-"Be who you are."
-"Your imagination is precious!"
-“Risk is required.”
-“Light attracts light.”
-“Beauty remains.”
-“Begin again.”
-“Stay soft.”
-“The soul knows.”
-“Wonder is wisdom.”
-“Love is labor.”
-"It is hard to keep up with you!"
-“Enough is plenty.”
-“Simplicity is power.”
-“Wounds heal and teach.”
-“Mercy matters.”
-“Breathe first.”
-“Grow through it.”
-“Act, then understand.”
-“Silence speaks.”
-“Depth over noise.”
-“Peace, my friend.”
-“Small steps count.”
-“Energy rarely lies.”
-“Be the blessing.”
-"Just a few more steps!"
-“Faith leads the way.”
-“Rest to digest.”
-“Gentleness is brave.”
-“Seek the light.”
-“Bloom when the suns on you.”
-“Let love lead.”
-“Truth needs no costume.”
-“The door opens.”
-“Nothing lasts forever”
-“All is gift.”
-"You are one of a kind."
-“Awe heals and inspires.”
-“Live awake.”
-“Stars need darkness.”
-“Patience is power.”
-“The wound has its own tale.”
-“Hope has wisdom.”
-“Wisdom is quiet.”
-“Forgive forward.”
-“Stay human.”
-"Be yourself"
-“Love enlarges.”
-“Fear eventually dwindles into a single point.”
-“Go gently.”
-“Choose the right.”
-“Be here now.”
-“Let your light shine.”
-“Light breaks in.”
-“You are becoming.”
-“Make meaning.”
-“The seed remembers.”
-“Walk in wonder.”
-“Be wildly kind.”
-“Heaven notices.”
-“The heart learns.”
-“Courage is contagious.”
-“Trust the timing.”
-"Don't be afraid to standup for what's right."
-“Let it breathe.”
-“Joy finds cracks.”
-“Life is art.”
-“Serve something higher.”
-"Your mind is a temple."
-“Love outlives life.”
-“Your attention is sacred.”
-“Tend the fire.”
-"Tend your soul."
-"Your soul remembers"
-“The river knows.”
-“Do the next thing.”
-“Hold fast.”
-“Look up.”
-“Be not afraid.”
-“The light returns.”
-“Mercy over ego.”
-“Become more real.”
-“Leave beauty behind.”
-“Love is the way.”
-“Eyes back on.”
-“Live like it matters.”
-"You matter."
-"You are important."
-"You have grown."
-"Become something new."
-"Find your destiny."
+This too shall pass.
+Know thyself.
+Fortune favors the bold.
+Less is more.
+Begin anywhere.
+Still waters run deep.
+Make it happen.
+This is not the end.
+Do no harm.
+Choose joy.
+I love when you do something brave.
+Stay curious.
+Believe in the mystery.
+Hold on!  Don't give up.
+I believe in you.
+There's no one in the world just like you.
+Love wins.
+Try your best, your best is just what we need!
+Time tells all.
+I love you.
+Time to smile!
+Eat your veggies!
+Be here now.
+There's no time like the present.
+Where would we be without you?
+The present is a gift.
+Every moment counts.
+Our lives are special.
+Just keep swimming.
+Your personality is contagious!
+Someone is proud of you.
+The future is waiting for you.
+Courage, dear heart.
+I'm glad you're here on planet Earth.
+The Dawn is Coming
+The world is better with you in it.
+Come lets listen to the storm.
+Hope is stubborn.
+somebody misses you.
+I like you most when you're exactly who you are.
+Live life to its fullest!
+Face your fears!
+Don't be afraid!.
+Become what you've always wanted to be.
+Truth endures.
+You're on the right track.
+Someone is dying to see you.
+Keep thinking smartypants!
+Stay on the path.
+Let your soul prevail.
+Kindness is strength.
+Peace begins within.
+Create yourself.
+Rise anyway.
+Jump right in!
+Immerse yourself!
+Almost there.
+Stray wondrously.
+Keep moving.
+Keep following those dreams!
+Dream bigger.
+Be who you are.
+Your imagination is precious!
+Risk is required.
+Light attracts light.
+Beauty remains.
+Begin again.
+Stay soft.
+The soul knows.
+Wonder is wisdom.
+Love is labor.
+Enough is plenty.
+Simplicity is power.
+Wounds heal and teach.
+Mercy matters.
+Breathe first.
+Grow through it.
+Act, then understand.
+Silence speaks.
+Depth over noise.
+Peace, my friend.
+Small steps count.
+Energy rarely lies.
+Be the blessing.
+Just a few more steps!
+Faith leads the way.
+Rest to digest.
+Gentleness is brave.
+Seek the light.
+Bloom when the suns on you.
+Let love lead.
+Truth needs no costume.
+The door opens.
+Nothing lasts forever
+All is gift.
+You are one of a kind.
+Awe heals and inspires.
+Live awake.
+Stars need darkness.
+Patience is power.
+The wound has its own tale.
+Hope has wisdom.
+Wisdom is quiet.
+Forgive forward.
+Stay human.
+Be yourself
+Love enlarges.
+Fear eventually dwindles into a single point.
+Go gently.
+Choose the right.
+Be here now.
+Let your light shine.
+Light breaks in.
+You are becoming.
+Make meaning.
+The seed remembers.
+Walk in wonder.
+Be wildly kind.
+Heaven notices.
+The heart learns.
+Courage is contagious.
+Trust the timing.
+Don't be afraid to standup for what's right.
+Let it breathe.
+Joy finds cracks.
+Life is art.
+Serve something higher.
+Your mind is a temple.
+Love outlives life.
+Your attention is sacred.
+Tend the fire.
+Tend your soul.
+Your soul remembers
+The river knows.
+Do the next thing.
+Hold fast.
+Look up.
+Be not afraid.
+The light returns.
+Mercy over ego.
+Become more real.
+Leave beauty behind.
+Love is the way.
+Eyes back on.
+Live like it matters.
+You matter.
+You are important.
+You have grown.
+Become something new.
+Find your destiny.
