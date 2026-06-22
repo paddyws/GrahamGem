@@ -69,7 +69,7 @@
     }
 
     .hero {
-      min-height: 62vh;
+      min-height: 93vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -95,7 +95,7 @@
       background-repeat: no-repeat;
       opacity: 0;
       transform: scale(1.025);
-      transition: opacity 1.4s ease, transform 7.5s ease;
+      transition: opacity 1.1s ease, transform 5.5s ease;
       will-change: opacity, transform;
     }
 
@@ -110,78 +110,8 @@
       z-index: 1;
       pointer-events: none;
       background:
-        linear-gradient(90deg, rgba(12,20,22,.78), rgba(12,20,22,.42), rgba(12,20,22,.12)),
-        linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.08));
-    }
-
-    .eyebrow {
-      color: #f3cf86;
-      text-transform: uppercase;
-      letter-spacing: .22em;
-      font-weight: 800;
-      font-size: .82rem;
-      margin-bottom: 18px;
-    }
-
-    h1 {
-      font-size: clamp(3.2rem, 7vw, 7.5rem);
-      line-height: .9;
-      margin: 0 0 24px;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      line-height: 1.75;
-      max-width: 650px;
-      color: #fff3db;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 34px;
-    }
-
-    .btn {
-      padding: 16px 24px;
-      border-radius: 999px;
-      font-weight: 900;
-      box-shadow: 0 14px 35px rgba(0,0,0,.2);
-    }
-
-    .primary { background: var(--teal); color: white; }
-    .secondary { background: rgba(255,250,241,.92); color: var(--ink); }
-
-    .stats {
-      width: min(1100px, 86vw);
-      margin: 92px auto 80px;
-      background: rgba(255,250,241,.94);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      overflow: hidden;
-    }
-
-    .stat {
-      padding: 28px;
-      text-align: center;
-      border-right: 1px solid #e4d2b7;
-    }
-
-    .stat:last-child { border-right: 0; }
-
-    .stat strong {
-      display: block;
-      font-family: Georgia, serif;
-      font-size: 2.4rem;
-      color: var(--ink);
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: .95rem;
+        linear-gradient(90deg, rgba(12,20,22,.64), rgba(12,20,22,.28), rgba(12,20,22,.08)),
+        linear-gradient(to bottom, rgba(0,0,0,.18), rgba(0,0,0,.08));
     }
 
     section { padding: 80px 8vw; }
@@ -275,15 +205,17 @@
     .hero-booking-wrap {
       position: absolute;
       left: 50%;
-      bottom: -58px;
+      bottom: 52px;
       transform: translateX(-50%);
       z-index: 6;
-      width: min(1120px, 88vw);
+      width: min(850px, 88vw);
       color: var(--ink);
     }
 
     .hero-booking-wrap .booking-fields {
       margin-bottom: 0;
+      padding: 10px;
+      border-radius: 24px;
       background: rgba(255,250,241,.96);
       backdrop-filter: blur(10px);
       box-shadow: 0 24px 70px rgba(0,0,0,.24);
@@ -356,26 +288,6 @@
 
     .field-block input[readonly] {
       cursor: pointer;
-    }
-
-    .hero-booking-message {
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 14px;
-      background: #f3eadc;
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.45;
-    }
-
-    .hero-booking-message.good {
-      background: #dff3e9;
-      color: var(--success);
-    }
-
-    .hero-booking-message.bad {
-      background: #f5d8d2;
-      color: var(--danger);
     }
 
     form, .availability-card {
@@ -471,7 +383,7 @@
 
     .booking-box-inner {
       display: grid;
-      grid-template-columns: 1.05fr 1fr 1fr 1.15fr auto;
+      grid-template-columns: 1fr 1fr 1.05fr auto;
       align-items: stretch;
       border: 1px solid var(--airbnb-border);
       border-radius: 18px;
@@ -479,34 +391,8 @@
       overflow: visible;
     }
 
-    .booking-box-heading {
-      padding: 16px 18px;
-      background: #fffaf1;
-      border-right: 1px solid var(--airbnb-border);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 4px;
-    }
-
-    .booking-box-heading small {
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: .68rem;
-      font-weight: 900;
-      color: var(--muted);
-    }
-
-    .booking-box-heading strong {
-      font-family: Georgia, serif;
-      font-size: 1.45rem;
-      font-weight: 500;
-      color: var(--ink);
-      line-height: 1;
-    }
-
     .field-block {
-      padding: 14px 16px;
+      padding: 12px 15px;
       border-right: 1px solid var(--airbnb-border);
       display: flex;
       flex-direction: column;
@@ -517,7 +403,7 @@
 
     .field-block label {
       display: block;
-      font-size: .68rem;
+      font-size: .62rem;
       font-weight: 900;
       letter-spacing: .08em;
       color: #000;
@@ -531,7 +417,7 @@
       border: 0;
       border-radius: 0;
       background: transparent;
-      font-size: .96rem;
+      font-size: .95rem;
       color: var(--ink);
       outline: none;
       min-width: 0;
@@ -548,7 +434,7 @@
       width: 100%;
       height: 100%;
       text-align: left;
-      padding: 14px 16px;
+      padding: 12px 15px;
       background: white;
       display: flex;
       align-items: center;
@@ -566,7 +452,7 @@
     }
 
     .guest-button .guest-label {
-      font-size: .68rem;
+      font-size: .62rem;
       font-weight: 900;
       letter-spacing: .08em;
       color: #000;
@@ -574,7 +460,7 @@
     }
 
     .guest-button .guest-value {
-      font-size: .96rem;
+      font-size: .95rem;
       color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
@@ -664,8 +550,8 @@
     }
 
     .quick-request-btn {
-      min-height: 70px;
-      padding: 0 24px;
+      min-height: 58px;
+      padding: 0 26px;
       background: var(--teal);
       color: white;
       font-weight: 900;
@@ -952,24 +838,15 @@
       }
 
       .hero-booking-wrap {
-        bottom: -74px;
-      }
-
-      .stats {
-        margin-top: 116px;
+        width: min(720px, 88vw);
+        bottom: 44px;
       }
 
       .booking-box-inner {
         grid-template-columns: 1fr 1fr;
       }
 
-      .booking-box-heading {
-        grid-column: 1 / -1;
-        border-right: 0;
-        border-bottom: 1px solid var(--airbnb-border);
-      }
-
-      .field-block:nth-of-type(3) {
+      .field-block:nth-child(2) {
         border-right: 0;
       }
 
@@ -988,22 +865,19 @@
 
       .hero {
         display: block;
-        min-height: auto;
+        min-height: 93vh;
         padding: 92px 6vw 24px;
       }
 
       .hero-booking-wrap {
-        position: static;
-        width: 100%;
+        position: absolute;
+        left: 6vw;
+        right: 6vw;
+        bottom: 26px;
+        width: auto;
         transform: none;
-        margin-top: 28px;
       }
 
-      .stats {
-        margin: 28px auto 80px;
-      }
-
-      .stats,
       .features,
       .reviews,
       .intro,
@@ -1011,11 +885,6 @@
       .photo-grid,
       .form-row {
         grid-template-columns: 1fr;
-      }
-
-      .stat {
-        border-right: 0;
-        border-bottom: 1px solid #e4d2b7;
       }
 
       .photo-grid img,
@@ -1094,120 +963,105 @@
       <div class="hero-slide hero-slide-a is-active"></div>
       <div class="hero-slide hero-slide-b"></div>
     </div>
+
     <div class="hero-overlay" aria-hidden="true"></div>
 
-      <div class="hero-booking-wrap" id="heroBookingWrap">
-        <div class="booking-fields">
-          <div class="booking-box-inner">
-            <div class="booking-box-heading">
-              <small>Book Now</small>
-              <strong>Check your dates</strong>
-            </div>
+    <div class="hero-booking-wrap" id="heroBookingWrap">
+      <div class="booking-fields">
+        <div class="booking-box-inner">
+          <div class="field-block">
+            <label for="checkIn">Check-in</label>
+            <input id="checkIn" type="text" placeholder="Add date" readonly required inputmode="none" aria-haspopup="dialog">
+          </div>
 
-            <div class="field-block">
-              <label for="checkIn">Check-in</label>
-              <input id="checkIn" type="text" placeholder="Add date" readonly required inputmode="none" aria-haspopup="dialog">
-            </div>
+          <div class="field-block">
+            <label for="checkOut">Check-out</label>
+            <input id="checkOut" type="text" placeholder="Add date" readonly required inputmode="none" aria-haspopup="dialog">
+          </div>
 
-            <div class="field-block">
-              <label for="checkOut">Check-out</label>
-              <input id="checkOut" type="text" placeholder="Add date" readonly required inputmode="none" aria-haspopup="dialog">
-            </div>
-
-            <div class="guest-field-wrap" id="guestFieldWrap">
-              <button type="button" class="guest-button" id="guestButton">
-                <div class="guest-copy">
-                  <span class="guest-label">Guests</span>
-                  <span class="guest-value" id="guestButtonText">1 guest</span>
-                </div>
-                <span class="guest-chevron">⌄</span>
-              </button>
-
-              <div class="guest-popover" id="guestPopover">
-                <div class="guest-row">
-                  <div>
-                    <strong>Adults</strong>
-                    <span>Ages 13+</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="adults" data-delta="-1">−</button>
-                    <span id="adultsCount">1</span>
-                    <button type="button" class="counter-btn" data-type="adults" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-row">
-                  <div>
-                    <strong>Children</strong>
-                    <span>Ages 2–12</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="children" data-delta="-1">−</button>
-                    <span id="childrenCount">0</span>
-                    <button type="button" class="counter-btn" data-type="children" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-row">
-                  <div>
-                    <strong>Infants</strong>
-                    <span>Under 2</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="infants" data-delta="-1">−</button>
-                    <span id="infantsCount">0</span>
-                    <button type="button" class="counter-btn" data-type="infants" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-note">
-                  Maximum 16 guests. Infants are not counted toward the 16-guest limit.
-                </div>
+          <div class="guest-field-wrap" id="guestFieldWrap">
+            <button type="button" class="guest-button" id="guestButton">
+              <div class="guest-copy">
+                <span class="guest-label">Guests</span>
+                <span class="guest-value" id="guestButtonText">1 guest</span>
               </div>
-            </div>
-
-            <button type="button" class="quick-request-btn" id="quickRequestButton">
-              Request Hold
+              <span class="guest-chevron">⌄</span>
             </button>
-          </div>
 
-          <div class="hero-calendar-popover" id="heroCalendarPopover" hidden>
-            <div class="hero-calendar-head">
-              <div>
-                <small>Availability Calendar</small>
-                <strong>Choose your check-in and check-out</strong>
+            <div class="guest-popover" id="guestPopover">
+              <div class="guest-row">
+                <div>
+                  <strong>Adults</strong>
+                  <span>Ages 13+</span>
+                </div>
+                <div class="guest-controls">
+                  <button type="button" class="counter-btn" data-type="adults" data-delta="-1">−</button>
+                  <span id="adultsCount">1</span>
+                  <button type="button" class="counter-btn" data-type="adults" data-delta="1">+</button>
+                </div>
               </div>
-              <button type="button" id="closeHeroCalendar" aria-label="Close calendar">×</button>
-            </div>
 
-            <div class="calendar-controls hero-calendar-controls">
-              <button type="button" id="heroPrevMonth" aria-label="Previous month">‹</button>
-              <div class="calendar-range-title">Click your check-in, then your check-out</div>
-              <button type="button" id="heroNextMonth" aria-label="Next month">›</button>
-            </div>
+              <div class="guest-row">
+                <div>
+                  <strong>Children</strong>
+                  <span>Ages 2–12</span>
+                </div>
+                <div class="guest-controls">
+                  <button type="button" class="counter-btn" data-type="children" data-delta="-1">−</button>
+                  <span id="childrenCount">0</span>
+                  <button type="button" class="counter-btn" data-type="children" data-delta="1">+</button>
+                </div>
+              </div>
 
-            <div id="heroCalendarMonths" class="calendar-months hero-calendar-months"></div>
+              <div class="guest-row">
+                <div>
+                  <strong>Infants</strong>
+                  <span>Under 2</span>
+                </div>
+                <div class="guest-controls">
+                  <button type="button" class="counter-btn" data-type="infants" data-delta="-1">−</button>
+                  <span id="infantsCount">0</span>
+                  <button type="button" class="counter-btn" data-type="infants" data-delta="1">+</button>
+                </div>
+              </div>
 
-            <div class="legend">
-              <span class="legend-item"><span class="swatch"></span> Available</span>
-              <span class="legend-item"><span class="swatch booked"></span> Unavailable</span>
-              <span class="legend-item"><span class="swatch selected"></span> Selected</span>
+              <div class="guest-note">
+                Maximum 16 guests. Infants are not counted toward the 16-guest limit.
+              </div>
             </div>
           </div>
 
-          <div id="heroBookingMessage" class="hero-booking-message">
-            Choose your dates and guests to start a direct booking request.
+          <button type="button" class="quick-request-btn" id="quickRequestButton">
+            Book Now!
+          </button>
+        </div>
+
+        <div class="hero-calendar-popover" id="heroCalendarPopover" hidden>
+          <div class="hero-calendar-head">
+            <div>
+              <small>Availability Calendar</small>
+              <strong>Choose your check-in and check-out</strong>
+            </div>
+            <button type="button" id="closeHeroCalendar" aria-label="Close calendar">×</button>
+          </div>
+
+          <div class="calendar-controls hero-calendar-controls">
+            <button type="button" id="heroPrevMonth" aria-label="Previous month">‹</button>
+            <div class="calendar-range-title">Click your check-in, then your check-out</div>
+            <button type="button" id="heroNextMonth" aria-label="Next month">›</button>
+          </div>
+
+          <div id="heroCalendarMonths" class="calendar-months hero-calendar-months"></div>
+
+          <div class="legend">
+            <span class="legend-item"><span class="swatch"></span> Available</span>
+            <span class="legend-item"><span class="swatch booked"></span> Unavailable</span>
+            <span class="legend-item"><span class="swatch selected"></span> Selected</span>
           </div>
         </div>
       </div>
+    </div>
   </header>
-
-  <div class="stats">
-    <div class="stat"><strong>16</strong><span>Room for the whole crew</span></div>
-    <div class="stat"><strong>5</strong><span>Bedrooms to spread out</span></div>
-    <div class="stat"><strong>2.5</strong><span>Bathrooms</span></div>
-    <div class="stat"><strong>4.8★</strong><span>Loved by guests</span></div>
-  </div>
 
   <section class="intro">
     <div>
@@ -1383,7 +1237,7 @@
     ];
 
     const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
-    const HERO_SLIDE_SECONDS = 5.5;
+    const HERO_SLIDE_SECONDS = 3.5;
 
     let blockedDateSet = new Set();
     let currentMonthDate = new Date();
@@ -1495,15 +1349,17 @@
     });
 
     quickRequestButton.addEventListener('click', () => {
+      if (!checkInInput.value || !checkOutInput.value) {
+        openHeroCalendar();
+        return;
+      }
+
       const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
 
       if (!result.ok) {
         setHeroBookingMessage(result.message, 'bad');
         setAvailabilityMessage(result.message, 'bad');
-        heroBookingWrap.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+        openHeroCalendar();
         return;
       }
 
@@ -1589,7 +1445,7 @@
         );
 
         renderQuotePlaceholder();
-        setHeroBookingMessage('Choose your dates and guests to start a direct booking request.');
+        setHeroBookingMessage('');
 
       } catch (error) {
         setAvailabilityMessage(String(error && error.message ? error.message : error), 'bad');
@@ -1866,14 +1722,14 @@
 
       if (!checkInInput.value && !checkOutInput.value) {
         setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
-        setHeroBookingMessage('Choose your dates and guests to start a direct booking request.');
+        setHeroBookingMessage('');
         renderQuotePlaceholder();
         return;
       }
 
       if (checkInInput.value && !checkOutInput.value) {
         setAvailabilityMessage('Now choose a check-out date.', '');
-        setHeroBookingMessage('Now choose a check-out date.');
+        setHeroBookingMessage('');
         renderQuotePlaceholder();
         return;
       }
