@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=EB+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Libre+Baskerville:wght@400;700&family=Marcellus&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -146,6 +146,156 @@
         linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.06));
     }
 
+    .hero-booking-wrap {
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%);
+      z-index: 6;
+      width: min(520px, 60vw);
+      color: var(--ink);
+    }
+
+    .hero-booking-wrap .booking-fields {
+      margin-bottom: 0;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(255,250,241,.92);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.18);
+      border: 1px solid rgba(255,250,241,.72);
+    }
+
+    .hero-booking-wrap .booking-box-inner {
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(222,216,207,.95);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+    }
+
+    .hero-booking-wrap .field-block {
+      padding: 8px 13px;
+    }
+
+    .hero-booking-wrap .guest-button {
+      padding: 8px 13px;
+    }
+
+    .hero-calendar-popover {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 14px);
+      z-index: 40;
+      background: #fffaf1;
+      border: 1px solid #ead8bd;
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.24);
+      padding: 24px;
+    }
+
+    .hero-calendar-popover[hidden] {
+      display: none;
+    }
+
+    .hero-calendar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .hero-calendar-head small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .7rem;
+      font-weight: 900;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .hero-calendar-head strong {
+      display: block;
+      font-size: 1.8rem;
+      color: var(--ink);
+      line-height: 1.05;
+    }
+
+    .hero-calendar-head button {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #ead8bd;
+      color: var(--ink);
+      font-size: 1.6rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .hero-calendar-controls {
+      margin-bottom: 18px;
+    }
+
+    .hero-calendar-months {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .inspiration-band {
+      position: relative;
+      z-index: 5;
+      margin-top: -28px;
+      padding: 0 8vw 30px;
+    }
+
+    .inspiration-card {
+      width: min(760px, 84vw);
+      margin: 0 auto;
+      background: rgba(255,250,241,.94);
+      border: 1px solid #ead8bd;
+      border-radius: 26px;
+      box-shadow: 0 18px 42px rgba(0,0,0,.10);
+      padding: 22px 28px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .inspiration-label {
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .inspiration-text {
+      min-height: 56px;
+      display: grid;
+      place-items: center;
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
+      line-height: 1.2;
+      color: var(--ink);
+      transition: opacity .28s ease, transform .28s ease;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .inspiration-text.is-hidden {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .font-cormorant { font-family: "Cormorant Garamond", serif; font-style: italic; }
+    .font-playfair { font-family: "Playfair Display", serif; }
+    .font-ebgaramond { font-family: "EB Garamond", serif; font-style: italic; }
+    .font-libre { font-family: "Libre Baskerville", serif; }
+    .font-marcellus { font-family: "Marcellus", serif; letter-spacing: .01em; }
+    .font-bodoni { font-family: "Bodoni Moda", serif; }
+
     section { padding: 80px 8vw; }
 
     .intro {
@@ -234,104 +384,6 @@
     .booking-stack {
       display: grid;
       gap: 22px;
-    }
-
-    .hero-booking-wrap {
-      position: absolute;
-      left: 50%;
-      top: 60%;
-      transform: translate(-50%, -50%);
-      z-index: 6;
-      width: min(690px, 76vw);
-      color: var(--ink);
-    }
-
-    .hero-booking-wrap .booking-fields {
-      margin-bottom: 0;
-      padding: 8px;
-      border-radius: 999px;
-      background: rgba(255,250,241,.94);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 18px 48px rgba(0,0,0,.22);
-      border: 1px solid rgba(255,250,241,.72);
-    }
-
-    .hero-booking-wrap .booking-box-inner {
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(222,216,207,.95);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
-    }
-
-    .hero-booking-wrap .field-block {
-      padding: 12px 18px;
-    }
-
-    .hero-booking-wrap .guest-button {
-      padding: 12px 18px;
-    }
-
-    .hero-calendar-popover {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: calc(100% + 14px);
-      z-index: 40;
-      background: #fffaf1;
-      border: 1px solid #ead8bd;
-      border-radius: 28px;
-      box-shadow: 0 24px 70px rgba(0,0,0,.24);
-      padding: 24px;
-    }
-
-    .hero-calendar-popover[hidden] {
-      display: none;
-    }
-
-    .hero-calendar-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 16px;
-    }
-
-    .hero-calendar-head small {
-      display: block;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: .7rem;
-      font-weight: 900;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .hero-calendar-head strong {
-      display: block;
-      font-size: 1.8rem;
-      color: var(--ink);
-      line-height: 1.05;
-    }
-
-    .hero-calendar-head button {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      background: #ead8bd;
-      color: var(--ink);
-      font-size: 1.6rem;
-      line-height: 1;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-    }
-
-    .hero-calendar-controls {
-      margin-bottom: 18px;
-    }
-
-    .hero-calendar-months {
-      grid-template-columns: 1fr 1fr;
     }
 
     .field-block input[readonly] {
@@ -432,10 +484,10 @@
 
     .booking-box-inner {
       display: grid;
-      grid-template-columns: 1fr 1fr .95fr auto;
+      grid-template-columns: 1fr 1fr .82fr auto;
       align-items: stretch;
       border: 1px solid var(--airbnb-border);
-      border-radius: 20px;
+      border-radius: 18px;
       background: white;
       overflow: hidden;
     }
@@ -452,11 +504,11 @@
 
     .field-block label {
       display: block;
-      font-size: .62rem;
+      font-size: .52rem;
       font-weight: 900;
       letter-spacing: .11em;
       color: #000;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
       text-transform: uppercase;
     }
 
@@ -466,7 +518,7 @@
       border: 0;
       border-radius: 0;
       background: transparent;
-      font-size: .96rem;
+      font-size: .82rem;
       color: var(--ink);
       outline: none;
       min-width: 0;
@@ -488,7 +540,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       border-radius: 0;
     }
 
@@ -496,12 +548,12 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       min-width: 0;
     }
 
     .guest-button .guest-label {
-      font-size: .62rem;
+      font-size: .52rem;
       font-weight: 900;
       letter-spacing: .11em;
       color: #000;
@@ -509,16 +561,16 @@
     }
 
     .guest-button .guest-value {
-      font-size: .96rem;
+      font-size: .82rem;
       color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 120px;
+      max-width: 90px;
     }
 
     .guest-chevron {
-      font-size: .95rem;
+      font-size: .82rem;
       color: var(--muted);
       transition: transform .18s ease;
       flex: 0 0 auto;
@@ -599,14 +651,14 @@
     }
 
     .quick-request-btn {
-      min-height: 62px;
-      padding: 0 26px;
+      min-height: 44px;
+      padding: 0 16px;
       background: var(--teal);
       color: white;
       font-family: "Cormorant Garamond", Georgia, serif;
       font-style: italic;
       font-weight: 700;
-      font-size: 1.45rem;
+      font-size: 1.08rem;
       letter-spacing: .01em;
       display: flex;
       align-items: center;
@@ -892,7 +944,7 @@
       }
 
       .hero-booking-wrap {
-        width: min(640px, 84vw);
+        width: min(600px, 84vw);
         top: 60%;
       }
 
@@ -933,13 +985,13 @@
         top: 62%;
         right: auto;
         bottom: auto;
-        width: min(92vw, 520px);
+        width: min(92vw, 480px);
         transform: translate(-50%, -50%);
       }
 
       .hero-booking-wrap .booking-fields,
       .hero-booking-wrap .booking-box-inner {
-        border-radius: 26px;
+        border-radius: 24px;
       }
 
       .features,
@@ -977,8 +1029,8 @@
 
       .quick-request-btn {
         min-height: auto;
-        padding: 16px;
-        border-radius: 0 0 22px 22px;
+        padding: 14px;
+        border-radius: 0 0 20px 20px;
       }
 
       .guest-popover {
@@ -1006,6 +1058,21 @@
       .day {
         border-radius: 12px;
         font-size: .86rem;
+      }
+
+      .inspiration-band {
+        margin-top: -18px;
+        padding: 0 6vw 24px;
+      }
+
+      .inspiration-card {
+        width: 100%;
+        padding: 18px 18px 20px;
+      }
+
+      .inspiration-text {
+        min-height: 64px;
+        font-size: 1.3rem;
       }
     }
   </style>
@@ -1126,6 +1193,13 @@
       </div>
     </div>
   </header>
+
+  <section class="inspiration-band">
+    <div class="inspiration-card">
+      <div class="inspiration-label">A little inspiration</div>
+      <div id="sayingText" class="inspiration-text font-cormorant">“Begin anywhere.”</div>
+    </div>
+  </section>
 
   <section class="intro">
     <div>
@@ -1301,7 +1375,8 @@
     ];
 
     const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
-    const HERO_SLIDE_SECONDS = 3.5;
+    const HERO_SLIDE_SECONDS = 4;
+    const SAYING_ROTATE_MS = 4000;
 
     let blockedDateSet = new Set();
     let currentMonthDate = new Date();
@@ -1318,6 +1393,121 @@
       children: 0,
       infants: 0
     };
+
+    const fallbackSayings = [
+      "This too shall pass.",
+      "Know thyself.",
+      "Fortune favors the bold.",
+      "Less is more.",
+      "Begin anywhere.",
+      "Still waters run deep.",
+      "Make it happen.",
+      "Do no harm.",
+      "Choose joy.",
+      "Stay curious.",
+      "Love wins.",
+      "Time tells all.",
+      "Be here now.",
+      "Grace changes everything.",
+      "Courage, dear heart.",
+      "Hope is stubborn.",
+      "Fear is a liar.",
+      "Truth endures.",
+      "Kindness is strength.",
+      "Peace begins within.",
+      "Create yourself.",
+      "Go with God.",
+      "Rise anyway.",
+      "Keep moving.",
+      "Dream bigger.",
+      "Risk is required.",
+      "Light attracts light.",
+      "Beauty remains.",
+      "Begin again.",
+      "Stay soft.",
+      "The soul knows.",
+      "Wonder is wisdom.",
+      "Love is labor.",
+      "Joy is resistance.",
+      "Enough is plenty.",
+      "Simplicity is power.",
+      "Pain teaches.",
+      "Mercy matters.",
+      "Breathe first.",
+      "Grow through it.",
+      "Act, then understand.",
+      "Silence speaks.",
+      "Depth over noise.",
+      "Protect your peace.",
+      "Small steps count.",
+      "Energy doesn’t lie.",
+      "Be the blessing.",
+      "Faith walks first.",
+      "Rest is holy.",
+      "Gentleness is brave.",
+      "Seek the light.",
+      "Bloom anyway.",
+      "Let love lead.",
+      "Truth needs no costume.",
+      "The door opens.",
+      "Nothing gold stays.",
+      "All is gift.",
+      "Awe heals.",
+      "Live awake.",
+      "Stars need darkness.",
+      "Patience is power.",
+      "The wound speaks.",
+      "Hope has teeth.",
+      "Wisdom is quiet.",
+      "Forgive forward.",
+      "Stay human.",
+      "Love enlarges.",
+      "Fear shrinks.",
+      "Go gently.",
+      "Choose the good.",
+      "Light breaks in.",
+      "You are becoming.",
+      "Make meaning.",
+      "The seed remembers.",
+      "Walk in wonder.",
+      "Be wildly kind.",
+      "Heaven notices.",
+      "The heart learns.",
+      "Courage is contagious.",
+      "Trust the timing.",
+      "Let it breathe.",
+      "Joy finds cracks.",
+      "Life is art.",
+      "Serve something higher.",
+      "Love outlives fear.",
+      "Your attention is sacred.",
+      "Tend the fire.",
+      "The river knows.",
+      "Do the next thing.",
+      "Hold fast.",
+      "Look up.",
+      "Be not afraid.",
+      "The light returns.",
+      "Mercy over ego.",
+      "Become more real.",
+      "Leave beauty behind.",
+      "Grace is enough.",
+      "Love is the way.",
+      "Eyes back on.",
+      "Live like it matters."
+    ];
+
+    const sayingFontClasses = [
+      "font-cormorant",
+      "font-playfair",
+      "font-ebgaramond",
+      "font-libre",
+      "font-marcellus",
+      "font-bodoni"
+    ];
+
+    let sayingsList = [];
+    let lastSayingIndex = -1;
 
     const calendarMonths = document.getElementById('calendarMonths');
     const availabilityStatus = document.getElementById('availabilityStatus');
@@ -2080,6 +2270,72 @@
       });
     }
 
+    async function loadSayingsList() {
+      const fileCandidates = ["sayings.txt", "sayings"];
+
+      for (const fileName of fileCandidates) {
+        try {
+          const response = await fetch(fileName, { cache: "no-store" });
+          if (!response.ok) continue;
+
+          const text = await response.text();
+          const parsed = text
+            .split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(Boolean)
+            .map(line => line.replace(/^["“]|["”]$/g, ""));
+
+          if (parsed.length) return parsed;
+        } catch (error) {
+          // If the file is not found, use the built-in sayings.
+        }
+      }
+
+      return fallbackSayings;
+    }
+
+    function randomIndex(length, excludeIndex = -1) {
+      if (length <= 1) return 0;
+
+      let index = Math.floor(Math.random() * length);
+      while (index === excludeIndex) {
+        index = Math.floor(Math.random() * length);
+      }
+
+      return index;
+    }
+
+    function randomFontClass() {
+      return sayingFontClasses[Math.floor(Math.random() * sayingFontClasses.length)];
+    }
+
+    function showSaying(text) {
+      const sayingTextEl = document.getElementById("sayingText");
+      if (!sayingTextEl) return;
+
+      sayingTextEl.classList.add("is-hidden");
+
+      setTimeout(() => {
+        sayingTextEl.classList.remove(...sayingFontClasses);
+        sayingTextEl.classList.add(randomFontClass());
+        sayingTextEl.textContent = `“${text}”`;
+        sayingTextEl.classList.remove("is-hidden");
+      }, 180);
+    }
+
+    async function startSayingsRotator() {
+      sayingsList = await loadSayingsList();
+      if (!sayingsList.length) return;
+
+      lastSayingIndex = randomIndex(sayingsList.length);
+      showSaying(sayingsList[lastSayingIndex]);
+
+      setInterval(() => {
+        lastSayingIndex = randomIndex(sayingsList.length, lastSayingIndex);
+        showSaying(sayingsList[lastSayingIndex]);
+      }, SAYING_ROTATE_MS);
+    }
+
     function startHeroSlideshow() {
       const slides = [
         document.querySelector('.hero-slide-a'),
@@ -2114,6 +2370,7 @@
     }
 
     startHeroSlideshow();
+    startSayingsRotator();
 
     syncGuestUI();
     syncMirrors();
