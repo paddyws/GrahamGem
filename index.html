@@ -75,13 +75,49 @@
       padding: 120px 8vw 120px;
       position: relative;
       overflow: visible;
-      background:
-        linear-gradient(90deg, rgba(12,20,22,.78), rgba(12,20,22,.42), rgba(12,20,22,.12)),
-        url("cozy.jpg") center/cover no-repeat;
+      background: #16242b;
       color: var(--white);
     }
 
-    .hero-content { max-width: 780px; }
+    .hero-slideshow {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transform: scale(1.025);
+      transition: opacity 1.4s ease, transform 7.5s ease;
+      will-change: opacity, transform;
+    }
+
+    .hero-slide.is-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(12,20,22,.78), rgba(12,20,22,.42), rgba(12,20,22,.12)),
+        linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.08));
+    }
+
+    .hero-content {
+      max-width: 780px;
+      position: relative;
+      z-index: 2;
+    }
 
     .eyebrow {
       color: #f3cf86;
@@ -1059,6 +1095,12 @@
   </nav>
 
   <header class="hero">
+    <div class="hero-slideshow" aria-hidden="true">
+      <div class="hero-slide hero-slide-a is-active"></div>
+      <div class="hero-slide hero-slide-b"></div>
+    </div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
     <div class="hero-content">
       <div class="eyebrow">Private pool • space for 16! • Graham, NC</div>
       <h1>Our Diamond, your getaway.</h1>
@@ -1346,6 +1388,18 @@
 
   <script>
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
+
+    const HERO_IMAGE_FOLDER = 'images/hero/';
+    const HERO_IMAGE_FILES = [
+      'cozy.jpg',
+      'living-room.jpg',
+      'bedroom.jpg',
+      'arcade.jpg',
+      'office.jpg'
+    ];
+
+    const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
+    const HERO_SLIDE_SECONDS = 5.5;
 
     let blockedDateSet = new Set();
     let currentMonthDate = new Date();
@@ -2121,6 +2175,41 @@
         maximumFractionDigits: 2
       });
     }
+
+    function startHeroSlideshow() {
+      const slides = [
+        document.querySelector('.hero-slide-a'),
+        document.querySelector('.hero-slide-b')
+      ].filter(Boolean);
+
+      if (!slides.length || !HERO_IMAGES.length) return;
+
+      let currentImageIndex = 0;
+      let activeSlideIndex = 0;
+
+      slides[0].style.backgroundImage = `url("${HERO_IMAGES[0]}")`;
+
+      if (slides[1] && HERO_IMAGES[1]) {
+        slides[1].style.backgroundImage = `url("${HERO_IMAGES[1]}")`;
+      }
+
+      if (HERO_IMAGES.length < 2 || slides.length < 2) return;
+
+      window.setInterval(() => {
+        const nextImageIndex = (currentImageIndex + 1) % HERO_IMAGES.length;
+        const nextSlideIndex = activeSlideIndex === 0 ? 1 : 0;
+
+        slides[nextSlideIndex].style.backgroundImage = `url("${HERO_IMAGES[nextImageIndex]}")`;
+
+        slides[activeSlideIndex].classList.remove('is-active');
+        slides[nextSlideIndex].classList.add('is-active');
+
+        currentImageIndex = nextImageIndex;
+        activeSlideIndex = nextSlideIndex;
+      }, HERO_SLIDE_SECONDS * 1000);
+    }
+
+    startHeroSlideshow();
 
     syncGuestUI();
     syncMirrors();
