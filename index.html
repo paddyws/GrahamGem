@@ -149,9 +149,10 @@
     .hero-booking-wrap {
       position: absolute;
       left: 50%;
-      top: 60%;
-      transform: translate(-50%, -50%);
-      z-index: 6;
+      top: auto;
+      bottom: 48px;
+      transform: translateX(-50%);
+      z-index: 8;
       width: min(520px, 60vw);
       color: var(--ink);
     }
@@ -246,7 +247,7 @@
 
     .inspiration-band {
       position: relative;
-      z-index: 5;
+      z-index: 7;
       margin-top: -28px;
       padding: 0 8vw 30px;
     }
@@ -945,7 +946,7 @@
 
       .hero-booking-wrap {
         width: min(600px, 84vw);
-        top: 60%;
+        bottom: 48px;
       }
 
       .booking-box-inner {
@@ -982,11 +983,11 @@
       .hero-booking-wrap {
         position: absolute;
         left: 50%;
-        top: 62%;
+        top: auto;
         right: auto;
-        bottom: auto;
+        bottom: 42px;
         width: min(92vw, 480px);
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%);
       }
 
       .hero-booking-wrap .booking-fields,
@@ -1061,7 +1062,7 @@
       }
 
       .inspiration-band {
-        margin-top: -18px;
+        margin-top: -28px;
         padding: 0 6vw 24px;
       }
 
