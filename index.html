@@ -7,7 +7,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=EB+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Libre+Baskerville:wght@400;700&family=Marcellus&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;1,500;1,700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Bellefair&family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Cardo:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Cormorant+Upright:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,500;0,700;1,500;1,700&family=EB+Garamond:wght@500;600;700&family=Fraunces:wght@500;600;700&family=Gloock&family=Great+Vibes&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=Italiana&family=Josefin+Slab:ital,wght@0,500;0,700;1,500;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,500;0,700;1,500;1,700&family=Marcellus&family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif+Display:ital,wght@0,500;0,700;1,500;1,700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Oranienbaum&family=Petrona:ital,wght@0,500;0,700;1,500;1,700&family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700&family=Prata&family=Quattrocento:wght@400;700&family=Spectral:ital,wght@0,500;0,700;1,500;1,700&family=Unna:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,500;0,700;1,500;1,700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -253,7 +254,7 @@
     }
 
     .inspiration-card {
-      width: min(760px, 84vw);
+      width: min(860px, 88vw);
       margin: 0 auto;
       background: rgba(255,250,241,.94);
       border: 1px solid #ead8bd;
@@ -274,15 +275,19 @@
     }
 
     .inspiration-text {
-      min-height: 56px;
-      display: grid;
-      place-items: center;
-      font-size: clamp(1.35rem, 2.5vw, 2rem);
-      line-height: 1.2;
+      min-height: 118px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+      gap: .08em .16em;
+      line-height: 1.08;
       color: var(--ink);
       transition: opacity .28s ease, transform .28s ease;
       opacity: 1;
       transform: translateY(0);
+      padding: 8px 12px;
     }
 
     .inspiration-text.is-hidden {
@@ -290,12 +295,50 @@
       transform: translateY(6px);
     }
 
-    .font-cormorant { font-family: "Cormorant Garamond", serif; font-style: italic; }
-    .font-playfair { font-family: "Playfair Display", serif; }
-    .font-ebgaramond { font-family: "EB Garamond", serif; font-style: italic; }
-    .font-libre { font-family: "Libre Baskerville", serif; }
-    .font-marcellus { font-family: "Marcellus", serif; letter-spacing: .01em; }
+    .saying-word {
+      display: inline-block;
+      line-height: 1.02;
+      vertical-align: middle;
+    }
+
+    .saying-quote {
+      display: inline-block;
+      font-size: 28pt;
+      line-height: 1;
+      margin: 0 .08em;
+      vertical-align: middle;
+    }
+
+    .font-alegreya { font-family: "Alegreya", serif; font-style: italic; }
+    .font-amiri { font-family: "Amiri", serif; }
+    .font-bellefair { font-family: "Bellefair", serif; letter-spacing: .02em; }
     .font-bodoni { font-family: "Bodoni Moda", serif; }
+    .font-cardo { font-family: "Cardo", serif; font-style: italic; }
+    .font-cinzel { font-family: "Cinzel", serif; letter-spacing: .04em; }
+    .font-cormorant { font-family: "Cormorant Garamond", serif; font-style: italic; }
+    .font-cormorant-upright { font-family: "Cormorant Upright", serif; }
+    .font-crimson { font-family: "Crimson Pro", serif; font-style: italic; }
+    .font-ebgaramond { font-family: "EB Garamond", serif; font-style: italic; }
+    .font-fraunces { font-family: "Fraunces", serif; }
+    .font-gloock { font-family: "Gloock", serif; }
+    .font-great-vibes { font-family: "Great Vibes", cursive; }
+    .font-instrument { font-family: "Instrument Serif", serif; font-style: italic; }
+    .font-italiana { font-family: "Italiana", serif; letter-spacing: .03em; }
+    .font-josefin { font-family: "Josefin Slab", serif; }
+    .font-libre { font-family: "Libre Baskerville", serif; }
+    .font-lora { font-family: "Lora", serif; font-style: italic; }
+    .font-marcellus { font-family: "Marcellus", serif; letter-spacing: .01em; }
+    .font-merriweather { font-family: "Merriweather", serif; font-style: italic; }
+    .font-noto-serif { font-family: "Noto Serif Display", serif; font-style: italic; }
+    .font-old-standard { font-family: "Old Standard TT", serif; }
+    .font-oranienbaum { font-family: "Oranienbaum", serif; letter-spacing: .02em; }
+    .font-petrona { font-family: "Petrona", serif; font-style: italic; }
+    .font-playfair { font-family: "Playfair Display", serif; font-style: italic; }
+    .font-prata { font-family: "Prata", serif; }
+    .font-quattrocento { font-family: "Quattrocento", serif; }
+    .font-spectral { font-family: "Spectral", serif; font-style: italic; }
+    .font-unna { font-family: "Unna", serif; font-style: italic; }
+    .font-vollkorn { font-family: "Vollkorn", serif; font-style: italic; }
 
     section { padding: 80px 8vw; }
 
@@ -1072,8 +1115,13 @@
       }
 
       .inspiration-text {
-        min-height: 64px;
-        font-size: 1.3rem;
+        min-height: 112px;
+        gap: .06em .12em;
+        padding: 8px 6px;
+      }
+
+      .saying-quote {
+        font-size: 22pt;
       }
     }
   </style>
@@ -1198,7 +1246,7 @@
   <section class="inspiration-band">
     <div class="inspiration-card">
       <div class="inspiration-label">A little inspiration</div>
-      <div id="sayingText" class="inspiration-text font-cormorant">“Begin anywhere.”</div>
+      <div id="sayingText" class="inspiration-text font-cormorant"></div>
     </div>
   </section>
 
@@ -1378,6 +1426,7 @@
     const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
     const HERO_SLIDE_SECONDS = 4;
     const SAYING_ROTATE_MS = 4000;
+    const WORD_SIZE_POINTS = [12, 18, 24, 30, 36, 42];
 
     let blockedDateSet = new Set();
     let currentMonthDate = new Date();
@@ -1499,12 +1548,36 @@
     ];
 
     const sayingFontClasses = [
+      "font-alegreya",
+      "font-amiri",
+      "font-bellefair",
+      "font-bodoni",
+      "font-cardo",
+      "font-cinzel",
       "font-cormorant",
-      "font-playfair",
+      "font-cormorant-upright",
+      "font-crimson",
       "font-ebgaramond",
+      "font-fraunces",
+      "font-gloock",
+      "font-great-vibes",
+      "font-instrument",
+      "font-italiana",
+      "font-josefin",
       "font-libre",
+      "font-lora",
       "font-marcellus",
-      "font-bodoni"
+      "font-merriweather",
+      "font-noto-serif",
+      "font-old-standard",
+      "font-oranienbaum",
+      "font-petrona",
+      "font-playfair",
+      "font-prata",
+      "font-quattrocento",
+      "font-spectral",
+      "font-unna",
+      "font-vollkorn"
     ];
 
     let sayingsList = [];
@@ -2288,7 +2361,7 @@
 
           if (parsed.length) return parsed;
         } catch (error) {
-          // If the file is not found, use the built-in sayings.
+          // fall back silently
         }
       }
 
@@ -2310,6 +2383,35 @@
       return sayingFontClasses[Math.floor(Math.random() * sayingFontClasses.length)];
     }
 
+    function randomWordSizePt() {
+      return WORD_SIZE_POINTS[Math.floor(Math.random() * WORD_SIZE_POINTS.length)];
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function buildStylizedSayingHTML(text) {
+      const cleaned = String(text || "").trim().replace(/^["“]|["”]$/g, "");
+      const words = cleaned.split(/\s+/).filter(Boolean);
+
+      const wordHtml = words.map(word => {
+        const sizePt = randomWordSizePt();
+        return `<span class="saying-word" style="font-size:${sizePt}pt;">${escapeHtml(word)}</span>`;
+      }).join("");
+
+      return `
+        <span class="saying-quote">“</span>
+        ${wordHtml}
+        <span class="saying-quote">”</span>
+      `;
+    }
+
     function showSaying(text) {
       const sayingTextEl = document.getElementById("sayingText");
       if (!sayingTextEl) return;
@@ -2319,7 +2421,7 @@
       setTimeout(() => {
         sayingTextEl.classList.remove(...sayingFontClasses);
         sayingTextEl.classList.add(randomFontClass());
-        sayingTextEl.textContent = `“${text}”`;
+        sayingTextEl.innerHTML = buildStylizedSayingHTML(text);
         sayingTextEl.classList.remove("is-hidden");
       }, 180);
     }
