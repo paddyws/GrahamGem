@@ -69,10 +69,11 @@
     }
 
     .hero {
-      min-height: 92vh;
+      min-height: 62vh;
       display: flex;
       align-items: center;
-      padding: 120px 8vw 120px;
+      justify-content: center;
+      padding: 40px 8vw 120px;
       position: relative;
       overflow: visible;
       background: #16242b;
@@ -111,12 +112,6 @@
       background:
         linear-gradient(90deg, rgba(12,20,22,.78), rgba(12,20,22,.42), rgba(12,20,22,.12)),
         linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.08));
-    }
-
-    .hero-content {
-      max-width: 780px;
-      position: relative;
-      z-index: 2;
     }
 
     .eyebrow {
@@ -994,7 +989,7 @@
       .hero {
         display: block;
         min-height: auto;
-        padding: 110px 6vw 34px;
+        padding: 92px 6vw 24px;
       }
 
       .hero-booking-wrap {
@@ -1100,20 +1095,6 @@
       <div class="hero-slide hero-slide-b"></div>
     </div>
     <div class="hero-overlay" aria-hidden="true"></div>
-
-    <div class="hero-content">
-      <div class="eyebrow">Private pool • space for 16! • Graham, NC</div>
-      <h1>Our Diamond, your getaway.</h1>
-      <p>
-        Welcome to Graham Gem — our hidden gem for family and friends, smack-dab in Graham!
-        Tour Duke and UNC in the Durham area or stroll through the Greensboro Botanical Gardens. 
-        When stomachs start to growl, grab a bite to eat in town or cook up a meal before an evening around the fire pit. Your adventure awaits!
-      </p>
-      <div class="buttons">
-        <a class="btn primary" href="#heroBookingWrap">Check Availability</a>
-        <a class="btn secondary" href="#gallery">View Photos</a>
-      </div>
-    </div>
 
       <div class="hero-booking-wrap" id="heroBookingWrap">
         <div class="booking-fields">
@@ -1389,16 +1370,13 @@
   <script>
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
 
-    const HERO_IMAGE_FOLDER = '';
+    const HERO_IMAGE_FOLDER = 'images/hero/';
     const HERO_IMAGE_FILES = [
-        'cozy.jpg',
-        'PoolTest.jpg',
-        'inside.jpg',
-        'living-room.jpg',
-        'pool.jpg',
-        'bedroom.jpg',
-        'arcade.jpg',
-        'office.jpg'
+      'cozy.jpg',
+      'living-room.jpg',
+      'bedroom.jpg',
+      'arcade.jpg',
+      'office.jpg'
     ];
 
     const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
