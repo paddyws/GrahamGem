@@ -2466,10 +2466,7 @@
         return `<span class="saying-word ${fontClass}" style="font-size:${sizePt}pt;">${escapeHtml(word)}</span>`;
       }).join("");
 
-      return `
-        <span class="saying-quote ${pickRandom(quoteFonts)}">“</span>
-        ${wordHtml}
-        <span class="saying-quote ${pickRandom(quoteFonts)}">”</span>
+      return wordHtml;
       `;
     }
 
