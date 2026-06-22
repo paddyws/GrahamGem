@@ -322,14 +322,6 @@
       white-space: nowrap;
     }
 
-    .saying-quote {
-      display: inline-block;
-      font-size: 28pt;
-      line-height: 1;
-      margin: 0 .06em;
-      vertical-align: middle;
-    }
-
     .font-alegreya { font-family: "Alegreya", serif; font-style: italic; }
     .font-amiri { font-family: "Amiri", serif; }
     .font-bellefair { font-family: "Bellefair", serif; letter-spacing: .02em; }
@@ -1138,10 +1130,6 @@
         gap: .12em .18em;
         padding: 8px 6px;
       }
-
-      .saying-quote {
-        font-size: 22pt;
-      }
     }
   </style>
 </head>
@@ -1442,13 +1430,6 @@
       'bedroom.jpg',
       'arcade.jpg',
       'office.jpg'
-      'bed2.jpg',
-      'house.jpg',
-      'scene.jpg',
-      'loft.jpg'
-      'backyard.jpg'
-      'living.jpg'
-      'diningroom.jpg'
     ];
 
     const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
@@ -2474,7 +2455,6 @@
       }).join("");
 
       return wordHtml;
-      
     }
 
     function showSaying(text) {
