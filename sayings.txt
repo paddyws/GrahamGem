@@ -8,22 +8,35 @@
 "This is not the end."
 “Do no harm.”
 “Choose joy.”
+"I love when you do something brave."
 “Stay curious.”
+"Believe in the mystery."
+"Hold on!  Don't give up."
+"I believe in you."
+"There's no one in the world just like you."
 “Love wins.”
 "Try your best, your best is just what we need!"
 “Time tells all.”"
+"I love you."
 "Time to smile!"
+"Eat your veggies!"
 “Be here now.”
+"There's no time like the present."
 "Where would we be without you?"
 "The present is a gift."
+"Every moment counts."
 "Our lives are special."
+"Just keep swimming."
+"Your personality is contagious!"
 "Someone is proud of you."
 "The future is waiting for you."
 “Courage, dear heart.”
 "I'm glad you're here on planet Earth."
 "The Dawn is Coming"
+"The world is better with you in it."
 "Come lets listen to the storm."
 “Hope is stubborn.”
+"somebody misses you."
 "I like you most when you're exactly who you are."
 "Live life to its fullest!"
 "Face your fears!"
@@ -31,6 +44,7 @@
 "Become what you've always wanted to be."
 “Truth endures.”
 "You're on the right track."
+"Someone is dying to see you."
 "Keep thinking smartypants!"
 "Stay on the path."
 "Let your soul prevail."
@@ -38,6 +52,7 @@
 “Peace begins within.”
 “Create yourself.”
 “Rise anyway.”
+"Jump right in!"
 "Immerse yourself!"
 "Almost there."
 "Stray wondrously."
