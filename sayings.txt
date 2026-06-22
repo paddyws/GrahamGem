@@ -10,15 +10,21 @@
 “Choose joy.”
 “Stay curious.”
 “Love wins.”
-“Time tells all.”
+"Try your best, your best is just what we need!"
+“Time tells all.”"
+"Time to smile!"
 “Be here now.”
+"Where would we be without you?"
 "The present is a gift."
+"Our lives are special."
 "Someone is proud of you."
-“Grace changes everything.”
 "The future is waiting for you."
 “Courage, dear heart.”
 "I'm glad you're here on planet Earth."
+"The Dawn is Coming"
+"Come lets listen to the storm."
 “Hope is stubborn.”
+"I like you most when you're exactly who you are."
 "Live life to its fullest!"
 "Face your fears!"
 “Don't be afraid!.”
@@ -32,11 +38,14 @@
 “Peace begins within.”
 “Create yourself.”
 “Rise anyway.”
+"Immerse yourself!"
 "Almost there."
 "Stray wondrously."
 “Keep moving.”
+"Keep following those dreams!"
 “Dream bigger.”
 "Be who you are."
+"Your imagination is precious!"
 “Risk is required.”
 “Light attracts light.”
 “Beauty remains.”
@@ -70,7 +79,7 @@
 “Nothing lasts forever”
 “All is gift.”
 "You are one of a kind."
-“Awe heals.”
+“Awe heals and inspires.”
 “Live awake.”
 “Stars need darkness.”
 “Patience is power.”
@@ -81,7 +90,7 @@
 “Stay human.”
 "Be yourself"
 “Love enlarges.”
-“Fear shrinks.”
+“Fear eventually dwindles into a single point.”
 “Go gently.”
 “Choose the right.”
 “Be here now.”
@@ -96,6 +105,7 @@
 “The heart learns.”
 “Courage is contagious.”
 “Trust the timing.”
+"Don't be afraid to standup for what's right."
 “Let it breathe.”
 “Joy finds cracks.”
 “Life is art.”
@@ -115,12 +125,11 @@
 “Mercy over ego.”
 “Become more real.”
 “Leave beauty behind.”
-“Grace is enough.”
 “Love is the way.”
 “Eyes back on.”
 “Live like it matters.”
 "You matter."
 "You are important."
-"You have changed."
+"You have grown."
 "Become something new."
 "Find your destiny."
