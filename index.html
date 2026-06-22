@@ -30,7 +30,6 @@
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -150,7 +149,6 @@
     .hero-booking-wrap {
       position: absolute;
       left: 50%;
-      top: auto;
       bottom: 48px;
       transform: translateX(-50%);
       z-index: 8;
@@ -246,6 +244,28 @@
       grid-template-columns: 1fr 1fr;
     }
 
+    .hero-booking-message {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255,250,241,.9);
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.4;
+      box-shadow: 0 10px 26px rgba(0,0,0,.12);
+      display: none;
+    }
+
+    .hero-booking-message.show { display: block; }
+    .hero-booking-message.good {
+      background: #dff3e9;
+      color: var(--success);
+    }
+    .hero-booking-message.bad {
+      background: #f5d8d2;
+      color: var(--danger);
+    }
+
     .inspiration-band {
       position: relative;
       z-index: 7;
@@ -254,7 +274,7 @@
     }
 
     .inspiration-card {
-      width: min(860px, 88vw);
+      width: min(880px, 88vw);
       margin: 0 auto;
       background: rgba(255,250,241,.94);
       border: 1px solid #ead8bd;
@@ -281,7 +301,7 @@
       justify-content: center;
       align-items: center;
       align-content: center;
-      gap: .08em .16em;
+      gap: .16em .22em;
       line-height: 1.08;
       color: var(--ink);
       transition: opacity .28s ease, transform .28s ease;
@@ -299,13 +319,14 @@
       display: inline-block;
       line-height: 1.02;
       vertical-align: middle;
+      white-space: nowrap;
     }
 
     .saying-quote {
       display: inline-block;
       font-size: 28pt;
       line-height: 1;
-      margin: 0 .08em;
+      margin: 0 .06em;
       vertical-align: middle;
     }
 
@@ -1026,8 +1047,6 @@
       .hero-booking-wrap {
         position: absolute;
         left: 50%;
-        top: auto;
-        right: auto;
         bottom: 42px;
         width: min(92vw, 480px);
         transform: translateX(-50%);
@@ -1116,7 +1135,7 @@
 
       .inspiration-text {
         min-height: 112px;
-        gap: .06em .12em;
+        gap: .12em .18em;
         padding: 8px 6px;
       }
 
@@ -1239,6 +1258,8 @@
             <span class="legend-item"><span class="swatch selected"></span> Selected</span>
           </div>
         </div>
+
+        <div id="heroBookingMessage" class="hero-booking-message"></div>
       </div>
     </div>
   </header>
@@ -1246,7 +1267,7 @@
   <section class="inspiration-band">
     <div class="inspiration-card">
       <div class="inspiration-label">A little inspiration</div>
-      <div id="sayingText" class="inspiration-text font-cormorant"></div>
+      <div id="sayingText" class="inspiration-text"></div>
     </div>
   </section>
 
@@ -1426,7 +1447,10 @@
     const HERO_IMAGES = HERO_IMAGE_FILES.map(fileName => HERO_IMAGE_FOLDER + fileName);
     const HERO_SLIDE_SECONDS = 4;
     const SAYING_ROTATE_MS = 4000;
-    const WORD_SIZE_POINTS = [12, 18, 24, 30, 36, 42];
+
+    const SMALL_WORD_SIZES = [12, 18];
+    const MEDIUM_WORD_SIZES = [18, 24];
+    const LARGE_WORD_SIZES = [30, 36, 42];
 
     let blockedDateSet = new Set();
     let currentMonthDate = new Date();
@@ -1580,6 +1604,20 @@
       "font-vollkorn"
     ];
 
+    const smallWords = new Set([
+      "a", "an", "the",
+      "and", "or", "but", "nor", "for", "yet", "so",
+      "as", "at", "by", "in", "of", "on", "to", "up", "if",
+      "is", "am", "are", "be", "was", "were", "been", "being",
+      "it", "its", "this", "that", "these", "those",
+      "with", "from", "into", "onto", "over", "under",
+      "through", "than", "then",
+      "you", "your", "we", "our", "us", "he", "she", "they", "them",
+      "do", "does", "did",
+      "has", "have", "had",
+      "my", "me", "i"
+    ]);
+
     let sayingsList = [];
     let lastSayingIndex = -1;
 
@@ -1648,21 +1686,10 @@
       }
     });
 
-    checkInInput.addEventListener('click', () => {
-      openHeroCalendar();
-    });
-
-    checkOutInput.addEventListener('click', () => {
-      openHeroCalendar();
-    });
-
-    checkInInput.addEventListener('focus', () => {
-      openHeroCalendar();
-    });
-
-    checkOutInput.addEventListener('focus', () => {
-      openHeroCalendar();
-    });
+    checkInInput.addEventListener('click', openHeroCalendar);
+    checkOutInput.addEventListener('click', openHeroCalendar);
+    checkInInput.addEventListener('focus', openHeroCalendar);
+    checkOutInput.addEventListener('focus', openHeroCalendar);
 
     closeHeroCalendarButton.addEventListener('click', () => {
       closeHeroCalendar();
@@ -2220,9 +2247,7 @@
       if (type !== 'adults' && nextValue < 0) return;
 
       const totalGuestsNow = guestState.adults + guestState.children;
-      const totalGuestsNext =
-        totalGuestsNow +
-        (type === 'infants' ? 0 : delta);
+      const totalGuestsNext = totalGuestsNow + (type === 'infants' ? 0 : delta);
 
       if (type !== 'infants' && totalGuestsNext > 16) return;
 
@@ -2280,10 +2305,14 @@
 
       heroBookingMessage.className = 'hero-booking-message';
 
+      if (message && message.trim()) {
+        heroBookingMessage.classList.add('show');
+      }
+
       if (type === 'good') heroBookingMessage.classList.add('good');
       if (type === 'bad') heroBookingMessage.classList.add('bad');
 
-      heroBookingMessage.textContent = message;
+      heroBookingMessage.textContent = message || '';
     }
 
     function setAvailabilityMessage(message, type, savingsText = '') {
@@ -2361,30 +2390,49 @@
 
           if (parsed.length) return parsed;
         } catch (error) {
-          // fall back silently
+          // use fallback if not found
         }
       }
 
       return fallbackSayings;
     }
 
-    function randomIndex(length, excludeIndex = -1) {
-      if (length <= 1) return 0;
-
-      let index = Math.floor(Math.random() * length);
-      while (index === excludeIndex) {
-        index = Math.floor(Math.random() * length);
-      }
-
-      return index;
+    function pickRandom(array) {
+      return array[Math.floor(Math.random() * array.length)];
     }
 
-    function randomFontClass() {
-      return sayingFontClasses[Math.floor(Math.random() * sayingFontClasses.length)];
+    function shuffleArray(array) {
+      return [...array].sort(() => Math.random() - 0.5);
     }
 
-    function randomWordSizePt() {
-      return WORD_SIZE_POINTS[Math.floor(Math.random() * WORD_SIZE_POINTS.length)];
+    function getThreeFontsForQuote() {
+      return shuffleArray(sayingFontClasses).slice(0, 3);
+    }
+
+    function cleanWordForCheck(word) {
+      return String(word || "")
+        .toLowerCase()
+        .replace(/[“”"'.!,;:!?()[\]{}]/g, "")
+        .trim();
+    }
+
+    function isLargeEligible(word) {
+      const cleaned = cleanWordForCheck(word);
+      return cleaned.length >= 3 && !smallWords.has(cleaned);
+    }
+
+    function chooseLargeWordIndexes(words) {
+      const eligibleIndexes = words
+        .map((word, index) => ({ word, index }))
+        .filter(item => isLargeEligible(item.word))
+        .map(item => item.index);
+
+      if (!eligibleIndexes.length) return new Set();
+
+      const largeCount = eligibleIndexes.length >= 2 && Math.random() > 0.42 ? 2 : 1;
+      const selected = shuffleArray(eligibleIndexes).slice(0, largeCount);
+
+      return new Set(selected);
     }
 
     function escapeHtml(str) {
@@ -2400,15 +2448,28 @@
       const cleaned = String(text || "").trim().replace(/^["“]|["”]$/g, "");
       const words = cleaned.split(/\s+/).filter(Boolean);
 
-      const wordHtml = words.map(word => {
-        const sizePt = randomWordSizePt();
-        return `<span class="saying-word" style="font-size:${sizePt}pt;">${escapeHtml(word)}</span>`;
+      const quoteFonts = getThreeFontsForQuote();
+      const largeWordIndexes = chooseLargeWordIndexes(words);
+
+      const wordHtml = words.map((word, index) => {
+        const fontClass = pickRandom(quoteFonts);
+
+        let sizePt;
+        if (largeWordIndexes.has(index)) {
+          sizePt = pickRandom(LARGE_WORD_SIZES);
+        } else {
+          sizePt = Math.random() > 0.45
+            ? pickRandom(MEDIUM_WORD_SIZES)
+            : pickRandom(SMALL_WORD_SIZES);
+        }
+
+        return `<span class="saying-word ${fontClass}" style="font-size:${sizePt}pt;">${escapeHtml(word)}</span>`;
       }).join("");
 
       return `
-        <span class="saying-quote">“</span>
+        <span class="saying-quote ${pickRandom(quoteFonts)}">“</span>
         ${wordHtml}
-        <span class="saying-quote">”</span>
+        <span class="saying-quote ${pickRandom(quoteFonts)}">”</span>
       `;
     }
 
@@ -2419,11 +2480,20 @@
       sayingTextEl.classList.add("is-hidden");
 
       setTimeout(() => {
-        sayingTextEl.classList.remove(...sayingFontClasses);
-        sayingTextEl.classList.add(randomFontClass());
         sayingTextEl.innerHTML = buildStylizedSayingHTML(text);
         sayingTextEl.classList.remove("is-hidden");
       }, 180);
+    }
+
+    function randomIndex(length, excludeIndex = -1) {
+      if (length <= 1) return 0;
+
+      let index = Math.floor(Math.random() * length);
+      while (index === excludeIndex) {
+        index = Math.floor(Math.random() * length);
+      }
+
+      return index;
     }
 
     async function startSayingsRotator() {
