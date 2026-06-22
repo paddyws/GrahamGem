@@ -258,6 +258,75 @@
       box-shadow: 0 24px 70px rgba(0,0,0,.24);
     }
 
+    .hero-calendar-popover {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 14px);
+      z-index: 40;
+      background: #fffaf1;
+      border: 1px solid #ead8bd;
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.24);
+      padding: 24px;
+    }
+
+    .hero-calendar-popover[hidden] {
+      display: none;
+    }
+
+    .hero-calendar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .hero-calendar-head small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .7rem;
+      font-weight: 900;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .hero-calendar-head strong {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: 1.55rem;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .hero-calendar-head button {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #ead8bd;
+      color: var(--ink);
+      font-size: 1.6rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .hero-calendar-controls {
+      margin-bottom: 18px;
+    }
+
+    .hero-calendar-months {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .field-block input[readonly] {
+      cursor: pointer;
+    }
+
     .hero-booking-message {
       margin-top: 12px;
       padding: 10px 14px;
@@ -954,6 +1023,22 @@
         width: 100%;
       }
 
+      .hero-calendar-popover {
+        position: fixed;
+        inset: auto 12px 12px;
+        max-height: 82vh;
+        overflow: auto;
+        padding: 18px;
+      }
+
+      .hero-calendar-months {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-calendar-head {
+        align-items: flex-start;
+      }
+
       .day {
         border-radius: 12px;
         font-size: .86rem;
@@ -998,12 +1083,12 @@
 
             <div class="field-block">
               <label for="checkIn">Check-in</label>
-              <input id="checkIn" type="date" required>
+              <input id="checkIn" type="text" placeholder="Add date" readonly required inputmode="none" aria-haspopup="dialog">
             </div>
 
             <div class="field-block">
               <label for="checkOut">Check-out</label>
-              <input id="checkOut" type="date" required>
+              <input id="checkOut" type="text" placeholder="Add date" readonly required inputmode="none" aria-haspopup="dialog">
             </div>
 
             <div class="guest-field-wrap" id="guestFieldWrap">
@@ -1062,7 +1147,31 @@
               Request Hold
             </button>
           </div>
-        </div>
+
+          <div class="hero-calendar-popover" id="heroCalendarPopover" hidden>
+            <div class="hero-calendar-head">
+              <div>
+                <small>Availability Calendar</small>
+                <strong>Choose your check-in and check-out</strong>
+              </div>
+              <button type="button" id="closeHeroCalendar" aria-label="Close calendar">×</button>
+            </div>
+
+            <div class="calendar-controls hero-calendar-controls">
+              <button type="button" id="heroPrevMonth" aria-label="Previous month">‹</button>
+              <div class="calendar-range-title">Click your check-in, then your check-out</div>
+              <button type="button" id="heroNextMonth" aria-label="Next month">›</button>
+            </div>
+
+            <div id="heroCalendarMonths" class="calendar-months hero-calendar-months"></div>
+
+            <div class="legend">
+              <span class="legend-item"><span class="swatch"></span> Available</span>
+              <span class="legend-item"><span class="swatch booked"></span> Unavailable</span>
+              <span class="legend-item"><span class="swatch selected"></span> Selected</span>
+            </div>
+          </div>
+
           <div id="heroBookingMessage" class="hero-booking-message">
             Choose your dates and guests to start a direct booking request.
           </div>
@@ -1259,6 +1368,11 @@
     const availabilityMessage = document.getElementById('availabilityMessage');
     const heroBookingMessage = document.getElementById('heroBookingMessage');
     const heroBookingWrap = document.getElementById('heroBookingWrap');
+    const heroCalendarPopover = document.getElementById('heroCalendarPopover');
+    const heroCalendarMonths = document.getElementById('heroCalendarMonths');
+    const closeHeroCalendarButton = document.getElementById('closeHeroCalendar');
+    const heroPrevMonthButton = document.getElementById('heroPrevMonth');
+    const heroNextMonthButton = document.getElementById('heroNextMonth');
     const quoteSummary = document.getElementById('quoteSummary');
 
     const checkInInput = document.getElementById('checkIn');
@@ -1285,6 +1399,16 @@
       renderCalendar();
     });
 
+    heroPrevMonthButton.addEventListener('click', () => {
+      currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    heroNextMonthButton.addEventListener('click', () => {
+      currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+      renderCalendar();
+    });
+
     guestButton.addEventListener('click', () => {
       guestFieldWrap.classList.toggle('open');
     });
@@ -1293,6 +1417,35 @@
       if (!guestFieldWrap.contains(event.target)) {
         guestFieldWrap.classList.remove('open');
       }
+
+      if (
+        heroCalendarPopover &&
+        !heroCalendarPopover.hidden &&
+        heroBookingWrap &&
+        !heroBookingWrap.contains(event.target)
+      ) {
+        closeHeroCalendar();
+      }
+    });
+
+    checkInInput.addEventListener('click', () => {
+      openHeroCalendar();
+    });
+
+    checkOutInput.addEventListener('click', () => {
+      openHeroCalendar();
+    });
+
+    checkInInput.addEventListener('focus', () => {
+      openHeroCalendar();
+    });
+
+    checkOutInput.addEventListener('focus', () => {
+      openHeroCalendar();
+    });
+
+    closeHeroCalendarButton.addEventListener('click', () => {
+      closeHeroCalendar();
     });
 
     guestPopover.querySelectorAll('.counter-btn').forEach(button => {
@@ -1471,14 +1624,42 @@
       updateAvailabilityMessageAndQuote();
     }
 
+    function openHeroCalendar() {
+      if (!heroCalendarPopover) return;
+
+      if (checkInInput.value) {
+        currentMonthDate = keyToDate(checkInInput.value);
+        currentMonthDate.setDate(1);
+      }
+
+      heroCalendarPopover.hidden = false;
+      guestFieldWrap.classList.remove('open');
+      renderCalendar();
+    }
+
+    function closeHeroCalendar() {
+      if (!heroCalendarPopover) return;
+      heroCalendarPopover.hidden = true;
+    }
+
     function renderCalendar() {
-      calendarMonths.innerHTML = '';
+      renderCalendarInto(calendarMonths);
+
+      if (heroCalendarMonths) {
+        renderCalendarInto(heroCalendarMonths);
+      }
+    }
+
+    function renderCalendarInto(container) {
+      if (!container) return;
+
+      container.innerHTML = '';
 
       const monthOne = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth(), 1);
       const monthTwo = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 1);
 
       [monthOne, monthTwo].forEach(monthDate => {
-        calendarMonths.appendChild(buildMonthCalendar(monthDate));
+        container.appendChild(buildMonthCalendar(monthDate));
       });
     }
 
@@ -1595,12 +1776,12 @@
 
       if (!checkInInput.value) {
         if (isBooked) {
-          setAvailabilityMessage(
-            isGlobalCheckoutOnlyDate(dateKey)
-              ? 'That date is checkout only. Please choose an available check-in date first.'
-              : 'That date is unavailable for check-in.',
-            'bad'
-          );
+          const message = isGlobalCheckoutOnlyDate(dateKey)
+            ? 'That date is checkout only. Please choose an available check-in date first.'
+            : 'That date is unavailable for check-in.';
+
+          setAvailabilityMessage(message, 'bad');
+          setHeroBookingMessage(message, 'bad');
           return;
         }
 
@@ -1612,10 +1793,9 @@
         const blockedNights = getBlockedNightsInRange(checkInInput.value, dateKey);
 
         if (blockedNights.length > 0) {
-          setAvailabilityMessage(
-            `Those dates are not available. Blocked night: ${blockedNights[0]}`,
-            'bad'
-          );
+          const message = `Those dates are not available. Blocked night: ${blockedNights[0]}`;
+          setAvailabilityMessage(message, 'bad');
+          setHeroBookingMessage(message, 'bad');
           return;
         }
 
@@ -1623,6 +1803,7 @@
       } else {
         if (isBooked) {
           setAvailabilityMessage('That date is unavailable for check-in.', 'bad');
+          setHeroBookingMessage('That date is unavailable for check-in.', 'bad');
           return;
         }
 
@@ -1635,6 +1816,11 @@
       syncMirrors();
       updateAvailabilityMessageAndQuote();
       renderCalendar();
+
+      const finalStatus = getDateRangeStatus(checkInInput.value, checkOutInput.value);
+      if (finalStatus.ok) {
+        closeHeroCalendar();
+      }
     }
 
     function updateAvailabilityMessageAndQuote() {
