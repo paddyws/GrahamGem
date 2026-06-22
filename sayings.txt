@@ -5,11 +5,15 @@
 “Begin anywhere.”
 “Still waters run deep.”
 “Make it happen.”
+"You make my day a little brighter."
 "This is not the end."
 “Do no harm.”
+"Cracks are how the light gets in."
 “Choose joy.”
+"Your soul is worth remembering."
 "I love when you do something brave."
 “Stay curious.”
+"Never forget who you are and what you stand for."
 "Believe in the mystery."
 "Hold on!  Don't give up."
 "I believe in you."
@@ -45,18 +49,24 @@
 “Truth endures.”
 "You're on the right track."
 "Someone is dying to see you."
+"I know our lives have purpose."
 "Keep thinking smartypants!"
 "Stay on the path."
 "Let your soul prevail."
 “Kindness is strength.”
+"The universe runs deep you know?"
 “Peace begins within.”
 “Create yourself.”
 “Rise anyway.”
+"It's gonna be a bumpy ride."
+"How exciting!!!!"
 "Jump right in!"
 "Immerse yourself!"
 "Almost there."
 "Stray wondrously."
+"Promise me you will keep on trying?"
 “Keep moving.”
+"You're almost there!!"
 "Keep following those dreams!"
 “Dream bigger.”
 "Be who you are."
@@ -69,6 +79,7 @@
 “The soul knows.”
 “Wonder is wisdom.”
 “Love is labor.”
+"It is hard to keep up with you!"
 “Enough is plenty.”
 “Simplicity is power.”
 “Wounds heal and teach.”
