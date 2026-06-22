@@ -72,7 +72,9 @@
       min-height: 92vh;
       display: flex;
       align-items: center;
-      padding: 120px 8vw 80px;
+      padding: 120px 8vw 120px;
+      position: relative;
+      overflow: visible;
       background:
         linear-gradient(90deg, rgba(12,20,22,.78), rgba(12,20,22,.42), rgba(12,20,22,.12)),
         url("cozy.jpg") center/cover no-repeat;
@@ -122,7 +124,7 @@
 
     .stats {
       width: min(1100px, 86vw);
-      margin: -54px auto 80px;
+      margin: 92px auto 80px;
       background: rgba(255,250,241,.94);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -237,6 +239,43 @@
     .booking-stack {
       display: grid;
       gap: 22px;
+    }
+
+    .hero-booking-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: -58px;
+      transform: translateX(-50%);
+      z-index: 6;
+      width: min(1120px, 88vw);
+      color: var(--ink);
+    }
+
+    .hero-booking-wrap .booking-fields {
+      margin-bottom: 0;
+      background: rgba(255,250,241,.96);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 70px rgba(0,0,0,.24);
+    }
+
+    .hero-booking-message {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #f3eadc;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.45;
+    }
+
+    .hero-booking-message.good {
+      background: #dff3e9;
+      color: var(--success);
+    }
+
+    .hero-booking-message.bad {
+      background: #f5d8d2;
+      color: var(--danger);
     }
 
     form, .availability-card {
@@ -812,6 +851,14 @@
         grid-template-columns: 1fr;
       }
 
+      .hero-booking-wrap {
+        bottom: -74px;
+      }
+
+      .stats {
+        margin-top: 116px;
+      }
+
       .booking-box-inner {
         grid-template-columns: 1fr 1fr;
       }
@@ -838,6 +885,23 @@
     @media (max-width: 850px) {
       nav { position: absolute; }
       .nav-links { display: none; }
+
+      .hero {
+        display: block;
+        min-height: auto;
+        padding: 110px 6vw 34px;
+      }
+
+      .hero-booking-wrap {
+        position: static;
+        width: 100%;
+        transform: none;
+        margin-top: 28px;
+      }
+
+      .stats {
+        margin: 28px auto 80px;
+      }
 
       .stats,
       .features,
@@ -919,10 +983,91 @@
         When stomachs start to growl, grab a bite to eat in town or cook up a meal before an evening around the fire pit. Your adventure awaits!
       </p>
       <div class="buttons">
-        <a class="btn primary" href="#book">Check Availability</a>
+        <a class="btn primary" href="#heroBookingWrap">Check Availability</a>
         <a class="btn secondary" href="#gallery">View Photos</a>
       </div>
     </div>
+
+      <div class="hero-booking-wrap" id="heroBookingWrap">
+        <div class="booking-fields">
+          <div class="booking-box-inner">
+            <div class="booking-box-heading">
+              <small>Book Now</small>
+              <strong>Check your dates</strong>
+            </div>
+
+            <div class="field-block">
+              <label for="checkIn">Check-in</label>
+              <input id="checkIn" type="date" required>
+            </div>
+
+            <div class="field-block">
+              <label for="checkOut">Check-out</label>
+              <input id="checkOut" type="date" required>
+            </div>
+
+            <div class="guest-field-wrap" id="guestFieldWrap">
+              <button type="button" class="guest-button" id="guestButton">
+                <div class="guest-copy">
+                  <span class="guest-label">Guests</span>
+                  <span class="guest-value" id="guestButtonText">1 guest</span>
+                </div>
+                <span class="guest-chevron">⌄</span>
+              </button>
+
+              <div class="guest-popover" id="guestPopover">
+                <div class="guest-row">
+                  <div>
+                    <strong>Adults</strong>
+                    <span>Ages 13+</span>
+                  </div>
+                  <div class="guest-controls">
+                    <button type="button" class="counter-btn" data-type="adults" data-delta="-1">−</button>
+                    <span id="adultsCount">1</span>
+                    <button type="button" class="counter-btn" data-type="adults" data-delta="1">+</button>
+                  </div>
+                </div>
+
+                <div class="guest-row">
+                  <div>
+                    <strong>Children</strong>
+                    <span>Ages 2–12</span>
+                  </div>
+                  <div class="guest-controls">
+                    <button type="button" class="counter-btn" data-type="children" data-delta="-1">−</button>
+                    <span id="childrenCount">0</span>
+                    <button type="button" class="counter-btn" data-type="children" data-delta="1">+</button>
+                  </div>
+                </div>
+
+                <div class="guest-row">
+                  <div>
+                    <strong>Infants</strong>
+                    <span>Under 2</span>
+                  </div>
+                  <div class="guest-controls">
+                    <button type="button" class="counter-btn" data-type="infants" data-delta="-1">−</button>
+                    <span id="infantsCount">0</span>
+                    <button type="button" class="counter-btn" data-type="infants" data-delta="1">+</button>
+                  </div>
+                </div>
+
+                <div class="guest-note">
+                  Maximum 16 guests. Infants are not counted toward the 16-guest limit.
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="quick-request-btn" id="quickRequestButton">
+              Request Hold
+            </button>
+          </div>
+        </div>
+          <div id="heroBookingMessage" class="hero-booking-message">
+            Choose your dates and guests to start a direct booking request.
+          </div>
+        </div>
+      </div>
   </header>
 
   <div class="stats">
@@ -1003,81 +1148,6 @@
           <p id="availabilityStatus" class="availability-status">
             Loading current availability...
           </p>
-        </div>
-
-        <div class="booking-fields">
-          <div class="booking-box-inner">
-            <div class="booking-box-heading">
-              <small>Book Now</small>
-              <strong>Check your dates</strong>
-            </div>
-
-            <div class="field-block">
-              <label for="checkIn">Check-in</label>
-              <input id="checkIn" type="date" required>
-            </div>
-
-            <div class="field-block">
-              <label for="checkOut">Check-out</label>
-              <input id="checkOut" type="date" required>
-            </div>
-
-            <div class="guest-field-wrap" id="guestFieldWrap">
-              <button type="button" class="guest-button" id="guestButton">
-                <div class="guest-copy">
-                  <span class="guest-label">Guests</span>
-                  <span class="guest-value" id="guestButtonText">1 guest</span>
-                </div>
-                <span class="guest-chevron">⌄</span>
-              </button>
-
-              <div class="guest-popover" id="guestPopover">
-                <div class="guest-row">
-                  <div>
-                    <strong>Adults</strong>
-                    <span>Ages 13+</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="adults" data-delta="-1">−</button>
-                    <span id="adultsCount">1</span>
-                    <button type="button" class="counter-btn" data-type="adults" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-row">
-                  <div>
-                    <strong>Children</strong>
-                    <span>Ages 2–12</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="children" data-delta="-1">−</button>
-                    <span id="childrenCount">0</span>
-                    <button type="button" class="counter-btn" data-type="children" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-row">
-                  <div>
-                    <strong>Infants</strong>
-                    <span>Under 2</span>
-                  </div>
-                  <div class="guest-controls">
-                    <button type="button" class="counter-btn" data-type="infants" data-delta="-1">−</button>
-                    <span id="infantsCount">0</span>
-                    <button type="button" class="counter-btn" data-type="infants" data-delta="1">+</button>
-                  </div>
-                </div>
-
-                <div class="guest-note">
-                  Maximum 16 guests. Infants are not counted toward the 16-guest limit.
-                </div>
-              </div>
-            </div>
-
-            <button type="button" class="quick-request-btn" id="quickRequestButton">
-              Request Hold
-            </button>
-          </div>
         </div>
 
         <div class="calendar-controls">
@@ -1187,6 +1257,8 @@
     const calendarMonths = document.getElementById('calendarMonths');
     const availabilityStatus = document.getElementById('availabilityStatus');
     const availabilityMessage = document.getElementById('availabilityMessage');
+    const heroBookingMessage = document.getElementById('heroBookingMessage');
+    const heroBookingWrap = document.getElementById('heroBookingWrap');
     const quoteSummary = document.getElementById('quoteSummary');
 
     const checkInInput = document.getElementById('checkIn');
@@ -1235,8 +1307,9 @@
       const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
 
       if (!result.ok) {
+        setHeroBookingMessage(result.message, 'bad');
         setAvailabilityMessage(result.message, 'bad');
-        availabilityMessage.scrollIntoView({
+        heroBookingWrap.scrollIntoView({
           behavior: 'smooth',
           block: 'center'
         });
@@ -1325,6 +1398,7 @@
         );
 
         renderQuotePlaceholder();
+        setHeroBookingMessage('Choose your dates and guests to start a direct booking request.');
 
       } catch (error) {
         setAvailabilityMessage(String(error && error.message ? error.message : error), 'bad');
@@ -1568,18 +1642,21 @@
 
       if (!checkInInput.value && !checkOutInput.value) {
         setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
+        setHeroBookingMessage('Choose your dates and guests to start a direct booking request.');
         renderQuotePlaceholder();
         return;
       }
 
       if (checkInInput.value && !checkOutInput.value) {
         setAvailabilityMessage('Now choose a check-out date.', '');
+        setHeroBookingMessage('Now choose a check-out date.');
         renderQuotePlaceholder();
         return;
       }
 
       if (!result.ok) {
         setAvailabilityMessage(result.message, 'bad');
+        setHeroBookingMessage(result.message, 'bad');
         renderQuotePlaceholder();
         return;
       }
@@ -1588,6 +1665,7 @@
       const savingsText = getSavingsText(quote);
 
       setAvailabilityMessage(result.message, 'good', savingsText);
+      setHeroBookingMessage(`${result.message} ${savingsText}`, 'good');
       renderQuote(quote);
     }
 
@@ -1789,6 +1867,17 @@
       checkOutMirror.value = checkOutInput.value || '';
     }
 
+    function setHeroBookingMessage(message, type = '') {
+      if (!heroBookingMessage) return;
+
+      heroBookingMessage.className = 'hero-booking-message';
+
+      if (type === 'good') heroBookingMessage.classList.add('good');
+      if (type === 'bad') heroBookingMessage.classList.add('bad');
+
+      heroBookingMessage.textContent = message;
+    }
+
     function setAvailabilityMessage(message, type, savingsText = '') {
       availabilityMessage.className = 'availability-message';
 
@@ -1859,6 +1948,7 @@
           'Availability could not be loaded right now. Please contact us and we will confirm manually.';
 
         console.error('Availability error:', error);
+        setHeroBookingMessage('Availability could not be loaded right now. Please contact us and we will confirm manually.', 'bad');
         renderCalendar();
         renderQuotePlaceholder();
       });
