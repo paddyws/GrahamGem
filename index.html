@@ -2705,10 +2705,28 @@
       const words = cleaned.split(/\s+/).filter(Boolean);
 
       const quoteFonts = getThreeFontsForQuote();
+      const fancyScriptFontClass = "font-great-vibes";
       const largeWordIndexes = chooseLargeWordIndexes(words);
       const lastWordIndex = words.length - 1;
       const lastWordCleaned = cleanWordForCheck(words[lastWordIndex] || '');
       const makeLastWordExtraLarge = lastWordIndex >= 0 && lastWordCleaned.length > 4;
+
+      const biggerWordIndexes = new Set(largeWordIndexes);
+      if (makeLastWordExtraLarge) {
+        biggerWordIndexes.add(lastWordIndex);
+      }
+
+      const fancyScriptWordIndex = biggerWordIndexes.size
+        ? pickRandom([...biggerWordIndexes])
+        : words.length
+          ? words.findIndex(word => isLargeEligible(word)) >= 0
+            ? words.findIndex(word => isLargeEligible(word))
+            : 0
+          : -1;
+
+      if (fancyScriptWordIndex >= 0) {
+        largeWordIndexes.add(fancyScriptWordIndex);
+      }
 
       const lineHtml = [];
 
@@ -2717,7 +2735,9 @@
 
         const wordHtml = lineWords.map((word, lineIndex) => {
           const index = start + lineIndex;
-          const fontClass = pickRandom(quoteFonts);
+          const fontClass = index === fancyScriptWordIndex
+            ? fancyScriptFontClass
+            : pickRandom(quoteFonts);
 
           let sizePt;
           if (makeLastWordExtraLarge && index === lastWordIndex) {
