@@ -3035,9 +3035,13 @@
         }
       }
 
-      const scriptWordIndex = bigWordIndexes.size
-        ? pickRandom([...bigWordIndexes])
-        : -1;
+      const scriptWordIndex = makeLastWordExtraLarge
+        ? lastWordIndex
+        : (bigWordIndexes.size ? pickRandom([...bigWordIndexes]) : -1);
+
+      const biggestLargeSize = Math.max(...LARGE_WORD_SIZES);
+      const biggestExtraLargeSize = Math.max(...EXTRA_LARGE_LAST_WORD_SIZES);
+      const otherLargeWordSizes = LARGE_WORD_SIZES.filter(size => size < biggestLargeSize);
 
       const lineHtml = [];
 
@@ -3046,15 +3050,18 @@
 
         const wordHtml = lineWords.map((word, lineIndex) => {
           const index = start + lineIndex;
-          const fontClass = index === scriptWordIndex
+          const isScriptWord = index === scriptWordIndex;
+          const fontClass = isScriptWord
             ? pickRandom(fancyScriptFontClasses)
             : pickRandom(quoteFonts);
 
           let sizePt;
           if (makeLastWordExtraLarge && index === lastWordIndex) {
-            sizePt = pickRandom(EXTRA_LARGE_LAST_WORD_SIZES);
-          } else if (largeWordIndexes.has(index) || index === scriptWordIndex) {
-            sizePt = pickRandom(LARGE_WORD_SIZES);
+            sizePt = isScriptWord ? biggestExtraLargeSize : pickRandom(EXTRA_LARGE_LAST_WORD_SIZES);
+          } else if (isScriptWord) {
+            sizePt = biggestLargeSize;
+          } else if (largeWordIndexes.has(index)) {
+            sizePt = pickRandom(otherLargeWordSizes.length ? otherLargeWordSizes : LARGE_WORD_SIZES);
           } else {
             sizePt = Math.random() > 0.45
               ? pickRandom(MEDIUM_WORD_SIZES)
