@@ -1894,6 +1894,10 @@
       "font-vollkorn"
     ];
 
+    const fancyScriptFontClasses = [
+      "font-great-vibes"
+    ];
+
     const smallWords = new Set([
       "a", "an", "the",
       "and", "or", "but", "nor", "for", "yet", "so",
@@ -3018,6 +3022,23 @@
       const lastWordCleaned = cleanWordForCheck(words[lastWordIndex] || '');
       const makeLastWordExtraLarge = lastWordIndex >= 0 && lastWordCleaned.length > 4;
 
+      const bigWordIndexes = new Set(largeWordIndexes);
+      if (makeLastWordExtraLarge) {
+        bigWordIndexes.add(lastWordIndex);
+      }
+
+      if (!bigWordIndexes.size) {
+        const fallbackLargeIndex = words.findIndex(word => isLargeEligible(word));
+        if (fallbackLargeIndex >= 0) {
+          bigWordIndexes.add(fallbackLargeIndex);
+          largeWordIndexes.add(fallbackLargeIndex);
+        }
+      }
+
+      const scriptWordIndex = bigWordIndexes.size
+        ? pickRandom([...bigWordIndexes])
+        : -1;
+
       const lineHtml = [];
 
       for (let start = 0; start < words.length; start += 6) {
@@ -3025,12 +3046,14 @@
 
         const wordHtml = lineWords.map((word, lineIndex) => {
           const index = start + lineIndex;
-          const fontClass = pickRandom(quoteFonts);
+          const fontClass = index === scriptWordIndex
+            ? pickRandom(fancyScriptFontClasses)
+            : pickRandom(quoteFonts);
 
           let sizePt;
           if (makeLastWordExtraLarge && index === lastWordIndex) {
             sizePt = pickRandom(EXTRA_LARGE_LAST_WORD_SIZES);
-          } else if (largeWordIndexes.has(index)) {
+          } else if (largeWordIndexes.has(index) || index === scriptWordIndex) {
             sizePt = pickRandom(LARGE_WORD_SIZES);
           } else {
             sizePt = Math.random() > 0.45
