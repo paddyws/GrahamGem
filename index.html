@@ -58,6 +58,13 @@
       background: linear-gradient(to bottom, rgba(0,0,0,.55), transparent);
     }
 
+    .brand-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
     .brand {
       font-size: 2.45rem;
       letter-spacing: .035em;
@@ -65,6 +72,18 @@
     }
 
     .brand span { color: var(--gold); }
+
+    .brand-address {
+      max-width: 430px;
+      font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      font-size: clamp(.82rem, .92vw, 1rem);
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: .035em;
+      color: rgba(255,250,241,.95);
+      text-shadow: 0 2px 12px rgba(0,0,0,.34);
+    }
 
     .nav-links {
       display: flex;
@@ -459,6 +478,21 @@
     .font-vollkorn { font-family: "Vollkorn", serif; font-style: italic; }
 
     section { padding: 80px 8vw; }
+
+    #location {
+      scroll-margin-top: 118px;
+    }
+
+    .location-address {
+      margin: -6px 0 34px;
+      font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--gold);
+      letter-spacing: .015em;
+    }
 
     .intro {
       display: grid;
@@ -1135,6 +1169,11 @@
         font-size: 2.25rem;
       }
 
+      .brand-address {
+        max-width: 78vw;
+        font-size: .9rem;
+      }
+
       .hero {
         display: block;
         min-height: 82vh;
@@ -1273,7 +1312,10 @@
 
 <body>
   <nav>
-    <div class="brand">Graham <span>Gem</span></div>
+    <div class="brand-wrap">
+      <div class="brand">Graham <span>Gem</span></div>
+      <div class="brand-address">Our Hidden Gem at 1338 Beaufort Dr, Graham, NC 27253</div>
+    </div>
     <div class="nav-links">
       <a href="#gallery">Gallery</a>
       <a href="#amenities">Amenities</a>
@@ -1545,6 +1587,7 @@
 
   <section id="location">
     <h2 class="section-title">Nestled in Graham, close to Elon, Greensboro, Durham, and local favorites.</h2>
+    <p class="location-address">Our Hidden Gem at 1338 Beaufort Dr, Graham, NC 27253</p>
     <div class="features">
       <div class="feature">
         <h3>Elon University</h3>
