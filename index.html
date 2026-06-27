@@ -1629,7 +1629,7 @@
       <div class="payment-checkout-card" id="paymentCheckoutCard">
         <h3 class="form-card-title">Checkout</h3>
         <p class="form-card-subtitle">
-          Select valid dates above, then choose Zelle or Stripe to book now. We’ll set up the real checkout links here.
+          Select valid dates above, then choose Zelle or Stripe to book now. Stripe creates a secure checkout for your exact total.
         </p>
 
         <div id="checkoutSummary" class="quote-placeholder">
@@ -1642,7 +1642,7 @@
         </div>
 
         <div id="paymentStatus" class="payment-status">
-          Zelle and Stripe are ready to connect once your payment details are added.
+          Stripe checkout is connected through the secure booking API. Add your Zelle recipient to enable Zelle details.
         </div>
       </div>
 
@@ -1713,7 +1713,7 @@
     // Payment setup placeholders.
     // Replace these with your real Zelle recipient and Stripe Payment Link / Checkout URL when ready.
     const ZELLE_RECIPIENT = 'SET_UP_ZELLE_EMAIL_OR_PHONE';
-    const STRIPE_CHECKOUT_URL = 'SET_UP_STRIPE_CHECKOUT_URL';
+    const STRIPE_CHECKOUT_ACTION = 'stripeCheckout';
 
     const HERO_IMAGE_FOLDER = '';
     const HERO_IMAGE_FILES = [
@@ -2139,7 +2139,7 @@
       }
     }
 
-    function handleStripeCheckout() {
+    async function handleStripeCheckout() {
       const quote = getCurrentValidQuote();
 
       if (!quote) {
@@ -2147,18 +2147,79 @@
         return;
       }
 
-      if (!isPaymentValueSet(STRIPE_CHECKOUT_URL, 'SET_UP_STRIPE')) {
-        setPaymentStatus('Stripe checkout is ready to connect. Replace STRIPE_CHECKOUT_URL in the code with your Stripe Payment Link or Checkout URL.', 'bad');
+      const originalText = stripeCheckoutButton ? stripeCheckoutButton.textContent : '';
+
+      try {
+        if (stripeCheckoutButton) {
+          stripeCheckoutButton.disabled = true;
+          stripeCheckoutButton.textContent = 'Opening Stripe...';
+        }
+
+        setPaymentStatus('Creating secure Stripe Checkout for your exact total...');
+
+        const data = await callAvailabilityApi({
+          action: STRIPE_CHECKOUT_ACTION,
+          checkIn: checkInInput.value,
+          checkOut: checkOutInput.value,
+          guests: guestCountInput.value,
+          returnUrl: window.location.origin + window.location.pathname
+        });
+
+        if (!data || !data.ok || !data.url) {
+          throw new Error(data && data.error ? data.error : 'Could not create Stripe Checkout.');
+        }
+
+        window.location.href = data.url;
+
+      } catch (error) {
+        if (stripeCheckoutButton) {
+          stripeCheckoutButton.disabled = false;
+          stripeCheckoutButton.textContent = originalText || 'Pay with Stripe';
+        }
+
+        setPaymentStatus(String(error && error.message ? error.message : error), 'bad');
+      }
+    }
+
+    async function handleStripeReturnNotice() {
+      const params = new URLSearchParams(window.location.search);
+      const paymentResult = params.get('payment');
+      const sessionId = params.get('session_id');
+
+      if (paymentResult === 'cancelled') {
+        setPaymentStatus('Stripe Checkout was cancelled. Your dates may be held briefly as pending; use Book manually if you want us to set those up.', 'bad');
         return;
       }
 
-      const stripeUrl = new URL(STRIPE_CHECKOUT_URL, window.location.href);
-      stripeUrl.searchParams.set('check_in', checkInInput.value);
-      stripeUrl.searchParams.set('check_out', checkOutInput.value);
-      stripeUrl.searchParams.set('guests', guestCountInput.value);
-      stripeUrl.searchParams.set('estimated_total', quote.totalWithTax.toFixed(2));
+      if (paymentResult !== 'success' || !sessionId) {
+        return;
+      }
 
-      window.location.href = stripeUrl.toString();
+      setPaymentStatus('Stripe payment received. Confirming your booking now...', 'good');
+
+      try {
+        const data = await callAvailabilityApi({
+          action: 'stripeConfirm',
+          session_id: sessionId
+        });
+
+        if (!data || !data.ok) {
+          throw new Error(data && data.message ? data.message : data && data.error ? data.error : 'Stripe payment confirmation is still pending.');
+        }
+
+        setPaymentStatus(data.message || 'Payment received. Your Graham Gem booking is confirmed.', 'good');
+        setAvailabilityMessage(data.message || 'Payment received. Your Graham Gem booking is confirmed.', 'good');
+
+        try {
+          const refreshedAvailability = await loadAvailability();
+          applyAvailabilityData(refreshedAvailability);
+        } catch (refreshError) {
+          console.warn('Could not refresh availability after Stripe confirmation:', refreshError);
+        }
+
+      } catch (error) {
+        setPaymentStatus(String(error && error.message ? error.message : error), 'bad');
+      }
     }
 
     function getCurrentValidQuote() {
@@ -2685,7 +2746,7 @@
         if (customMessage) {
           setPaymentStatus(customMessage, customType);
         } else {
-          setPaymentStatus('Zelle and Stripe are ready to connect once your payment details are added.');
+          setPaymentStatus('Stripe checkout is connected through the secure booking API. Add your Zelle recipient to enable Zelle details.');
         }
 
         return;
@@ -2707,11 +2768,11 @@
           <strong>${formatMoney(quote.totalWithTax)}</strong>
         </div>
         <div class="quote-footnote">
-          Choose Zelle or Stripe to book now. Replace the setup placeholders in the code with your real payment details.
+          Choose Zelle or Stripe to book now. Stripe will open a secure checkout for your exact total.
         </div>
       `;
 
-      setPaymentStatus('Ready for checkout. Zelle and Stripe buttons are below.');
+      setPaymentStatus('Ready for checkout. Choose Zelle or open secure Stripe Checkout below.');
     }
 
     function getBlockedNightsInRange(checkIn, checkOut) {
@@ -3400,6 +3461,7 @@ ${getCurrentQuoteText()}`;
     renderCalendar();
     renderQuotePlaceholder();
     updatePaymentCheckout();
+    handleStripeReturnNotice();
   </script>
 </body>
 </html>
