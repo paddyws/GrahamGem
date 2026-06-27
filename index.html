@@ -322,6 +322,58 @@
       white-space: nowrap;
     }
 
+    .inspiration-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .share-post-btn,
+    .share-download-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid #d8c5a9;
+      background: white;
+      color: var(--ink);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.08rem;
+      font-style: italic;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,.06);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+
+    .share-post-btn {
+      background: var(--ink);
+      color: var(--white);
+      padding: 0 22px;
+    }
+
+    .share-post-btn:hover,
+    .share-download-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(0,0,0,.08);
+      filter: brightness(.98);
+    }
+
+    .share-download-link[hidden] {
+      display: none;
+    }
+
+    .share-status {
+      min-height: 18px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.35;
+      text-align: center;
+    }
+
     .font-alegreya { font-family: "Alegreya", serif; font-style: italic; }
     .font-amiri { font-family: "Amiri", serif; }
     .font-bellefair { font-family: "Bellefair", serif; letter-spacing: .02em; }
@@ -1130,6 +1182,11 @@
         gap: .12em .18em;
         padding: 8px 6px;
       }
+
+      .share-post-btn,
+      .share-download-link {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -1256,6 +1313,17 @@
     <div class="inspiration-card">
       <div class="inspiration-label">A little inspiration</div>
       <div id="sayingText" class="inspiration-text"></div>
+
+      <div class="inspiration-actions" id="shareQuoteWrap">
+        <button type="button" class="share-post-btn" id="shareQuotePostBtn">
+          Share as Post
+        </button>
+        <a id="downloadQuotePostLink" class="share-download-link" download="graham-gem-quote.png" hidden>
+          Download post
+        </a>
+        <div class="share-status" id="shareQuoteStatus" aria-live="polite"></div>
+        <canvas id="quoteShareCanvas" width="1080" height="1350" hidden></canvas>
+      </div>
     </div>
   </section>
 
@@ -1614,6 +1682,7 @@
 
     let sayingsList = [];
     let lastSayingIndex = -1;
+    let currentSayingText = '';
 
     const calendarMonths = document.getElementById('calendarMonths');
     const availabilityStatus = document.getElementById('availabilityStatus');
@@ -1640,6 +1709,12 @@
 
     const bookingForm = document.getElementById('bookingForm');
     const quickRequestButton = document.getElementById('quickRequestButton');
+
+    const shareQuoteWrap = document.getElementById('shareQuoteWrap');
+    const shareQuotePostBtn = document.getElementById('shareQuotePostBtn');
+    const downloadQuotePostLink = document.getElementById('downloadQuotePostLink');
+    const shareQuoteStatus = document.getElementById('shareQuoteStatus');
+    const quoteShareCanvas = document.getElementById('quoteShareCanvas');
 
     document.getElementById('prevMonth').addEventListener('click', () => {
       currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
@@ -1721,6 +1796,41 @@
         document.getElementById('guestName').focus({ preventScroll: true });
       }, 450);
     });
+
+
+    if (shareQuotePostBtn) {
+      shareQuotePostBtn.addEventListener('click', async () => {
+        clearShareStatus();
+
+        try {
+          const file = await buildQuoteShareFile();
+          const shareText = 'A little inspiration from Graham Gem';
+
+          if (
+            navigator.canShare &&
+            navigator.canShare({ files: [file] }) &&
+            navigator.share
+          ) {
+            await navigator.share({
+              files: [file],
+              title: 'Graham Gem Quote',
+              text: shareText
+            });
+
+            setShareStatus('Post image shared.');
+            return;
+          }
+
+          triggerQuotePostDownload(file);
+          setShareStatus('Post image downloaded. Upload it to Instagram, Facebook, or anywhere you like.');
+        } catch (error) {
+          if (error && error.name === 'AbortError') return;
+
+          console.error(error);
+          setShareStatus('Sorry — the quote post could not be created.');
+        }
+      });
+    }
 
     checkInInput.addEventListener('change', () => {
       if (checkInInput.value) {
@@ -2463,14 +2573,198 @@
       return wordHtml;
     }
 
+    function cleanQuoteText(text) {
+      return String(text || "")
+        .trim()
+        .replace(/^["“]|["”]$/g, "");
+    }
+
+    function getCurrentQuoteText() {
+      return cleanQuoteText(currentSayingText || 'Choose joy.');
+    }
+
+    function setShareStatus(message) {
+      if (shareQuoteStatus) shareQuoteStatus.textContent = message || '';
+    }
+
+    function clearShareStatus() {
+      setShareStatus('');
+    }
+
+    function triggerQuotePostDownload(file) {
+      if (!downloadQuotePostLink) return;
+
+      if (downloadQuotePostLink.dataset.objectUrl) {
+        URL.revokeObjectURL(downloadQuotePostLink.dataset.objectUrl);
+      }
+
+      const objectUrl = URL.createObjectURL(file);
+      downloadQuotePostLink.href = objectUrl;
+      downloadQuotePostLink.hidden = false;
+      downloadQuotePostLink.dataset.objectUrl = objectUrl;
+      downloadQuotePostLink.click();
+    }
+
+    async function buildQuoteShareFile() {
+      await ensureFontsReady();
+
+      if (!quoteShareCanvas) {
+        throw new Error('Quote share canvas was not found.');
+      }
+
+      const canvas = quoteShareCanvas;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+
+      const quote = getCurrentQuoteText();
+      const hostname = window.location.hostname || window.location.href.replace(/^https?:\/\//, '').split('/')[0] || 'grahamgem.com';
+      const footerUrl = hostname.replace(/^www\./, '');
+
+      ctx.clearRect(0, 0, width, height);
+
+      const backgroundGradient = ctx.createLinearGradient(0, 0, width, height);
+      backgroundGradient.addColorStop(0, '#fffaf1');
+      backgroundGradient.addColorStop(1, '#f2e5d2');
+      ctx.fillStyle = backgroundGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      drawRoundedRect(ctx, 70, 70, width - 140, height - 140, 40);
+      ctx.fillStyle = '#fbf5ea';
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#ead8bd';
+      ctx.stroke();
+
+      drawRoundedRect(ctx, 118, 118, width - 236, height - 236, 28);
+      ctx.strokeStyle = 'rgba(31,170,166,.18)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+
+      ctx.fillStyle = '#6e6258';
+      ctx.font = '700 28px Inter, system-ui, sans-serif';
+      ctx.fillText('A LITTLE INSPIRATION', width / 2, 170);
+
+      ctx.fillStyle = '#16242b';
+      ctx.font = '600 68px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText('Graham', width / 2 - 84, 252);
+      ctx.fillStyle = '#c99b4a';
+      ctx.fillText('Gem', width / 2 + 122, 252);
+
+      ctx.strokeStyle = '#1faaa6';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(302, 302);
+      ctx.lineTo(778, 302);
+      ctx.stroke();
+
+      ctx.fillStyle = '#1faaa6';
+      ctx.font = 'italic 116px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText('“', width / 2, 412);
+
+      const maxQuoteWidth = width - 240;
+      const quoteFontSize = fitQuoteFontSize(ctx, quote, maxQuoteWidth, 6, 68, 40);
+      ctx.font = `italic ${quoteFontSize}px "Cormorant Garamond", Georgia, serif`;
+      ctx.fillStyle = '#16242b';
+
+      const lines = wrapCanvasText(ctx, quote, maxQuoteWidth);
+      const lineHeight = quoteFontSize * 1.28;
+      const quoteBlockHeight = lines.length * lineHeight;
+      let y = 660 - (quoteBlockHeight / 2) + (quoteFontSize * 0.35);
+
+      lines.forEach(line => {
+        ctx.fillText(line, width / 2, y);
+        y += lineHeight;
+      });
+
+      ctx.fillStyle = '#6e6258';
+      ctx.font = '500 28px Inter, system-ui, sans-serif';
+      ctx.fillText('Private Pool Retreat • Graham, North Carolina', width / 2, height - 186);
+
+      ctx.fillStyle = '#1faaa6';
+      ctx.font = '700 27px Inter, system-ui, sans-serif';
+      ctx.fillText(footerUrl, width / 2, height - 136);
+
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) {
+        throw new Error('Canvas export failed.');
+      }
+
+      return new File([blob], 'graham-gem-quote.png', { type: 'image/png' });
+    }
+
+    function wrapCanvasText(ctx, text, maxWidth) {
+      const words = String(text || '').split(/\s+/).filter(Boolean);
+      if (!words.length) return [''];
+
+      const lines = [];
+      let currentLine = words[0];
+
+      for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const testLine = `${currentLine} ${word}`;
+
+        if (ctx.measureText(testLine).width > maxWidth) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+
+      return lines;
+    }
+
+    function fitQuoteFontSize(ctx, text, maxWidth, maxLines, startSize, minSize) {
+      for (let size = startSize; size >= minSize; size -= 2) {
+        ctx.font = `italic ${size}px "Cormorant Garamond", Georgia, serif`;
+        const lines = wrapCanvasText(ctx, text, maxWidth);
+        if (lines.length <= maxLines) {
+          return size;
+        }
+      }
+
+      return minSize;
+    }
+
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    async function ensureFontsReady() {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+    }
+
     function showSaying(text) {
       const sayingTextEl = document.getElementById("sayingText");
       if (!sayingTextEl) return;
 
+      currentSayingText = cleanQuoteText(text);
+      clearShareStatus();
+
       sayingTextEl.classList.add("is-hidden");
 
       setTimeout(() => {
-        sayingTextEl.innerHTML = buildStylizedSayingHTML(text);
+        sayingTextEl.innerHTML = buildStylizedSayingHTML(currentSayingText);
         sayingTextEl.classList.remove("is-hidden");
       }, 180);
     }
