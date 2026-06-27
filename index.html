@@ -283,17 +283,9 @@
       padding: 22px 28px;
       text-align: center;
       backdrop-filter: blur(8px);
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-areas:
-        "label share"
-        "quote share";
-      column-gap: 24px;
-      align-items: center;
     }
 
     .inspiration-label {
-      grid-area: label;
       font-size: .72rem;
       font-weight: 800;
       letter-spacing: .16em;
@@ -303,7 +295,6 @@
     }
 
     .inspiration-text {
-      grid-area: quote;
       min-height: 118px;
       display: flex;
       flex-wrap: wrap;
@@ -332,11 +323,10 @@
     }
 
     .inspiration-actions {
-      grid-area: share;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      margin: 0;
+      justify-content: center;
+      margin-top: 14px;
     }
 
     .share-post-btn {
@@ -1165,11 +1155,6 @@
       .inspiration-card {
         width: 100%;
         padding: 18px 18px 20px;
-        grid-template-columns: 1fr;
-        grid-template-areas:
-          "label"
-          "quote"
-          "share";
       }
 
       .inspiration-text {
