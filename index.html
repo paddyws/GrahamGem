@@ -1100,6 +1100,73 @@
       line-height: 1.45;
     }
 
+    .payment-checkout-card {
+      background: #fffaf1;
+      padding: 34px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid #ead8bd;
+      scroll-margin-top: 118px;
+    }
+
+    .payment-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .payment-btn {
+      min-height: 54px;
+      padding: 0 18px;
+      border-radius: 999px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .payment-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(.97);
+    }
+
+    .payment-btn.zelle {
+      background: var(--ink);
+      color: white;
+    }
+
+    .payment-btn.stripe {
+      background: var(--teal);
+      color: white;
+    }
+
+    .payment-status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #f3eadc;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: .92rem;
+    }
+
+    .payment-status.good {
+      background: #dff3e9;
+      color: var(--success);
+    }
+
+    .payment-status.bad {
+      background: #f5d8d2;
+      color: var(--danger);
+    }
+
+    .manual-booking-form {
+      scroll-margin-top: 118px;
+    }
+
     .form-card-title {
       margin: 0 0 8px;
       font-size: 2rem;
@@ -1217,7 +1284,8 @@
       .intro,
       .booking,
       .photo-grid,
-      .form-row {
+      .form-row,
+      .payment-actions {
         grid-template-columns: 1fr;
       }
 
@@ -1509,13 +1577,13 @@
 
   <section id="book" class="booking">
     <div>
-      <h2 class="section-title">Request your stay</h2>
+      <h2 class="section-title">Book your stay</h2>
       <p class="section-text">
-        Check the live availability calendar, then request a temporary date hold.
-        Your dates will be held on this website immediately, but final booking is confirmed manually.
+        Choose your dates, review the estimated total, then head straight to checkout with Zelle or Stripe.
       </p>
       <p class="section-text">
-        The calendar below combines our current Evolve availability feed with direct website holds.
+        The calendar below combines our current Evolve availability feed with direct website holds. Prefer a manual booking?
+        That option is still available below.
       </p>
     </div>
 
@@ -1557,10 +1625,31 @@
         </div>
       </div>
 
-      <form id="bookingForm">
-        <h3 class="form-card-title">Request a temporary hold</h3>
+
+      <div class="payment-checkout-card" id="paymentCheckoutCard">
+        <h3 class="form-card-title">Checkout</h3>
         <p class="form-card-subtitle">
-          We’ll receive your request right away and confirm the booking manually.
+          Select valid dates above, then choose Zelle or Stripe to book now. We’ll set up the real checkout links here.
+        </p>
+
+        <div id="checkoutSummary" class="quote-placeholder">
+          Select dates to unlock checkout.
+        </div>
+
+        <div class="payment-actions">
+          <button type="button" class="payment-btn zelle" id="zelleCheckoutButton">Pay with Zelle</button>
+          <button type="button" class="payment-btn stripe" id="stripeCheckoutButton">Pay with Stripe</button>
+        </div>
+
+        <div id="paymentStatus" class="payment-status">
+          Zelle and Stripe are ready to connect once your payment details are added.
+        </div>
+      </div>
+
+      <form id="bookingForm" class="manual-booking-form">
+        <h3 class="form-card-title">Book manually</h3>
+        <p class="form-card-subtitle">
+          Want us to set those up for you? Send a manual booking request and we’ll help confirm the stay.
         </p>
 
         <input id="guestName" type="text" placeholder="Name" required>
@@ -1576,10 +1665,10 @@
 
         <textarea id="guestMessage" placeholder="Anything we should know?"></textarea>
 
-        <button class="submit-btn" type="submit">Request Date Hold</button>
+        <button class="submit-btn" type="submit">Request Manual Booking</button>
 
         <p class="section-text" style="font-size:.9rem; margin-top: 14px;">
-          Your dates will be temporarily held on this website. Final booking is confirmed manually.
+          Use this if you’d rather have us set up payment and confirmation manually.
         </p>
       </form>
     </div>
@@ -1615,11 +1704,16 @@
 
   <footer>
     Graham Gem • Graham, North Carolina<br>
-    Direct booking inquiries only. Final availability confirmed manually.
+    Direct booking available through Zelle or Stripe. Manual booking available by request.
   </footer>
 
   <script>
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
+
+    // Payment setup placeholders.
+    // Replace these with your real Zelle recipient and Stripe Payment Link / Checkout URL when ready.
+    const ZELLE_RECIPIENT = 'SET_UP_ZELLE_EMAIL_OR_PHONE';
+    const STRIPE_CHECKOUT_URL = 'SET_UP_STRIPE_CHECKOUT_URL';
 
     const HERO_IMAGE_FOLDER = '';
     const HERO_IMAGE_FILES = [
@@ -1843,6 +1937,11 @@
 
     const bookingForm = document.getElementById('bookingForm');
     const quickRequestButton = document.getElementById('quickRequestButton');
+    const paymentCheckoutCard = document.getElementById('paymentCheckoutCard');
+    const checkoutSummary = document.getElementById('checkoutSummary');
+    const paymentStatus = document.getElementById('paymentStatus');
+    const zelleCheckoutButton = document.getElementById('zelleCheckoutButton');
+    const stripeCheckoutButton = document.getElementById('stripeCheckoutButton');
 
     const shareQuoteWrap = document.getElementById('shareQuoteWrap');
     const shareQuotePostBtn = document.getElementById('shareQuotePostBtn');
@@ -1908,29 +2007,16 @@
     });
 
     quickRequestButton.addEventListener('click', () => {
-      if (!checkInInput.value || !checkOutInput.value) {
-        openHeroCalendar();
-        return;
-      }
-
-      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
-
-      if (!result.ok) {
-        setHeroBookingMessage(result.message, 'bad');
-        setAvailabilityMessage(result.message, 'bad');
-        openHeroCalendar();
-        return;
-      }
-
-      bookingForm.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-
-      setTimeout(() => {
-        document.getElementById('guestName').focus({ preventScroll: true });
-      }, 450);
+      handleBookNowClick();
     });
+
+    if (zelleCheckoutButton) {
+      zelleCheckoutButton.addEventListener('click', handleZelleCheckout);
+    }
+
+    if (stripeCheckoutButton) {
+      stripeCheckoutButton.addEventListener('click', handleStripeCheckout);
+    }
 
 
     if (shareQuotePostBtn) {
@@ -2004,6 +2090,116 @@
       renderCalendar();
     });
 
+    function handleBookNowClick() {
+      if (!checkInInput.value || !checkOutInput.value) {
+        openHeroCalendar();
+        return;
+      }
+
+      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
+
+      if (!result.ok) {
+        setHeroBookingMessage(result.message, 'bad');
+        setAvailabilityMessage(result.message, 'bad');
+        openHeroCalendar();
+        return;
+      }
+
+      updatePaymentCheckout();
+      closeHeroCalendar();
+
+      if (paymentCheckoutCard) {
+        paymentCheckoutCard.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+    }
+
+    async function handleZelleCheckout() {
+      const quote = getCurrentValidQuote();
+
+      if (!quote) {
+        openHeroCalendar();
+        return;
+      }
+
+      if (!isPaymentValueSet(ZELLE_RECIPIENT, 'SET_UP_ZELLE')) {
+        setPaymentStatus('Zelle checkout is ready to connect. Replace ZELLE_RECIPIENT in the code with your Zelle email or phone.', 'bad');
+        return;
+      }
+
+      const zelleMessage = buildPaymentDetails(quote, 'Zelle');
+
+      try {
+        await navigator.clipboard.writeText(zelleMessage);
+        setPaymentStatus(`Zelle details copied. Send ${formatMoney(quote.totalWithTax)} to ${ZELLE_RECIPIENT}.`, 'good');
+      } catch (error) {
+        setPaymentStatus(`Send ${formatMoney(quote.totalWithTax)} by Zelle to ${ZELLE_RECIPIENT}.`, 'good');
+      }
+    }
+
+    function handleStripeCheckout() {
+      const quote = getCurrentValidQuote();
+
+      if (!quote) {
+        openHeroCalendar();
+        return;
+      }
+
+      if (!isPaymentValueSet(STRIPE_CHECKOUT_URL, 'SET_UP_STRIPE')) {
+        setPaymentStatus('Stripe checkout is ready to connect. Replace STRIPE_CHECKOUT_URL in the code with your Stripe Payment Link or Checkout URL.', 'bad');
+        return;
+      }
+
+      const stripeUrl = new URL(STRIPE_CHECKOUT_URL, window.location.href);
+      stripeUrl.searchParams.set('check_in', checkInInput.value);
+      stripeUrl.searchParams.set('check_out', checkOutInput.value);
+      stripeUrl.searchParams.set('guests', guestCountInput.value);
+      stripeUrl.searchParams.set('estimated_total', quote.totalWithTax.toFixed(2));
+
+      window.location.href = stripeUrl.toString();
+    }
+
+    function getCurrentValidQuote() {
+      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
+
+      if (!result.ok) {
+        setAvailabilityMessage(result.message, 'bad');
+        setHeroBookingMessage(result.message, 'bad');
+        setPaymentStatus(result.message, 'bad');
+        return null;
+      }
+
+      return buildQuote(checkInInput.value, checkOutInput.value);
+    }
+
+    function isPaymentValueSet(value, placeholderPrefix) {
+      return Boolean(value && !String(value).startsWith(placeholderPrefix));
+    }
+
+    function buildPaymentDetails(quote, method) {
+      return [
+        `Graham Gem ${method} booking`,
+        `Check-in: ${checkInInput.value}`,
+        `Check-out: ${checkOutInput.value}`,
+        `Guests: ${guestCountInput.value}`,
+        `Total: ${formatMoney(quote.totalWithTax)}`,
+        `Zelle recipient: ${ZELLE_RECIPIENT}`,
+        'Please include your name and stay dates in the payment memo.'
+      ].join('\n');
+    }
+
+    function setPaymentStatus(message, type = '') {
+      if (!paymentStatus) return;
+
+      paymentStatus.className = 'payment-status';
+      if (type === 'good') paymentStatus.classList.add('good');
+      if (type === 'bad') paymentStatus.classList.add('bad');
+
+      paymentStatus.textContent = message || '';
+    }
+
     bookingForm.addEventListener('submit', async event => {
       event.preventDefault();
 
@@ -2056,6 +2252,7 @@
         );
 
         renderQuotePlaceholder();
+        updatePaymentCheckout();
         setHeroBookingMessage('');
 
       } catch (error) {
@@ -2335,6 +2532,7 @@
         setAvailabilityMessage('Select your dates below or click available dates on the calendar.', '');
         setHeroBookingMessage('');
         renderQuotePlaceholder();
+        updatePaymentCheckout();
         return;
       }
 
@@ -2342,6 +2540,7 @@
         setAvailabilityMessage('Now choose a check-out date.', '');
         setHeroBookingMessage('');
         renderQuotePlaceholder();
+        updatePaymentCheckout();
         return;
       }
 
@@ -2349,6 +2548,7 @@
         setAvailabilityMessage(result.message, 'bad');
         setHeroBookingMessage(result.message, 'bad');
         renderQuotePlaceholder();
+        updatePaymentCheckout(result.message, 'bad');
         return;
       }
 
@@ -2358,6 +2558,7 @@
       setAvailabilityMessage(result.message, 'good', savingsText);
       setHeroBookingMessage(`${result.message} ${savingsText}`, 'good');
       renderQuote(quote);
+      updatePaymentCheckout();
     }
 
     function getDateRangeStatus(checkIn, checkOut) {
@@ -2469,6 +2670,50 @@
       `;
     }
 
+    function updatePaymentCheckout(customMessage = '', customType = '') {
+      if (!checkoutSummary) return;
+
+      const result = getDateRangeStatus(checkInInput.value, checkOutInput.value);
+
+      if (!result.ok) {
+        checkoutSummary.innerHTML = `
+          <div class="quote-placeholder">
+            Select valid dates to unlock Zelle or Stripe checkout.
+          </div>
+        `;
+
+        if (customMessage) {
+          setPaymentStatus(customMessage, customType);
+        } else {
+          setPaymentStatus('Zelle and Stripe are ready to connect once your payment details are added.');
+        }
+
+        return;
+      }
+
+      const quote = buildQuote(checkInInput.value, checkOutInput.value);
+
+      checkoutSummary.innerHTML = `
+        <div class="quote-row">
+          <span>Stay dates</span>
+          <strong>${checkInInput.value} → ${checkOutInput.value}</strong>
+        </div>
+        <div class="quote-row">
+          <span>Guests</span>
+          <strong>${guestCountInput.value}</strong>
+        </div>
+        <div class="quote-total">
+          <span>Checkout total</span>
+          <strong>${formatMoney(quote.totalWithTax)}</strong>
+        </div>
+        <div class="quote-footnote">
+          Choose Zelle or Stripe to book now. Replace the setup placeholders in the code with your real payment details.
+        </div>
+      `;
+
+      setPaymentStatus('Ready for checkout. Zelle and Stripe buttons are below.');
+    }
+
     function getBlockedNightsInRange(checkIn, checkOut) {
       const blocked = [];
       let current = keyToDate(checkIn);
@@ -2549,6 +2794,8 @@
 
         button.disabled = false;
       });
+
+      updatePaymentCheckout();
     }
 
     function syncMirrors() {
@@ -2705,28 +2952,10 @@
       const words = cleaned.split(/\s+/).filter(Boolean);
 
       const quoteFonts = getThreeFontsForQuote();
-      const fancyScriptFontClass = "font-great-vibes";
       const largeWordIndexes = chooseLargeWordIndexes(words);
       const lastWordIndex = words.length - 1;
       const lastWordCleaned = cleanWordForCheck(words[lastWordIndex] || '');
       const makeLastWordExtraLarge = lastWordIndex >= 0 && lastWordCleaned.length > 4;
-
-      const biggerWordIndexes = new Set(largeWordIndexes);
-      if (makeLastWordExtraLarge) {
-        biggerWordIndexes.add(lastWordIndex);
-      }
-
-      const fancyScriptWordIndex = biggerWordIndexes.size
-        ? pickRandom([...biggerWordIndexes])
-        : words.length
-          ? words.findIndex(word => isLargeEligible(word)) >= 0
-            ? words.findIndex(word => isLargeEligible(word))
-            : 0
-          : -1;
-
-      if (fancyScriptWordIndex >= 0) {
-        largeWordIndexes.add(fancyScriptWordIndex);
-      }
 
       const lineHtml = [];
 
@@ -2735,9 +2964,7 @@
 
         const wordHtml = lineWords.map((word, lineIndex) => {
           const index = start + lineIndex;
-          const fontClass = index === fancyScriptWordIndex
-            ? fancyScriptFontClass
-            : pickRandom(quoteFonts);
+          const fontClass = pickRandom(quoteFonts);
 
           let sizePt;
           if (makeLastWordExtraLarge && index === lastWordIndex) {
@@ -3172,6 +3399,7 @@ ${getCurrentQuoteText()}`;
 
     renderCalendar();
     renderQuotePlaceholder();
+    updatePaymentCheckout();
   </script>
 </body>
 </html>
