@@ -1915,6 +1915,7 @@
     let sayingsList = [];
     let lastSayingIndex = -1;
     let currentSayingText = '';
+    let useLargestFancyScriptWordNext = true;
 
     const calendarMonths = document.getElementById('calendarMonths');
     const availabilityStatus = document.getElementById('availabilityStatus');
@@ -2973,8 +2974,12 @@
       return [...array].sort(() => Math.random() - 0.5);
     }
 
+    function getRegularFontsForQuote() {
+      return sayingFontClasses.filter(fontClass => !fancyScriptFontClasses.includes(fontClass));
+    }
+
     function getThreeFontsForQuote() {
-      return shuffleArray(sayingFontClasses).slice(0, 3);
+      return shuffleArray(getRegularFontsForQuote()).slice(0, 3);
     }
 
     function cleanWordForCheck(word) {
@@ -3017,6 +3022,7 @@
       const words = cleaned.split(/\s+/).filter(Boolean);
 
       const quoteFonts = getThreeFontsForQuote();
+      const regularFallbackFonts = getRegularFontsForQuote();
       const largeWordIndexes = chooseLargeWordIndexes(words);
       const lastWordIndex = words.length - 1;
       const lastWordCleaned = cleanWordForCheck(words[lastWordIndex] || '');
@@ -3035,13 +3041,38 @@
         }
       }
 
-      const scriptWordIndex = makeLastWordExtraLarge
-        ? lastWordIndex
-        : (bigWordIndexes.size ? pickRandom([...bigWordIndexes]) : -1);
-
       const biggestLargeSize = Math.max(...LARGE_WORD_SIZES);
       const biggestExtraLargeSize = Math.max(...EXTRA_LARGE_LAST_WORD_SIZES);
       const otherLargeWordSizes = LARGE_WORD_SIZES.filter(size => size < biggestLargeSize);
+      const sizeByIndex = new Map();
+
+      words.forEach((word, index) => {
+        let sizePt;
+
+        if (makeLastWordExtraLarge && index === lastWordIndex) {
+          sizePt = biggestExtraLargeSize;
+        } else if (largeWordIndexes.has(index)) {
+          sizePt = pickRandom(otherLargeWordSizes.length ? otherLargeWordSizes : LARGE_WORD_SIZES);
+        } else {
+          sizePt = Math.random() > 0.45
+            ? pickRandom(MEDIUM_WORD_SIZES)
+            : pickRandom(SMALL_WORD_SIZES);
+        }
+
+        sizeByIndex.set(index, sizePt);
+      });
+
+      const rankedBigWords = [...bigWordIndexes]
+        .map(index => ({ index, size: sizeByIndex.get(index) || 0 }))
+        .sort((a, b) => b.size - a.size || a.index - b.index);
+
+      let scriptWordIndex = -1;
+      if (rankedBigWords.length) {
+        const scriptRank = useLargestFancyScriptWordNext || rankedBigWords.length === 1 ? 0 : 1;
+        scriptWordIndex = rankedBigWords[scriptRank].index;
+        useLargestFancyScriptWordNext = !useLargestFancyScriptWordNext;
+      }
+
 
       const lineHtml = [];
 
@@ -3053,20 +3084,8 @@
           const isScriptWord = index === scriptWordIndex;
           const fontClass = isScriptWord
             ? pickRandom(fancyScriptFontClasses)
-            : pickRandom(quoteFonts);
-
-          let sizePt;
-          if (makeLastWordExtraLarge && index === lastWordIndex) {
-            sizePt = isScriptWord ? biggestExtraLargeSize : pickRandom(EXTRA_LARGE_LAST_WORD_SIZES);
-          } else if (isScriptWord) {
-            sizePt = biggestLargeSize;
-          } else if (largeWordIndexes.has(index)) {
-            sizePt = pickRandom(otherLargeWordSizes.length ? otherLargeWordSizes : LARGE_WORD_SIZES);
-          } else {
-            sizePt = Math.random() > 0.45
-              ? pickRandom(MEDIUM_WORD_SIZES)
-              : pickRandom(SMALL_WORD_SIZES);
-          }
+            : pickRandom(quoteFonts.length ? quoteFonts : regularFallbackFonts);
+          const sizePt = sizeByIndex.get(index) || pickRandom(MEDIUM_WORD_SIZES);
 
           return `<span class="saying-word ${fontClass}" style="font-size:${sizePt}pt;">${escapeHtml(word)}</span>`;
         }).join("");
