@@ -354,6 +354,153 @@
       filter: brightness(.98);
     }
 
+    .share-post-btn:disabled,
+    .gem-preview-btn:disabled {
+      opacity: .68;
+      cursor: wait;
+      transform: none;
+    }
+
+    .gem-preview-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(22,36,43,.62);
+      backdrop-filter: blur(8px);
+    }
+
+    .gem-preview-modal[hidden] {
+      display: none;
+    }
+
+    .gem-preview-dialog {
+      width: min(560px, 94vw);
+      max-height: 92vh;
+      overflow: auto;
+      background: #fffaf1;
+      border: 1px solid #ead8bd;
+      border-radius: 30px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.28);
+      padding: 22px;
+      color: var(--ink);
+    }
+
+    .gem-preview-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .gem-preview-top small {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .gem-preview-top strong {
+      display: block;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .gem-preview-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #ead8bd;
+      color: var(--ink);
+      font-size: 1.6rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .gem-preview-copy {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: .95rem;
+    }
+
+    .gem-preview-image-wrap {
+      border-radius: 24px;
+      border: 1px solid #ead8bd;
+      background: #efe0c8;
+      padding: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+    }
+
+    .gem-preview-image-wrap img {
+      display: block;
+      width: 100%;
+      max-height: 56vh;
+      object-fit: contain;
+      border-radius: 18px;
+      background: #fffaf1;
+    }
+
+    .gem-preview-status {
+      min-height: 22px;
+      margin: 14px 2px 0;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .gem-preview-status.good { color: var(--success); }
+    .gem-preview-status.bad { color: var(--danger); }
+
+    .gem-preview-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .gem-preview-btn {
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid #d8c5a9;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.06rem;
+      font-style: italic;
+      font-weight: 700;
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+
+    .gem-preview-btn.primary {
+      background: var(--ink);
+      color: var(--white);
+      border-color: var(--ink);
+    }
+
+    .gem-preview-btn.secondary {
+      background: #fffaf1;
+      color: var(--ink);
+    }
+
+    .gem-preview-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0,0,0,.08);
+      filter: brightness(.98);
+    }
+
     .font-alegreya { font-family: "Alegreya", serif; font-style: italic; }
     .font-amiri { font-family: "Amiri", serif; }
     .font-bellefair { font-family: "Bellefair", serif; letter-spacing: .02em; }
@@ -1171,6 +1318,30 @@
       .share-post-btn {
         width: auto;
       }
+
+      .gem-preview-modal {
+        padding: 12px;
+        align-items: flex-end;
+      }
+
+      .gem-preview-dialog {
+        width: 100%;
+        max-height: 94vh;
+        border-radius: 26px;
+        padding: 18px;
+      }
+
+      .gem-preview-image-wrap img {
+        max-height: 52vh;
+      }
+
+      .gem-preview-actions {
+        flex-direction: column;
+      }
+
+      .gem-preview-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -1306,6 +1477,33 @@
       </div>
     </div>
   </section>
+
+  <div class="gem-preview-modal" id="gemPreviewModal" role="dialog" aria-modal="true" aria-labelledby="gemPreviewTitle" hidden>
+    <div class="gem-preview-dialog">
+      <div class="gem-preview-top">
+        <div>
+          <small>Gem Preview</small>
+          <strong id="gemPreviewTitle">Ready to share</strong>
+        </div>
+        <button type="button" class="gem-preview-close" id="closeGemPreviewButton" aria-label="Close Gem preview">×</button>
+      </div>
+
+      <p class="gem-preview-copy">
+        Preview your Graham Gem below. On desktop, Copy Gem puts the image on your clipboard. On mobile, Share Gem opens the native share sheet.
+      </p>
+
+      <div class="gem-preview-image-wrap">
+        <img id="gemPreviewImage" alt="Graham Gem social post preview">
+      </div>
+
+      <div class="gem-preview-status" id="gemPreviewStatus" aria-live="polite"></div>
+
+      <div class="gem-preview-actions">
+        <button type="button" class="gem-preview-btn secondary" id="copyGemButton">Copy Gem</button>
+        <button type="button" class="gem-preview-btn primary" id="nativeShareGemButton">Share Gem</button>
+      </div>
+    </div>
+  </div>
 
   <section class="intro">
     <div>
@@ -1693,6 +1891,15 @@
     const shareQuoteWrap = document.getElementById('shareQuoteWrap');
     const shareQuotePostBtn = document.getElementById('shareQuotePostBtn');
     const quoteShareCanvas = document.getElementById('quoteShareCanvas');
+    const gemPreviewModal = document.getElementById('gemPreviewModal');
+    const gemPreviewImage = document.getElementById('gemPreviewImage');
+    const gemPreviewStatus = document.getElementById('gemPreviewStatus');
+    const closeGemPreviewButton = document.getElementById('closeGemPreviewButton');
+    const copyGemButton = document.getElementById('copyGemButton');
+    const nativeShareGemButton = document.getElementById('nativeShareGemButton');
+
+    let currentGemFile = null;
+    let currentGemObjectUrl = '';
 
     document.getElementById('prevMonth').addEventListener('click', () => {
       currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
@@ -1779,40 +1986,107 @@
     if (shareQuotePostBtn) {
       shareQuotePostBtn.addEventListener('click', async () => {
         setShareButtonBusy(true, 'Making Gem...');
+        setGemPreviewStatus('Building your Graham Gem preview...', '');
 
         try {
           const file = await buildQuoteShareFile();
-          const shareText = 'A little inspiration from Graham Gem';
+          setCurrentGemFile(file);
+          openGemPreview();
 
-          if (
-            navigator.canShare &&
-            navigator.canShare({ files: [file] }) &&
-            navigator.share
-          ) {
-            await navigator.share({
-              files: [file],
-              title: 'Graham Gem',
-              text: shareText
-            });
+          setShareButtonBusy(false);
+          setShareButtonTemporaryText('Preview Ready');
 
-            setShareButtonBusy(false);
-            setShareButtonTemporaryText('Shared!');
-            return;
+          if (canCopyGemImageToClipboard()) {
+            try {
+              await copyGemImageToClipboard(file);
+              setGemPreviewStatus('Gem copied to your clipboard. You can paste it into a post, text, or email.', 'good');
+              return;
+            } catch (copyError) {
+              console.warn(copyError);
+              setGemPreviewStatus('Preview ready. Tap Copy Gem to try again, or use Share Gem on mobile.', 'bad');
+              return;
+            }
           }
 
-          await copyGemImageToClipboard(file);
-          setShareButtonBusy(false);
-          setShareButtonTemporaryText('Gem Copied!');
+          setGemPreviewStatus('Preview ready. Use Share Gem on mobile, or try Copy Gem if your browser supports image clipboard.', '');
         } catch (error) {
           setShareButtonBusy(false);
 
           if (error && error.name === 'AbortError') return;
 
           console.error(error);
-          setShareButtonTemporaryText('Try on mobile');
+          setShareButtonTemporaryText('Try Again');
+          setGemPreviewStatus('The Gem preview could not be created. Please try again.', 'bad');
         }
       });
     }
+
+    if (copyGemButton) {
+      copyGemButton.addEventListener('click', async () => {
+        if (!currentGemFile) return;
+
+        setGemActionBusy(copyGemButton, true, 'Copying...');
+
+        try {
+          await copyGemImageToClipboard(currentGemFile);
+          setGemPreviewStatus('Gem copied to your clipboard.', 'good');
+        } catch (error) {
+          console.error(error);
+          setGemPreviewStatus('This browser is blocking image clipboard copy. Try the Share Gem button instead.', 'bad');
+        } finally {
+          setGemActionBusy(copyGemButton, false, 'Copy Gem');
+        }
+      });
+    }
+
+    if (nativeShareGemButton) {
+      nativeShareGemButton.addEventListener('click', async () => {
+        if (!currentGemFile) return;
+
+        setGemActionBusy(nativeShareGemButton, true, 'Sharing...');
+
+        try {
+          if (canNativeShareGemFile(currentGemFile)) {
+            await navigator.share({
+              files: [currentGemFile],
+              title: 'Graham Gem',
+              text: 'A little inspiration from Graham Gem'
+            });
+            setGemPreviewStatus('Gem shared!', 'good');
+          } else {
+            await copyGemImageToClipboard(currentGemFile);
+            setGemPreviewStatus('Native sharing is not available here, so the Gem was copied instead.', 'good');
+          }
+        } catch (error) {
+          if (error && error.name === 'AbortError') {
+            setGemPreviewStatus('Share canceled. Your preview is still ready.', '');
+          } else {
+            console.error(error);
+            setGemPreviewStatus('Sharing is blocked in this browser. Try Copy Gem instead.', 'bad');
+          }
+        } finally {
+          setGemActionBusy(nativeShareGemButton, false, 'Share Gem');
+        }
+      });
+    }
+
+    if (closeGemPreviewButton) {
+      closeGemPreviewButton.addEventListener('click', closeGemPreview);
+    }
+
+    if (gemPreviewModal) {
+      gemPreviewModal.addEventListener('click', event => {
+        if (event.target === gemPreviewModal) {
+          closeGemPreview();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeGemPreview();
+      }
+    });
 
     checkInInput.addEventListener('change', () => {
       if (checkInInput.value) {
@@ -2586,13 +2860,71 @@
       if (shareQuotePostBtn) shareQuotePostBtn.textContent = 'Share Gem';
     }
 
+    function setCurrentGemFile(file) {
+      currentGemFile = file;
+
+      if (currentGemObjectUrl) {
+        URL.revokeObjectURL(currentGemObjectUrl);
+      }
+
+      currentGemObjectUrl = URL.createObjectURL(file);
+
+      if (gemPreviewImage) {
+        gemPreviewImage.src = currentGemObjectUrl;
+      }
+    }
+
+    function openGemPreview() {
+      if (!gemPreviewModal) return;
+      gemPreviewModal.hidden = false;
+    }
+
+    function closeGemPreview() {
+      if (!gemPreviewModal || gemPreviewModal.hidden) return;
+      gemPreviewModal.hidden = true;
+    }
+
+    function setGemPreviewStatus(message, tone = '') {
+      if (!gemPreviewStatus) return;
+      gemPreviewStatus.textContent = message || '';
+      gemPreviewStatus.classList.remove('good', 'bad');
+      if (tone) gemPreviewStatus.classList.add(tone);
+    }
+
+    function setGemActionBusy(button, isBusy, label) {
+      if (!button) return;
+      button.disabled = Boolean(isBusy);
+      if (label) button.textContent = label;
+    }
+
+    function canCopyGemImageToClipboard() {
+      return Boolean(
+        window.isSecureContext &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.write === 'function' &&
+        window.ClipboardItem
+      );
+    }
+
+    function canNativeShareGemFile(file) {
+      return Boolean(
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [file] })
+      );
+    }
+
     async function copyGemImageToClipboard(file) {
-      if (!navigator.clipboard || !window.ClipboardItem) {
+      if (!canCopyGemImageToClipboard()) {
         throw new Error('Image clipboard sharing is not supported in this browser.');
       }
 
+      const pngBlob = file.type === 'image/png'
+        ? file
+        : file.slice(0, file.size, 'image/png');
+
       await navigator.clipboard.write([
-        new ClipboardItem({ [file.type]: file })
+        new ClipboardItem({ 'image/png': pngBlob })
       ]);
     }
 
