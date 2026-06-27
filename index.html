@@ -283,9 +283,17 @@
       padding: 22px 28px;
       text-align: center;
       backdrop-filter: blur(8px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "label share"
+        "quote share";
+      column-gap: 24px;
+      align-items: center;
     }
 
     .inspiration-label {
+      grid-area: label;
       font-size: .72rem;
       font-weight: 800;
       letter-spacing: .16em;
@@ -295,6 +303,7 @@
     }
 
     .inspiration-text {
+      grid-area: quote;
       min-height: 118px;
       display: flex;
       flex-wrap: wrap;
@@ -323,61 +332,36 @@
     }
 
     .inspiration-actions {
+      grid-area: share;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      margin-top: 14px;
+      justify-content: flex-end;
+      margin: 0;
     }
 
-    .share-post-btn,
-    .share-copy-btn,
-    .share-download-link {
+    .share-post-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 46px;
-      padding: 0 18px;
+      padding: 0 22px;
       border-radius: 999px;
       border: 1px solid #d8c5a9;
-      background: white;
-      color: var(--ink);
+      background: var(--ink);
+      color: var(--white);
       font-family: "Cormorant Garamond", Georgia, serif;
       font-size: 1.08rem;
       font-style: italic;
       font-weight: 700;
+      white-space: nowrap;
       box-shadow: 0 8px 20px rgba(0,0,0,.06);
       transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
     }
 
-    .share-post-btn {
-      background: var(--ink);
-      color: var(--white);
-      padding: 0 22px;
-    }
-
-    .share-copy-btn {
-      color: var(--muted);
-    }
-
-    .share-post-btn:hover,
-    .share-copy-btn:hover,
-    .share-download-link:hover {
+    .share-post-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 12px 24px rgba(0,0,0,.08);
       filter: brightness(.98);
-    }
-
-    .share-download-link[hidden] {
-      display: none;
-    }
-
-    .share-status {
-      min-height: 18px;
-      color: var(--muted);
-      font-size: .82rem;
-      line-height: 1.35;
-      text-align: center;
     }
 
     .font-alegreya { font-family: "Alegreya", serif; font-style: italic; }
@@ -1181,6 +1165,11 @@
       .inspiration-card {
         width: 100%;
         padding: 18px 18px 20px;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "label"
+          "quote"
+          "share";
       }
 
       .inspiration-text {
@@ -1189,14 +1178,13 @@
         padding: 8px 6px;
       }
 
-      .share-post-btn,
-      .share-copy-btn,
-      .share-download-link {
-        width: 100%;
+      .inspiration-actions {
+        justify-content: center;
+        margin-top: 12px;
       }
 
-      .share-copy-btn {
-        display: none;
+      .share-post-btn {
+        width: auto;
       }
     }
   </style>
@@ -1329,13 +1317,6 @@
         <button type="button" class="share-post-btn" id="shareQuotePostBtn">
           Share Gem
         </button>
-        <button type="button" class="share-copy-btn" id="copyQuotePostBtn">
-          Copy Image
-        </button>
-        <a id="downloadQuotePostLink" class="share-download-link" download="graham-gem.png" hidden>
-          Download post
-        </a>
-        <div class="share-status" id="shareQuoteStatus" aria-live="polite"></div>
         <canvas id="quoteShareCanvas" width="1080" height="1350" hidden></canvas>
       </div>
     </div>
@@ -1726,9 +1707,6 @@
 
     const shareQuoteWrap = document.getElementById('shareQuoteWrap');
     const shareQuotePostBtn = document.getElementById('shareQuotePostBtn');
-    const copyQuotePostBtn = document.getElementById('copyQuotePostBtn');
-    const downloadQuotePostLink = document.getElementById('downloadQuotePostLink');
-    const shareQuoteStatus = document.getElementById('shareQuoteStatus');
     const quoteShareCanvas = document.getElementById('quoteShareCanvas');
 
     document.getElementById('prevMonth').addEventListener('click', () => {
@@ -1815,13 +1793,39 @@
 
     if (shareQuotePostBtn) {
       shareQuotePostBtn.addEventListener('click', async () => {
-        await shareOrCopyQuoteGem();
-      });
-    }
+        setShareButtonBusy(true, 'Making Gem...');
 
-    if (copyQuotePostBtn) {
-      copyQuotePostBtn.addEventListener('click', async () => {
-        await copyQuoteGemOnly();
+        try {
+          const file = await buildQuoteShareFile();
+          const shareText = 'A little inspiration from Graham Gem';
+
+          if (
+            navigator.canShare &&
+            navigator.canShare({ files: [file] }) &&
+            navigator.share
+          ) {
+            await navigator.share({
+              files: [file],
+              title: 'Graham Gem',
+              text: shareText
+            });
+
+            setShareButtonBusy(false);
+            setShareButtonTemporaryText('Shared!');
+            return;
+          }
+
+          await copyGemImageToClipboard(file);
+          setShareButtonBusy(false);
+          setShareButtonTemporaryText('Gem Copied!');
+        } catch (error) {
+          setShareButtonBusy(false);
+
+          if (error && error.name === 'AbortError') return;
+
+          console.error(error);
+          setShareButtonTemporaryText('Try on mobile');
+        }
       });
     }
 
@@ -2576,145 +2580,40 @@
       return cleanQuoteText(currentSayingText || 'Choose joy.');
     }
 
-    function setShareStatus(message) {
-      if (shareQuoteStatus) shareQuoteStatus.textContent = message || '';
+    function setShareButtonBusy(isBusy, label) {
+      if (!shareQuotePostBtn) return;
+      shareQuotePostBtn.disabled = Boolean(isBusy);
+      if (label) shareQuotePostBtn.textContent = label;
+    }
+
+    function setShareButtonTemporaryText(label) {
+      if (!shareQuotePostBtn) return;
+
+      const defaultLabel = 'Share Gem';
+      shareQuotePostBtn.textContent = label;
+
+      window.setTimeout(() => {
+        shareQuotePostBtn.textContent = defaultLabel;
+      }, 1800);
     }
 
     function clearShareStatus() {
-      setShareStatus('');
+      if (shareQuotePostBtn) shareQuotePostBtn.textContent = 'Share Gem';
     }
 
-    function triggerQuotePostDownload(file) {
-      if (!downloadQuotePostLink) return;
-
-      if (downloadQuotePostLink.dataset.objectUrl) {
-        URL.revokeObjectURL(downloadQuotePostLink.dataset.objectUrl);
-      }
-
-      const objectUrl = URL.createObjectURL(file);
-      downloadQuotePostLink.href = objectUrl;
-      downloadQuotePostLink.hidden = false;
-      downloadQuotePostLink.dataset.objectUrl = objectUrl;
-      downloadQuotePostLink.click();
-    }
-
-    function isLikelyMobileDevice() {
-      return window.matchMedia('(max-width: 850px)').matches ||
-        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    }
-
-    async function shareOrCopyQuoteGem() {
-      clearShareStatus();
-
-      if (shareQuotePostBtn) {
-        shareQuotePostBtn.disabled = true;
-        shareQuotePostBtn.textContent = 'Making Gem...';
-      }
-
-      try {
-        const file = await buildQuoteShareFile();
-
-        if (
-          isLikelyMobileDevice() &&
-          navigator.canShare &&
-          navigator.canShare({ files: [file] }) &&
-          navigator.share
-        ) {
-          await navigator.share({
-            files: [file],
-            title: 'Graham Gem',
-            text: 'A little inspiration from Graham Gem'
-          });
-
-          setShareStatus('Gem shared.');
-          return;
-        }
-
-        await copyQuotePostImageToClipboard(file);
-        revealDownloadPostLink(file);
-        setShareStatus('Gem image copied. Paste it into a social post, text, email, or design tool.');
-      } catch (error) {
-        if (error && error.name === 'AbortError') return;
-
-        console.error(error);
-
-        try {
-          const file = await buildQuoteShareFile();
-          revealDownloadPostLink(file);
-          setShareStatus('Clipboard image copy is not supported here, so I made the Gem image downloadable instead.');
-        } catch (downloadError) {
-          console.error(downloadError);
-          setShareStatus('Sorry — the Gem image could not be created.');
-        }
-      } finally {
-        if (shareQuotePostBtn) {
-          shareQuotePostBtn.disabled = false;
-          shareQuotePostBtn.textContent = 'Share Gem';
-        }
-      }
-    }
-
-    async function copyQuoteGemOnly() {
-      clearShareStatus();
-
-      if (copyQuotePostBtn) {
-        copyQuotePostBtn.disabled = true;
-        copyQuotePostBtn.textContent = 'Copying...';
-      }
-
-      try {
-        const file = await buildQuoteShareFile();
-        await copyQuotePostImageToClipboard(file);
-        revealDownloadPostLink(file);
-        setShareStatus('Gem image copied to your clipboard.');
-      } catch (error) {
-        console.error(error);
-
-        try {
-          const file = await buildQuoteShareFile();
-          revealDownloadPostLink(file);
-          setShareStatus('Clipboard image copy is not supported here, so I made the Gem image downloadable instead.');
-        } catch (downloadError) {
-          console.error(downloadError);
-          setShareStatus('Sorry — the Gem image could not be copied.');
-        }
-      } finally {
-        if (copyQuotePostBtn) {
-          copyQuotePostBtn.disabled = false;
-          copyQuotePostBtn.textContent = 'Copy Image';
-        }
-      }
-    }
-
-    async function copyQuotePostImageToClipboard(file) {
+    async function copyGemImageToClipboard(file) {
       if (!navigator.clipboard || !window.ClipboardItem) {
-        throw new Error('Image clipboard is not supported in this browser.');
+        throw new Error('Image clipboard sharing is not supported in this browser.');
       }
-
-      const blob = file instanceof Blob
-        ? file
-        : new Blob([await file.arrayBuffer()], { type: 'image/png' });
 
       await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob })
+        new ClipboardItem({ [file.type]: file })
       ]);
-    }
-
-    function revealDownloadPostLink(file) {
-      if (!downloadQuotePostLink) return;
-
-      if (downloadQuotePostLink.dataset.objectUrl) {
-        URL.revokeObjectURL(downloadQuotePostLink.dataset.objectUrl);
-      }
-
-      const objectUrl = URL.createObjectURL(file);
-      downloadQuotePostLink.href = objectUrl;
-      downloadQuotePostLink.hidden = false;
-      downloadQuotePostLink.dataset.objectUrl = objectUrl;
     }
 
     async function buildQuoteShareFile() {
       await ensureFontsReady();
+      await waitForNextFrame();
 
       if (!quoteShareCanvas) {
         throw new Error('Quote share canvas was not found.');
@@ -2724,18 +2623,14 @@
       const ctx = canvas.getContext('2d');
       const width = canvas.width;
       const height = canvas.height;
-
-      const hostname = window.location.hostname ||
-        window.location.href.replace(/^https?:\/\//, '').split('/')[0] ||
-        'grahamgem.com';
-
+      const hostname = window.location.hostname || window.location.href.replace(/^https?:\/\//, '').split('/')[0] || 'grahamgem.com';
       const footerUrl = hostname.replace(/^www\./, '');
 
       ctx.clearRect(0, 0, width, height);
 
       const backgroundGradient = ctx.createLinearGradient(0, 0, width, height);
       backgroundGradient.addColorStop(0, '#fffaf1');
-      backgroundGradient.addColorStop(1, '#efe0c8');
+      backgroundGradient.addColorStop(1, '#f2e5d2');
       ctx.fillStyle = backgroundGradient;
       ctx.fillRect(0, 0, width, height);
 
@@ -2746,7 +2641,7 @@
       ctx.strokeStyle = '#ead8bd';
       ctx.stroke();
 
-      drawRoundedRect(ctx, 116, 116, width - 232, height - 232, 30);
+      drawRoundedRect(ctx, 118, 118, width - 236, height - 236, 28);
       ctx.strokeStyle = 'rgba(31,170,166,.18)';
       ctx.lineWidth = 2;
       ctx.stroke();
@@ -2759,27 +2654,24 @@
       ctx.fillText('A LITTLE INSPIRATION', width / 2, 170);
 
       ctx.fillStyle = '#16242b';
-      ctx.font = '600 70px "Cormorant Garamond", Georgia, serif';
-      ctx.fillText('Graham', width / 2 - 86, 256);
+      ctx.font = '600 68px "Cormorant Garamond", Georgia, serif';
+      ctx.fillText('Graham', width / 2 - 84, 252);
       ctx.fillStyle = '#c99b4a';
-      ctx.fillText('Gem', width / 2 + 126, 256);
+      ctx.fillText('Gem', width / 2 + 122, 252);
 
       ctx.strokeStyle = '#1faaa6';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(302, 308);
-      ctx.lineTo(778, 308);
+      ctx.moveTo(302, 302);
+      ctx.lineTo(778, 302);
       ctx.stroke();
 
-      drawStyledQuoteFromPage(ctx, {
-        canvasWidth: width,
-        centerY: 675,
-        maxWidth: width - 220,
-        maxHeight: 470
-      });
+      drawCurrentQuoteLayoutToCanvas(ctx, width, height);
 
       ctx.fillStyle = '#6e6258';
       ctx.font = '500 28px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
       ctx.fillText('Private Pool Retreat • Graham, North Carolina', width / 2, height - 186);
 
       ctx.fillStyle = '#1faaa6';
@@ -2794,112 +2686,76 @@
       return new File([blob], 'graham-gem.png', { type: 'image/png' });
     }
 
-    function drawStyledQuoteFromPage(ctx, options) {
+    function drawCurrentQuoteLayoutToCanvas(ctx, canvasWidth, canvasHeight) {
       const sayingTextEl = document.getElementById('sayingText');
-      const wordEls = sayingTextEl
-        ? Array.from(sayingTextEl.querySelectorAll('.saying-word'))
-        : [];
+      const words = sayingTextEl ? [...sayingTextEl.querySelectorAll('.saying-word')] : [];
 
-      if (!wordEls.length) {
-        drawFallbackQuote(ctx, options);
+      if (!words.length) {
+        drawFallbackQuoteToCanvas(ctx, getCurrentQuoteText(), canvasWidth);
         return;
       }
 
-      const parentRect = sayingTextEl.getBoundingClientRect();
-      const pieces = wordEls
-        .map(el => {
-          const rect = el.getBoundingClientRect();
-          const style = window.getComputedStyle(el);
+      const rects = words.map(word => ({
+        el: word,
+        rect: word.getBoundingClientRect(),
+        style: window.getComputedStyle(word)
+      })).filter(item => item.rect.width && item.rect.height);
 
-          return {
-            text: el.textContent,
-            x: rect.left - parentRect.left,
-            y: rect.top - parentRect.top,
-            width: rect.width,
-            height: rect.height,
-            fontSize: parseFloat(style.fontSize) || 32,
-            fontStyle: style.fontStyle || 'normal',
-            fontWeight: style.fontWeight || '500',
-            fontFamily: style.fontFamily || '"Cormorant Garamond", Georgia, serif',
-            letterSpacing: style.letterSpacing
-          };
-        })
-        .filter(piece => piece.text && piece.width > 0 && piece.height > 0);
-
-      if (!pieces.length) {
-        drawFallbackQuote(ctx, options);
+      if (!rects.length) {
+        drawFallbackQuoteToCanvas(ctx, getCurrentQuoteText(), canvasWidth);
         return;
       }
 
-      const minX = Math.min(...pieces.map(piece => piece.x));
-      const minY = Math.min(...pieces.map(piece => piece.y));
-      const maxX = Math.max(...pieces.map(piece => piece.x + piece.width));
-      const maxY = Math.max(...pieces.map(piece => piece.y + piece.height));
+      const minLeft = Math.min(...rects.map(item => item.rect.left));
+      const maxRight = Math.max(...rects.map(item => item.rect.right));
+      const minTop = Math.min(...rects.map(item => item.rect.top));
+      const maxBottom = Math.max(...rects.map(item => item.rect.bottom));
 
-      const sourceWidth = Math.max(maxX - minX, 1);
-      const sourceHeight = Math.max(maxY - minY, 1);
-
-      const scale = Math.min(
-        options.maxWidth / sourceWidth,
-        options.maxHeight / sourceHeight,
-        2.15
-      );
-
-      const targetWidth = sourceWidth * scale;
-      const targetHeight = sourceHeight * scale;
-      const startX = (options.canvasWidth - targetWidth) / 2;
-      const startY = options.centerY - targetHeight / 2;
+      const layoutWidth = maxRight - minLeft;
+      const layoutHeight = maxBottom - minTop;
+      const maxCanvasWidth = canvasWidth - 230;
+      const maxCanvasHeight = 430;
+      const scale = Math.min(maxCanvasWidth / layoutWidth, maxCanvasHeight / layoutHeight, 2.8);
+      const offsetX = (canvasWidth - (layoutWidth * scale)) / 2;
+      const offsetY = 650 - ((layoutHeight * scale) / 2);
 
       ctx.save();
       ctx.textAlign = 'left';
-      ctx.textBaseline = 'alphabetic';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = '#16242b';
 
-      pieces.forEach(piece => {
-        const scaledFontSize = piece.fontSize * scale;
-        const canvasX = startX + ((piece.x - minX) * scale);
-        const canvasY = startY + ((piece.y - minY) * scale) + (scaledFontSize * 0.82);
+      rects.forEach(item => {
+        const fontSize = parseFloat(item.style.fontSize) * scale;
+        const fontStyle = item.style.fontStyle || 'normal';
+        const fontWeight = item.style.fontWeight || '500';
+        const fontFamily = item.style.fontFamily || '"Cormorant Garamond", Georgia, serif';
+        const x = offsetX + ((item.rect.left - minLeft) * scale);
+        const y = offsetY + ((item.rect.top - minTop) * scale);
 
-        ctx.fillStyle = '#16242b';
-        ctx.font = `${piece.fontStyle} ${piece.fontWeight} ${scaledFontSize}px ${piece.fontFamily}`;
-
-        if ('letterSpacing' in ctx) {
-          const spacing = piece.letterSpacing === 'normal'
-            ? 0
-            : parseFloat(piece.letterSpacing || 0);
-
-          ctx.letterSpacing = `${Number.isFinite(spacing) ? spacing * scale : 0}px`;
-        }
-
-        ctx.fillText(piece.text, canvasX, canvasY);
+        ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+        ctx.fillText(item.el.textContent, x, y);
       });
-
-      if ('letterSpacing' in ctx) {
-        ctx.letterSpacing = '0px';
-      }
 
       ctx.restore();
     }
 
-    function drawFallbackQuote(ctx, options) {
-      const quote = getCurrentQuoteText();
-
-      ctx.save();
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#16242b';
-      const quoteFontSize = fitQuoteFontSize(ctx, quote, options.maxWidth, 6, 68, 40);
+    function drawFallbackQuoteToCanvas(ctx, quote, canvasWidth) {
+      const maxQuoteWidth = canvasWidth - 240;
+      const quoteFontSize = fitQuoteFontSize(ctx, quote, maxQuoteWidth, 6, 68, 40);
       ctx.font = `italic ${quoteFontSize}px "Cormorant Garamond", Georgia, serif`;
+      ctx.fillStyle = '#16242b';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
 
-      const lines = wrapCanvasText(ctx, quote, options.maxWidth);
+      const lines = wrapCanvasText(ctx, quote, maxQuoteWidth);
       const lineHeight = quoteFontSize * 1.28;
       const quoteBlockHeight = lines.length * lineHeight;
-      let y = options.centerY - (quoteBlockHeight / 2) + (quoteFontSize * 0.35);
+      let y = 660 - (quoteBlockHeight / 2) + (quoteFontSize * 0.35);
 
       lines.forEach(line => {
-        ctx.fillText(line, options.canvasWidth / 2, y);
+        ctx.fillText(line, canvasWidth / 2, y);
         y += lineHeight;
       });
-
-      ctx.restore();
     }
 
     function wrapCanvasText(ctx, text, maxWidth) {
@@ -2958,6 +2814,10 @@
       if (document.fonts && document.fonts.ready) {
         await document.fonts.ready;
       }
+    }
+
+    function waitForNextFrame() {
+      return new Promise(resolve => requestAnimationFrame(() => resolve()));
     }
 
     function showSaying(text) {
