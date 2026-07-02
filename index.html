@@ -236,22 +236,23 @@
 
     .hero-discount-note {
       width: max-content;
-      max-width: min(100%, 280px);
-      margin: 8px auto 0;
-      padding: 4px 14px;
-      border-radius: 999px;
-      background: rgba(22,36,43,.62);
-      color: rgba(255,250,241,.96);
-      border: 1px solid rgba(255,250,241,.34);
-      box-shadow: 0 8px 20px rgba(0,0,0,.13);
-      backdrop-filter: blur(10px);
+      max-width: min(100%, 320px);
+      margin: 10px auto 0;
+      padding: 2px 4px;
+      border-radius: 0;
+      background: transparent;
+      color: #16242b;
+      border: 0;
+      box-shadow: none;
+      backdrop-filter: none;
       font-family: "Great Vibes", cursive;
-      font-size: 1.2rem;
+      font-size: 1.28rem;
       font-weight: 400;
       line-height: 1.1;
-      letter-spacing: .01em;
+      letter-spacing: 0;
       text-align: center;
       text-transform: none;
+      text-shadow: none;
       pointer-events: none;
       white-space: nowrap;
     }
@@ -1736,10 +1737,10 @@
       }
 
       .hero-discount-note {
-        margin-top: 5px !important;
-        padding: 3px 8px !important;
-        font-size: .54rem !important;
-        letter-spacing: .045em !important;
+        margin-top: 6px !important;
+        padding: 2px 4px !important;
+        font-size: 1.08rem !important;
+        letter-spacing: 0 !important;
       }
 
       .hero-booking-wrap .guest-button .guest-value {
@@ -2489,6 +2490,106 @@
     };
 
     const fallbackSayings = [
+      "This too shall pass.",
+      "Know thyself.",
+      "Fortune favors the bold.",
+      "Less is more.",
+      "Begin anywhere.",
+      "Still waters run deep.",
+      "Make it happen.",
+      "Do no harm.",
+      "Choose joy.",
+      "Stay curious.",
+      "Love wins.",
+      "Time tells all.",
+      "Be here now.",
+      "Grace changes everything.",
+      "Courage, dear heart.",
+      "Hope is stubborn.",
+      "Fear is a liar.",
+      "Truth endures.",
+      "Kindness is strength.",
+      "Peace begins within.",
+      "Create yourself.",
+      "Go with God.",
+      "Rise anyway.",
+      "Keep moving.",
+      "Dream bigger.",
+      "Risk is required.",
+      "Light attracts light.",
+      "Beauty remains.",
+      "Begin again.",
+      "Stay soft.",
+      "The soul knows.",
+      "Wonder is wisdom.",
+      "Love is labor.",
+      "Joy is resistance.",
+      "Enough is plenty.",
+      "Simplicity is power.",
+      "Pain teaches.",
+      "Mercy matters.",
+      "Breathe first.",
+      "Grow through it.",
+      "Act, then understand.",
+      "Silence speaks.",
+      "Depth over noise.",
+      "Protect your peace.",
+      "Small steps count.",
+      "Energy doesn’t lie.",
+      "Be the blessing.",
+      "Faith walks first.",
+      "Rest is holy.",
+      "Gentleness is brave.",
+      "Seek the light.",
+      "Bloom anyway.",
+      "Let love lead.",
+      "Truth needs no costume.",
+      "The door opens.",
+      "Nothing gold stays.",
+      "All is gift.",
+      "Awe heals.",
+      "Live awake.",
+      "Stars need darkness.",
+      "Patience is power.",
+      "The wound speaks.",
+      "Hope has teeth.",
+      "Wisdom is quiet.",
+      "Forgive forward.",
+      "Stay human.",
+      "Love enlarges.",
+      "Fear shrinks.",
+      "Go gently.",
+      "Choose the good.",
+      "Light breaks in.",
+      "You are becoming.",
+      "Make meaning.",
+      "The seed remembers.",
+      "Walk in wonder.",
+      "Be wildly kind.",
+      "Heaven notices.",
+      "The heart learns.",
+      "Courage is contagious.",
+      "Trust the timing.",
+      "Let it breathe.",
+      "Joy finds cracks.",
+      "Life is art.",
+      "Serve something higher.",
+      "Love outlives fear.",
+      "Your attention is sacred.",
+      "Tend the fire.",
+      "The river knows.",
+      "Do the next thing.",
+      "Hold fast.",
+      "Look up.",
+      "Be not afraid.",
+      "The light returns.",
+      "Mercy over ego.",
+      "Become more real.",
+      "Leave beauty behind.",
+      "Grace is enough.",
+      "Love is the way.",
+      "Eyes back on.",
+      "Live like it matters."
     ];
 
     const sayingFontClasses = [
@@ -3416,7 +3517,7 @@
         savingsParts.push(`7-night discount: you will save ${formatMoney(quote.weeklyDiscountAmount)} in addition.`);
       }
 
-      savingsParts.push(`Your total for these nights is ${formatMoney(quote.totalWithTax)}.`);
+      savingsParts.push(`Your total for this stay is ${formatMoney(quote.totalWithTax)}.`);
 
       return savingsParts.join(' ');
     }
@@ -3450,7 +3551,7 @@
           <strong>${formatMoney(quote.taxAmount)}</strong>
         </div>
         <div class="quote-total">
-          <span>Total</span>
+          <span>Total for stay</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
         </div>
         <div class="quote-footnote">
