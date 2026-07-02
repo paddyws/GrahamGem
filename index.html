@@ -2457,6 +2457,7 @@
 
     const WEEKLY_DISCOUNT_NIGHTS = 7;
     const WEEKLY_DISCOUNT_RATE = 0.10;
+    const DIRECT_BOOKING_SAVINGS_RATE = 0.10;
 
     const guestState = {
       adults: 1,
@@ -3534,9 +3535,20 @@
     }
 
     function getSavingsText(quote) {
-      if (!quote || !quote.weeklyDiscountAmount) return '';
+      if (!quote || !quote.preTaxTotal) return '';
 
-      return `7-night discount applied: you save ${formatMoney(quote.weeklyDiscountAmount)}.`;
+      const savedAmount = roundCurrency(quote.preTaxTotal * DIRECT_BOOKING_SAVINGS_RATE);
+      const savingsParts = [
+        `You will save ${formatMoney(savedAmount)} by booking directly with us!*`
+      ];
+
+      if (quote.weeklyDiscountAmount > 0) {
+        savingsParts.push(`7-night discount: you will save ${formatMoney(quote.weeklyDiscountAmount)} in addition.`);
+      }
+
+      savingsParts.push(`Your total for these nights is ${formatMoney(quote.totalWithTax)}.`);
+
+      return savingsParts.join(' ');
     }
 
     function renderQuote(quote) {
@@ -3550,8 +3562,8 @@
         : '';
 
       const discountFootnote = quote.weeklyDiscountAmount > 0
-        ? 'A 10% discount is automatically applied to stays of 7 nights or more.'
-        : 'Estimated total shown before payment confirmation.';
+        ? '*Compared with booking sites like Airbnb. Your 10% 7-night discount is included in this total.'
+        : '*Compared with booking sites like Airbnb.';
 
       quoteSummary.innerHTML = `
         <div class="quote-row">
@@ -3635,9 +3647,11 @@
         </div>
       `;
 
+      const checkoutSavingsText = getSavingsText(quote);
+
       setPaymentStatus(
-        quote.weeklyDiscountAmount > 0
-          ? 'Ready for checkout. Your 7-night discount is included in the total.'
+        checkoutSavingsText
+          ? `Ready for checkout. ${checkoutSavingsText}`
           : 'Ready for checkout. Choose Zelle or open secure Stripe Checkout below.'
       );
     }
