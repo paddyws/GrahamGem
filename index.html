@@ -236,22 +236,24 @@
 
     .hero-discount-note {
       width: max-content;
-      max-width: min(100%, 260px);
+      max-width: min(100%, 280px);
       margin: 8px auto 0;
-      padding: 4px 10px;
+      padding: 4px 14px;
       border-radius: 999px;
       background: rgba(22,36,43,.62);
-      color: rgba(255,250,241,.94);
+      color: rgba(255,250,241,.96);
       border: 1px solid rgba(255,250,241,.34);
       box-shadow: 0 8px 20px rgba(0,0,0,.13);
       backdrop-filter: blur(10px);
-      font-size: .72rem;
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: .055em;
+      font-family: "Great Vibes", cursive;
+      font-size: 1.2rem;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: .01em;
       text-align: center;
-      text-transform: uppercase;
+      text-transform: none;
       pointer-events: none;
+      white-space: nowrap;
     }
 
     .hero-calendar-popover {
@@ -1131,7 +1133,7 @@
 
     .payment-actions {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 14px;
       margin-top: 18px;
     }
@@ -1151,11 +1153,6 @@
     .payment-btn:hover {
       transform: translateY(-1px);
       filter: brightness(.97);
-    }
-
-    .payment-btn.zelle {
-      background: var(--ink);
-      color: white;
     }
 
     .payment-btn.stripe {
@@ -1181,6 +1178,10 @@
     .payment-status.bad {
       background: #f5d8d2;
       color: var(--danger);
+    }
+
+    .payment-status:empty {
+      display: none;
     }
 
     .manual-booking-form {
@@ -2312,7 +2313,7 @@
     <div>
       <h2 class="section-title">Book your stay</h2>
       <p class="section-text">
-        Choose your dates, review the estimated total, then head straight to checkout with Zelle or Stripe.
+        Choose your dates, review the estimated total, then head straight to secure checkout.
       </p>
       <p class="section-text">
         The calendar below combines our current Evolve availability feed with direct website holds. Prefer a manual booking?
@@ -2361,22 +2362,16 @@
 
       <div class="payment-checkout-card" id="paymentCheckoutCard">
         <h3 class="form-card-title">Checkout</h3>
-        <p class="form-card-subtitle">
-          Select valid dates above, then choose Zelle or Stripe to book now. Stripe creates a secure checkout for your exact total.
-        </p>
 
         <div id="checkoutSummary" class="quote-placeholder">
           Select dates to unlock checkout.
         </div>
 
         <div class="payment-actions">
-          <button type="button" class="payment-btn zelle" id="zelleCheckoutButton">Pay with Zelle</button>
           <button type="button" class="payment-btn stripe" id="stripeCheckoutButton">Pay with Stripe</button>
         </div>
 
-        <div id="paymentStatus" class="payment-status">
-          Stripe checkout is connected through the secure booking API. Add your Zelle recipient to enable Zelle details.
-        </div>
+        <div id="paymentStatus" class="payment-status"></div>
       </div>
 
       <form id="bookingForm" class="manual-booking-form">
@@ -2437,15 +2432,13 @@
 
   <footer>
     Graham Gem • Graham, North Carolina<br>
-    Direct booking available through Zelle or Stripe. Manual booking available by request.
+    Direct booking available through secure Stripe checkout. Manual booking available by request.
   </footer>
 
   <script>
     const AVAILABILITY_API = 'https://script.google.com/macros/s/AKfycbxlH7T940c-i0fcDXOhWbuVaN3a9USs0wTWOTVoB3La_zAq1dwRwZSRr1MYVxRwxwwGCQ/exec';
 
     // Payment setup placeholders.
-    // Replace these with your real Zelle recipient and Stripe Payment Link / Checkout URL when ready.
-    const ZELLE_RECIPIENT = 'SET_UP_ZELLE_EMAIL_OR_PHONE';
     const STRIPE_CHECKOUT_ACTION = 'stripeCheckout';
 
     const HERO_IMAGE_FOLDER = '';
@@ -2496,106 +2489,6 @@
     };
 
     const fallbackSayings = [
-      "This too shall pass.",
-      "Know thyself.",
-      "Fortune favors the bold.",
-      "Less is more.",
-      "Begin anywhere.",
-      "Still waters run deep.",
-      "Make it happen.",
-      "Do no harm.",
-      "Choose joy.",
-      "Stay curious.",
-      "Love wins.",
-      "Time tells all.",
-      "Be here now.",
-      "Grace changes everything.",
-      "Courage, dear heart.",
-      "Hope is stubborn.",
-      "Fear is a liar.",
-      "Truth endures.",
-      "Kindness is strength.",
-      "Peace begins within.",
-      "Create yourself.",
-      "Go with God.",
-      "Rise anyway.",
-      "Keep moving.",
-      "Dream bigger.",
-      "Risk is required.",
-      "Light attracts light.",
-      "Beauty remains.",
-      "Begin again.",
-      "Stay soft.",
-      "The soul knows.",
-      "Wonder is wisdom.",
-      "Love is labor.",
-      "Joy is resistance.",
-      "Enough is plenty.",
-      "Simplicity is power.",
-      "Pain teaches.",
-      "Mercy matters.",
-      "Breathe first.",
-      "Grow through it.",
-      "Act, then understand.",
-      "Silence speaks.",
-      "Depth over noise.",
-      "Protect your peace.",
-      "Small steps count.",
-      "Energy doesn’t lie.",
-      "Be the blessing.",
-      "Faith walks first.",
-      "Rest is holy.",
-      "Gentleness is brave.",
-      "Seek the light.",
-      "Bloom anyway.",
-      "Let love lead.",
-      "Truth needs no costume.",
-      "The door opens.",
-      "Nothing gold stays.",
-      "All is gift.",
-      "Awe heals.",
-      "Live awake.",
-      "Stars need darkness.",
-      "Patience is power.",
-      "The wound speaks.",
-      "Hope has teeth.",
-      "Wisdom is quiet.",
-      "Forgive forward.",
-      "Stay human.",
-      "Love enlarges.",
-      "Fear shrinks.",
-      "Go gently.",
-      "Choose the good.",
-      "Light breaks in.",
-      "You are becoming.",
-      "Make meaning.",
-      "The seed remembers.",
-      "Walk in wonder.",
-      "Be wildly kind.",
-      "Heaven notices.",
-      "The heart learns.",
-      "Courage is contagious.",
-      "Trust the timing.",
-      "Let it breathe.",
-      "Joy finds cracks.",
-      "Life is art.",
-      "Serve something higher.",
-      "Love outlives fear.",
-      "Your attention is sacred.",
-      "Tend the fire.",
-      "The river knows.",
-      "Do the next thing.",
-      "Hold fast.",
-      "Look up.",
-      "Be not afraid.",
-      "The light returns.",
-      "Mercy over ego.",
-      "Become more real.",
-      "Leave beauty behind.",
-      "Grace is enough.",
-      "Love is the way.",
-      "Eyes back on.",
-      "Live like it matters."
     ];
 
     const sayingFontClasses = [
@@ -2679,7 +2572,6 @@
     const paymentCheckoutCard = document.getElementById('paymentCheckoutCard');
     const checkoutSummary = document.getElementById('checkoutSummary');
     const paymentStatus = document.getElementById('paymentStatus');
-    const zelleCheckoutButton = document.getElementById('zelleCheckoutButton');
     const stripeCheckoutButton = document.getElementById('stripeCheckoutButton');
 
     const shareQuoteWrap = document.getElementById('shareQuoteWrap');
@@ -2758,10 +2650,6 @@
     quickRequestButton.addEventListener('click', () => {
       handleBookNowClick();
     });
-
-    if (zelleCheckoutButton) {
-      zelleCheckoutButton.addEventListener('click', handleZelleCheckout);
-    }
 
     if (stripeCheckoutButton) {
       stripeCheckoutButton.addEventListener('click', handleStripeCheckout);
@@ -2865,29 +2753,6 @@
       }
     }
 
-    async function handleZelleCheckout() {
-      const quote = getCurrentValidQuote();
-
-      if (!quote) {
-        openHeroCalendar();
-        return;
-      }
-
-      if (!isPaymentValueSet(ZELLE_RECIPIENT, 'SET_UP_ZELLE')) {
-        setPaymentStatus('Zelle checkout is ready to connect. Replace ZELLE_RECIPIENT in the code with your Zelle email or phone.', 'bad');
-        return;
-      }
-
-      const zelleMessage = buildPaymentDetails(quote, 'Zelle');
-
-      try {
-        await navigator.clipboard.writeText(zelleMessage);
-        setPaymentStatus(`Zelle details copied. Send ${formatMoney(quote.totalWithTax)} to ${ZELLE_RECIPIENT}.`, 'good');
-      } catch (error) {
-        setPaymentStatus(`Send ${formatMoney(quote.totalWithTax)} by Zelle to ${ZELLE_RECIPIENT}.`, 'good');
-      }
-    }
-
     async function handleStripeCheckout() {
       const quote = getCurrentValidQuote();
 
@@ -2939,7 +2804,7 @@
       const sessionId = params.get('session_id');
 
       if (paymentResult === 'cancelled') {
-        setPaymentStatus('Stripe Checkout was cancelled. Your dates may be held briefly as pending; use Book manually if you want us to set those up.', 'bad');
+        setPaymentStatus('Stripe Checkout was cancelled. Your dates may be held briefly as pending; use the manual booking form below if you want us to set those up.', 'bad');
         return;
       }
 
@@ -2989,31 +2854,6 @@
 
     function isPaymentValueSet(value, placeholderPrefix) {
       return Boolean(value && !String(value).startsWith(placeholderPrefix));
-    }
-
-    function buildPaymentDetails(quote, method) {
-      const details = [
-        `Graham Gem ${method} booking`,
-        `Check-in: ${checkInInput.value}`,
-        `Check-out: ${checkOutInput.value}`,
-        `Guests: ${guestCountInput.value}`,
-        `Nights: ${quote.nights}`,
-        `Nightly subtotal: ${formatMoney(quote.nightlySubtotal)}`
-      ];
-
-      if (quote.weeklyDiscountAmount > 0) {
-        details.push(`7+ night discount: -${formatMoney(quote.weeklyDiscountAmount)}`);
-      }
-
-      details.push(
-        `Cleaning fee: ${formatMoney(quote.cleaningFee)}`,
-        `Taxes: ${formatMoney(quote.taxAmount)}`,
-        `Total: ${formatMoney(quote.totalWithTax)}`,
-        `Zelle recipient: ${ZELLE_RECIPIENT}`,
-        'Please include your name and stay dates in the payment memo.'
-      );
-
-      return details.join('\n');
     }
 
     function setPaymentStatus(message, type = '') {
@@ -3635,14 +3475,14 @@
       if (!result.ok) {
         checkoutSummary.innerHTML = `
           <div class="quote-placeholder">
-            Select valid dates to unlock Zelle or Stripe checkout.
+            Select valid dates to unlock checkout.
           </div>
         `;
 
         if (customMessage) {
           setPaymentStatus(customMessage, customType);
         } else {
-          setPaymentStatus('Stripe checkout is connected through the secure booking API. Add your Zelle recipient to enable Zelle details.');
+          setPaymentStatus('');
         }
 
         return;
@@ -3672,9 +3512,6 @@
           <span>Checkout total</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
         </div>
-        <div class="quote-footnote">
-          Choose Zelle or Stripe to book now. Stripe will open a secure checkout for your exact total.
-        </div>
       `;
 
       const checkoutSavingsText = getSavingsText(quote);
@@ -3682,7 +3519,7 @@
       setPaymentStatus(
         checkoutSavingsText
           ? `Ready for checkout. ${checkoutSavingsText}`
-          : 'Ready for checkout. Choose Zelle or open secure Stripe Checkout below.'
+          : 'Ready for checkout. Your exact total is shown below.'
       );
     }
 
