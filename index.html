@@ -3536,6 +3536,10 @@
         ? '*Compared with booking sites like Airbnb. Your 10% 7-night discount is included in this total.'
         : '*Compared with booking sites like Airbnb.';
 
+      const taxesAndFeesAmount = roundCurrency(
+        Number(quote.taxAmount || 0) + Number(quote.cleaningFee || 0)
+      );
+
       quoteSummary.innerHTML = `
         <div class="quote-row">
           <span>${quote.nights} night${quote.nights === 1 ? '' : 's'}</span>
@@ -3543,12 +3547,8 @@
         </div>
         ${discountRow}
         <div class="quote-row">
-          <span>Cleaning fee</span>
-          <strong>${formatMoney(quote.cleaningFee)}</strong>
-        </div>
-        <div class="quote-row">
-          <span>Taxes</span>
-          <strong>${formatMoney(quote.taxAmount)}</strong>
+          <span>Taxes & fees</span>
+          <strong>${formatMoney(taxesAndFeesAmount)}</strong>
         </div>
         <div class="quote-total">
           <span>Total for stay</span>
