@@ -1864,6 +1864,109 @@
     }
 
 
+
+    /* MOBILE CALENDAR 75% SIZE OVERRIDE - keep booking bar horizontal, shrink popover */
+    @media (max-width: 850px) {
+      .hero-calendar-popover {
+        width: min(72vw, 323px) !important;
+        max-height: 60vh !important;
+        padding: 10px !important;
+        border-radius: 20px !important;
+      }
+
+      .hero-calendar-head {
+        gap: 7px !important;
+        margin-bottom: 7px !important;
+      }
+
+      .hero-calendar-head small {
+        font-size: .48rem !important;
+        letter-spacing: .09em !important;
+        margin-bottom: 1px !important;
+      }
+
+      .hero-calendar-head strong {
+        font-size: .9rem !important;
+        line-height: 1.03 !important;
+      }
+
+      .hero-calendar-head button {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 1rem !important;
+      }
+
+      .hero-calendar-controls {
+        grid-template-columns: 30px 1fr 30px !important;
+        gap: 5px !important;
+        margin-bottom: 7px !important;
+      }
+
+      .hero-calendar-controls button {
+        width: 30px !important;
+        min-width: 30px !important;
+        height: 30px !important;
+        font-size: .95rem !important;
+      }
+
+      .calendar-range-title {
+        font-size: .58rem !important;
+        line-height: 1.08 !important;
+      }
+
+      .hero-calendar-months {
+        gap: 8px !important;
+      }
+
+      .calendar-title {
+        font-size: 1.08rem !important;
+        margin-bottom: 6px !important;
+      }
+
+      .month-weekdays,
+      .month-days {
+        gap: 3px !important;
+      }
+
+      .weekday {
+        font-size: .48rem !important;
+      }
+
+      .day {
+        font-size: .58rem !important;
+        border-radius: 999px !important;
+      }
+
+      .hero-calendar-popover .legend {
+        margin-top: 7px !important;
+        gap: 6px !important;
+        font-size: .56rem !important;
+      }
+
+      .hero-calendar-popover .swatch {
+        width: 9px !important;
+        height: 9px !important;
+        border-radius: 3px !important;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .hero-calendar-popover {
+        width: min(72vw, 293px) !important;
+        padding: 9px !important;
+        max-height: 58vh !important;
+      }
+
+      .calendar-title {
+        font-size: 1rem !important;
+      }
+
+      .day {
+        font-size: .54rem !important;
+      }
+    }
+
+
   </style>
 </head>
 
