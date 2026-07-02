@@ -2455,6 +2455,9 @@
     let taxRate = 0.1275;
     let minimumNights = 3;
 
+    const WEEKLY_DISCOUNT_NIGHTS = 7;
+    const WEEKLY_DISCOUNT_RATE = 0.10;
+
     const guestState = {
       adults: 1,
       children: 0,
@@ -2615,6 +2618,7 @@
     let sayingsList = [];
     let lastSayingIndex = -1;
     let currentSayingText = '';
+    let activeDateField = 'auto';
 
     const calendarMonths = document.getElementById('calendarMonths');
     const availabilityStatus = document.getElementById('availabilityStatus');
@@ -2693,10 +2697,20 @@
       }
     });
 
-    checkInInput.addEventListener('click', openHeroCalendar);
-    checkOutInput.addEventListener('click', openHeroCalendar);
-    checkInInput.addEventListener('focus', openHeroCalendar);
-    checkOutInput.addEventListener('focus', openHeroCalendar);
+    checkInInput.addEventListener('click', () => openHeroCalendar('checkIn'));
+    checkOutInput.addEventListener('click', () => openHeroCalendar('checkOut'));
+    checkInInput.addEventListener('focus', () => openHeroCalendar('checkIn'));
+    checkOutInput.addEventListener('focus', () => openHeroCalendar('checkOut'));
+
+    if (checkInMirror) {
+      checkInMirror.addEventListener('click', () => openHeroCalendar('checkIn'));
+      checkInMirror.addEventListener('focus', () => openHeroCalendar('checkIn'));
+    }
+
+    if (checkOutMirror) {
+      checkOutMirror.addEventListener('click', () => openHeroCalendar('checkOut'));
+      checkOutMirror.addEventListener('focus', () => openHeroCalendar('checkOut'));
+    }
 
     closeHeroCalendarButton.addEventListener('click', () => {
       closeHeroCalendar();
@@ -2796,7 +2810,7 @@
 
     function handleBookNowClick() {
       if (!checkInInput.value || !checkOutInput.value) {
-        openHeroCalendar();
+        openHeroCalendar(checkInInput.value ? 'checkOut' : 'checkIn');
         return;
       }
 
@@ -2866,6 +2880,9 @@
           checkIn: checkInInput.value,
           checkOut: checkOutInput.value,
           guests: guestCountInput.value,
+          nights: quote.nights,
+          weeklyDiscountAmount: quote.weeklyDiscountAmount,
+          quotedTotal: quote.totalWithTax,
           returnUrl: window.location.origin + window.location.pathname
         });
 
@@ -2944,15 +2961,28 @@
     }
 
     function buildPaymentDetails(quote, method) {
-      return [
+      const details = [
         `Graham Gem ${method} booking`,
         `Check-in: ${checkInInput.value}`,
         `Check-out: ${checkOutInput.value}`,
         `Guests: ${guestCountInput.value}`,
+        `Nights: ${quote.nights}`,
+        `Nightly subtotal: ${formatMoney(quote.nightlySubtotal)}`
+      ];
+
+      if (quote.weeklyDiscountAmount > 0) {
+        details.push(`7+ night discount: -${formatMoney(quote.weeklyDiscountAmount)}`);
+      }
+
+      details.push(
+        `Cleaning fee: ${formatMoney(quote.cleaningFee)}`,
+        `Taxes: ${formatMoney(quote.taxAmount)}`,
         `Total: ${formatMoney(quote.totalWithTax)}`,
         `Zelle recipient: ${ZELLE_RECIPIENT}`,
         'Please include your name and stay dates in the payment memo.'
-      ].join('\n');
+      );
+
+      return details.join('\n');
     }
 
     function setPaymentStatus(message, type = '') {
@@ -3091,22 +3121,65 @@
       updateAvailabilityMessageAndQuote();
     }
 
-    function openHeroCalendar() {
+    function setActiveDateField(field = 'auto') {
+      activeDateField = ['checkIn', 'checkOut'].includes(field) ? field : 'auto';
+    }
+
+    function getActiveCalendarPrompt() {
+      if (activeDateField === 'checkIn') {
+        return 'Choose your check-in date';
+      }
+
+      if (activeDateField === 'checkOut') {
+        return checkInInput.value
+          ? 'Choose your check-out date'
+          : 'Choose your check-in date first';
+      }
+
+      return 'Click your check-in, then your check-out';
+    }
+
+    function updateCalendarPromptText() {
+      document.querySelectorAll('.calendar-range-title').forEach(title => {
+        title.textContent = getActiveCalendarPrompt();
+      });
+    }
+
+    function openHeroCalendar(fieldToEdit = 'auto') {
       if (!heroCalendarPopover) return;
 
-      if (checkInInput.value) {
+      setActiveDateField(fieldToEdit);
+
+      if (fieldToEdit === 'checkOut' && checkOutInput.value) {
+        currentMonthDate = keyToDate(checkOutInput.value);
+        currentMonthDate.setDate(1);
+      } else if (checkInInput.value) {
         currentMonthDate = keyToDate(checkInInput.value);
         currentMonthDate.setDate(1);
       }
 
+      if (activeDateField === 'checkIn') {
+        setAvailabilityMessage('Choose your check-in date.', '');
+        setHeroBookingMessage('');
+      } else if (activeDateField === 'checkOut') {
+        setAvailabilityMessage(
+          checkInInput.value ? 'Choose your check-out date.' : 'Choose your check-in date first.',
+          ''
+        );
+        setHeroBookingMessage('');
+      }
+
       heroCalendarPopover.hidden = false;
       guestFieldWrap.classList.remove('open');
+      updateCalendarPromptText();
       renderCalendar();
     }
 
     function closeHeroCalendar() {
       if (!heroCalendarPopover) return;
       heroCalendarPopover.hidden = true;
+      setActiveDateField('auto');
+      updateCalendarPromptText();
     }
 
     function renderCalendar() {
@@ -3241,7 +3314,56 @@
     function handleCalendarDateClick(dateKey) {
       const isBooked = blockedDateSet.has(dateKey);
 
-      if (!checkInInput.value) {
+      if (activeDateField === 'checkIn') {
+        if (isBooked) {
+          const message = isGlobalCheckoutOnlyDate(dateKey)
+            ? 'That date is checkout only. Please choose an available check-in date first.'
+            : 'That date is unavailable for check-in.';
+
+          setAvailabilityMessage(message, 'bad');
+          setHeroBookingMessage(message, 'bad');
+          return;
+        }
+
+        checkInInput.value = dateKey;
+        checkOutInput.value = '';
+        checkOutInput.min = addDaysToKey(dateKey, 1);
+        setActiveDateField('checkOut');
+        setAvailabilityMessage('Now choose a check-out date.', '');
+      } else if (activeDateField === 'checkOut') {
+        if (!checkInInput.value) {
+          if (isBooked) {
+            setAvailabilityMessage('That date is unavailable for check-in.', 'bad');
+            setHeroBookingMessage('That date is unavailable for check-in.', 'bad');
+            return;
+          }
+
+          checkInInput.value = dateKey;
+          checkOutInput.value = '';
+          checkOutInput.min = addDaysToKey(dateKey, 1);
+          setAvailabilityMessage('Now choose a check-out date.', '');
+          finishCalendarSelection();
+          return;
+        }
+
+        if (dateKey <= checkInInput.value) {
+          const message = 'Check-out must be after check-in.';
+          setAvailabilityMessage(message, 'bad');
+          setHeroBookingMessage(message, 'bad');
+          return;
+        }
+
+        const blockedNights = getBlockedNightsInRange(checkInInput.value, dateKey);
+
+        if (blockedNights.length > 0) {
+          const message = `Those dates are not available. Blocked night: ${blockedNights[0]}`;
+          setAvailabilityMessage(message, 'bad');
+          setHeroBookingMessage(message, 'bad');
+          return;
+        }
+
+        checkOutInput.value = dateKey;
+      } else if (!checkInInput.value) {
         if (isBooked) {
           const message = isGlobalCheckoutOnlyDate(dateKey)
             ? 'That date is checkout only. Please choose an available check-in date first.'
@@ -3280,8 +3402,13 @@
         setAvailabilityMessage('Now choose a check-out date.', '');
       }
 
+      finishCalendarSelection();
+    }
+
+    function finishCalendarSelection() {
       syncMirrors();
       updateAvailabilityMessageAndQuote();
+      updateCalendarPromptText();
       renderCalendar();
 
       const finalStatus = getDateRangeStatus(checkInInput.value, checkOutInput.value);
@@ -3363,7 +3490,7 @@
 
       return {
         ok: true,
-        message: `Great news, those ${nights} night${nights === 1 ? '' : 's'} appear available.`
+        message: `Great news, those ${nights} night${nights === 1 ? '' : 's'} are available.`
       };
     }
 
@@ -3382,15 +3509,22 @@
 
       nightlySubtotal = roundCurrency(nightlySubtotal);
 
-      const staySubtotal = roundCurrency(nightlySubtotal + cleaningFee);
+      const weeklyDiscountAmount = nights >= WEEKLY_DISCOUNT_NIGHTS
+        ? roundCurrency(nightlySubtotal * WEEKLY_DISCOUNT_RATE)
+        : 0;
+
+      const discountedNightlySubtotal = roundCurrency(nightlySubtotal - weeklyDiscountAmount);
+      const staySubtotal = roundCurrency(discountedNightlySubtotal + cleaningFee);
       const taxAmount = roundCurrency(staySubtotal * taxRate);
       const totalWithTax = roundCurrency(staySubtotal + taxAmount);
-      const averageNightlyRate = roundCurrency(staySubtotal / nights);
+      const averageNightlyRate = roundCurrency(discountedNightlySubtotal / nights);
 
       return {
         nights,
         averageNightlyRate,
         nightlySubtotal,
+        weeklyDiscountAmount,
+        discountedNightlySubtotal,
         cleaningFee,
         staySubtotal,
         preTaxTotal: staySubtotal,
@@ -3400,18 +3534,34 @@
     }
 
     function getSavingsText(quote) {
-      if (!quote || !quote.preTaxTotal) return '';
+      if (!quote || !quote.weeklyDiscountAmount) return '';
 
-      const savedAmount = roundCurrency(quote.preTaxTotal * 0.10);
-
-      return `You will save ${formatMoney(savedAmount)} by booking directly with us!*`;
+      return `7-night discount applied: you save ${formatMoney(quote.weeklyDiscountAmount)}.`;
     }
 
     function renderQuote(quote) {
+      const discountRow = quote.weeklyDiscountAmount > 0
+        ? `
+          <div class="quote-row">
+            <span>7+ night discount (10%)</span>
+            <strong>−${formatMoney(quote.weeklyDiscountAmount)}</strong>
+          </div>
+        `
+        : '';
+
+      const discountFootnote = quote.weeklyDiscountAmount > 0
+        ? 'A 10% discount is automatically applied to stays of 7 nights or more.'
+        : 'Estimated total shown before payment confirmation.';
+
       quoteSummary.innerHTML = `
         <div class="quote-row">
-          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'} × ${formatMoney(quote.averageNightlyRate)}</span>
-          <strong>${formatMoney(quote.staySubtotal)}</strong>
+          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'}</span>
+          <strong>${formatMoney(quote.nightlySubtotal)}</strong>
+        </div>
+        ${discountRow}
+        <div class="quote-row">
+          <span>Cleaning fee</span>
+          <strong>${formatMoney(quote.cleaningFee)}</strong>
         </div>
         <div class="quote-row">
           <span>Taxes</span>
@@ -3422,7 +3572,7 @@
           <strong>${formatMoney(quote.totalWithTax)}</strong>
         </div>
         <div class="quote-footnote">
-          *Compared with booking sites like Airbnb.
+          ${discountFootnote}
         </div>
       `;
     }
@@ -3457,6 +3607,14 @@
       }
 
       const quote = buildQuote(checkInInput.value, checkOutInput.value);
+      const discountCheckoutRow = quote.weeklyDiscountAmount > 0
+        ? `
+          <div class="quote-row">
+            <span>7+ night discount</span>
+            <strong>−${formatMoney(quote.weeklyDiscountAmount)}</strong>
+          </div>
+        `
+        : '';
 
       checkoutSummary.innerHTML = `
         <div class="quote-row">
@@ -3467,6 +3625,7 @@
           <span>Guests</span>
           <strong>${guestCountInput.value}</strong>
         </div>
+        ${discountCheckoutRow}
         <div class="quote-total">
           <span>Checkout total</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
@@ -3476,7 +3635,11 @@
         </div>
       `;
 
-      setPaymentStatus('Ready for checkout. Choose Zelle or open secure Stripe Checkout below.');
+      setPaymentStatus(
+        quote.weeklyDiscountAmount > 0
+          ? 'Ready for checkout. Your 7-night discount is included in the total.'
+          : 'Ready for checkout. Choose Zelle or open secure Stripe Checkout below.'
+      );
     }
 
     function getBlockedNightsInRange(checkIn, checkOut) {
