@@ -2107,6 +2107,55 @@
     }
 
 
+
+    /* GUEST PICKER VISIBILITY FIX - lets the guest menu open above the hero booking bar */
+    .hero-booking-wrap,
+    .hero-booking-wrap .booking-fields,
+    .hero-booking-wrap .booking-box-inner,
+    .hero-booking-wrap .guest-field-wrap {
+      overflow: visible !important;
+    }
+
+    .hero-booking-wrap .guest-field-wrap {
+      position: relative !important;
+      z-index: 10020 !important;
+    }
+
+    .hero-booking-wrap .guest-field-wrap.open {
+      z-index: 10030 !important;
+    }
+
+    .hero-booking-wrap .guest-popover {
+      top: auto !important;
+      bottom: calc(100% + 10px) !important;
+      right: 0 !important;
+      z-index: 10040 !important;
+      display: none;
+    }
+
+    .hero-booking-wrap .guest-field-wrap.open .guest-popover {
+      display: block !important;
+    }
+
+    @media (max-width: 850px) {
+      .hero-booking-wrap .guest-popover {
+        position: absolute !important;
+        left: auto !important;
+        right: 0 !important;
+        width: min(320px, 92vw) !important;
+        max-height: 58vh !important;
+        overflow-y: auto !important;
+        border-radius: 20px !important;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .hero-booking-wrap .guest-popover {
+        right: -6px !important;
+        width: min(330px, 94vw) !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -2153,7 +2202,7 @@
           </div>
 
           <div class="guest-field-wrap" id="guestFieldWrap">
-            <button type="button" class="guest-button" id="guestButton">
+            <button type="button" class="guest-button" id="guestButton" aria-haspopup="dialog" aria-expanded="false" aria-controls="guestPopover">
               <div class="guest-copy">
                 <span class="guest-label">Guests</span>
                 <span class="guest-value" id="guestButtonText">1 guest</span>
@@ -2702,13 +2751,22 @@
       renderCalendar();
     });
 
-    guestButton.addEventListener('click', () => {
-      guestFieldWrap.classList.toggle('open');
+    guestButton.addEventListener('click', event => {
+      event.stopPropagation();
+      const shouldOpen = !guestFieldWrap.classList.contains('open');
+
+      if (shouldOpen) {
+        closeHeroCalendar();
+      }
+
+      guestFieldWrap.classList.toggle('open', shouldOpen);
+      guestButton.setAttribute('aria-expanded', String(shouldOpen));
     });
 
     document.addEventListener('click', event => {
       if (!guestFieldWrap.contains(event.target)) {
         guestFieldWrap.classList.remove('open');
+        guestButton.setAttribute('aria-expanded', 'false');
       }
 
       if (
