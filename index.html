@@ -234,6 +234,26 @@
       padding: 8px 13px;
     }
 
+    .hero-discount-note {
+      width: max-content;
+      max-width: min(100%, 260px);
+      margin: 8px auto 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(22,36,43,.62);
+      color: rgba(255,250,241,.94);
+      border: 1px solid rgba(255,250,241,.34);
+      box-shadow: 0 8px 20px rgba(0,0,0,.13);
+      backdrop-filter: blur(10px);
+      font-size: .72rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: .055em;
+      text-align: center;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
     .hero-calendar-popover {
       position: absolute;
       left: 0;
@@ -1714,6 +1734,13 @@
         font-size: .58rem !important;
       }
 
+      .hero-discount-note {
+        margin-top: 5px !important;
+        padding: 3px 8px !important;
+        font-size: .54rem !important;
+        letter-spacing: .045em !important;
+      }
+
       .hero-booking-wrap .guest-button .guest-value {
         max-width: 52px !important;
       }
@@ -2179,6 +2206,9 @@
             Book Now!
           </button>
         </div>
+
+
+        <div class="hero-discount-note">7+ nights save 10%</div>
 
         <div class="hero-calendar-popover" id="heroCalendarPopover" hidden>
           <div class="hero-calendar-head">
