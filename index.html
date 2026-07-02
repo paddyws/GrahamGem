@@ -1377,52 +1377,88 @@
     }
 
 
-    /* MOBILE POLISH: smaller booking box + quote text containment */
+    /* MOBILE COMPACT: smaller booking box + quote text containment */
     @media (max-width: 850px) {
       .hero {
-        min-height: 76vh;
-        padding-bottom: 18px;
+        min-height: 70vh;
+        padding: 86px 6vw 16px;
+      }
+
+      .hero-statements {
+        top: 92px;
       }
 
       .hero-booking-wrap {
-        width: min(86vw, 390px);
-        bottom: 26px;
+        width: min(76vw, 340px);
+        bottom: 22px;
       }
 
       .hero-booking-wrap .booking-fields {
-        padding: 4px;
-        border-radius: 28px;
+        padding: 3px;
+        border-radius: 24px;
       }
 
       .hero-booking-wrap .booking-box-inner {
-        border-radius: 22px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-radius: 20px;
       }
 
       .hero-booking-wrap .field-block {
-        padding: 9px 16px;
-        min-height: 68px;
+        min-height: 48px;
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--airbnb-border);
+      }
+
+      .hero-booking-wrap .field-block:nth-child(1) {
+        border-right: 1px solid var(--airbnb-border);
+      }
+
+      .hero-booking-wrap .field-block:nth-child(2) {
+        border-right: 0;
       }
 
       .hero-booking-wrap .field-block label,
       .hero-booking-wrap .guest-button .guest-label {
-        font-size: .66rem;
-        letter-spacing: .09em;
+        font-size: .54rem;
+        letter-spacing: .08em;
+        margin-bottom: 1px;
       }
 
       .hero-booking-wrap .field-block input,
       .hero-booking-wrap .guest-button .guest-value {
-        font-size: 1.05rem;
+        font-size: .86rem;
+      }
+
+      .hero-booking-wrap .guest-field-wrap {
+        min-height: 48px;
+        border-top: 0;
+        border-bottom: 0;
+        border-right: 1px solid var(--airbnb-border);
       }
 
       .hero-booking-wrap .guest-button {
-        padding: 9px 16px;
-        min-height: 68px;
+        min-height: 48px;
+        padding: 6px 10px;
       }
 
       .hero-booking-wrap .quick-request-btn {
-        min-height: 64px;
-        padding: 12px 16px;
-        font-size: 1.35rem;
+        min-height: 48px;
+        padding: 8px 10px;
+        font-size: 1.02rem;
+        border-radius: 0 0 18px 0;
+      }
+
+      .hero-booking-wrap .guest-chevron {
+        font-size: .72rem;
+      }
+
+      .guest-popover {
+        width: min(320px, 86vw);
+      }
+
+      .inspiration-band {
+        margin-top: -18px;
       }
 
       .inspiration-card {
@@ -1432,7 +1468,7 @@
       .inspiration-text {
         width: 100%;
         max-width: 100%;
-        min-height: 112px;
+        min-height: 106px;
         overflow: hidden;
         padding-left: 14px;
         padding-right: 14px;
@@ -1451,39 +1487,148 @@
       }
 
       .saying-word[style] {
-        font-size: clamp(1rem, 8vw, 3.2rem) !important;
+        font-size: clamp(.95rem, 7vw, 2.85rem) !important;
       }
 
       .saying-word.font-great-vibes[style] {
-        font-size: clamp(1.2rem, 8.5vw, 3.4rem) !important;
+        font-size: clamp(1.05rem, 7.4vw, 3rem) !important;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .hero {
+        min-height: 68vh;
+      }
+
+      .hero-booking-wrap {
+        width: min(74vw, 315px);
+        bottom: 20px;
+      }
+
+      .hero-booking-wrap .field-block,
+      .hero-booking-wrap .guest-button,
+      .hero-booking-wrap .quick-request-btn {
+        min-height: 44px;
+      }
+
+      .hero-booking-wrap .field-block {
+        padding: 5px 9px;
+      }
+
+      .hero-booking-wrap .guest-button {
+        padding: 5px 9px;
+      }
+
+      .hero-booking-wrap .quick-request-btn {
+        padding: 7px 9px;
+        font-size: .96rem;
+      }
+
+      .hero-booking-wrap .field-block label,
+      .hero-booking-wrap .guest-button .guest-label {
+        font-size: .5rem;
+      }
+
+      .hero-booking-wrap .field-block input,
+      .hero-booking-wrap .guest-button .guest-value {
+        font-size: .8rem;
+      }
+
+      .saying-word[style] {
+        font-size: clamp(.9rem, 6.5vw, 2.55rem) !important;
+      }
+
+      .saying-word.font-great-vibes[style] {
+        font-size: clamp(1rem, 7vw, 2.7rem) !important;
+      }
+    }
+
+
+    /* MOBILE TINY BOOKING OVERRIDE - compact 2x2 hero booking box */
+    @media (max-width: 850px) {
+      .hero-booking-wrap {
+        width: min(58vw, 245px) !important;
+        bottom: 18px !important;
+      }
+      .hero-booking-wrap .booking-fields {
+        padding: 2px !important;
+        border-radius: 22px !important;
+      }
+      .hero-booking-wrap .booking-box-inner {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        border-radius: 18px !important;
+        overflow: hidden !important;
+      }
+      .hero-booking-wrap .field-block,
+      .hero-booking-wrap .guest-field-wrap,
+      .hero-booking-wrap .guest-button,
+      .hero-booking-wrap .quick-request-btn {
+        min-height: 32px !important;
+        height: 32px !important;
+      }
+      .hero-booking-wrap .field-block {
+        padding: 5px 9px !important;
+        border-bottom: 1px solid var(--airbnb-border) !important;
+      }
+      .hero-booking-wrap .field-block:nth-child(1) {
+        border-right: 1px solid var(--airbnb-border) !important;
+      }
+      .hero-booking-wrap .field-block:nth-child(2) {
+        border-right: 0 !important;
+      }
+      .hero-booking-wrap .guest-field-wrap {
+        border-top: 0 !important;
+        border-bottom: 0 !important;
+        border-right: 1px solid var(--airbnb-border) !important;
+      }
+      .hero-booking-wrap .guest-button {
+        padding: 5px 9px !important;
+      }
+      .hero-booking-wrap .quick-request-btn {
+        padding: 5px 8px !important;
+        font-size: .78rem !important;
+        border-radius: 0 0 16px 0 !important;
+      }
+      .hero-booking-wrap .field-block label,
+      .hero-booking-wrap .guest-button .guest-label {
+        font-size: .38rem !important;
+        letter-spacing: .075em !important;
+        margin-bottom: 0 !important;
+      }
+      .hero-booking-wrap .field-block input,
+      .hero-booking-wrap .guest-button .guest-value {
+        font-size: .62rem !important;
+        line-height: 1.05 !important;
+      }
+      .hero-booking-wrap .guest-chevron {
+        font-size: .62rem !important;
+      }
+      .inspiration-band {
+        margin-top: -14px !important;
       }
     }
 
     @media (max-width: 430px) {
       .hero-booking-wrap {
-        width: min(84vw, 360px);
-        bottom: 24px;
+        width: min(56vw, 235px) !important;
       }
-
+      .hero-booking-wrap .field-block,
+      .hero-booking-wrap .guest-field-wrap,
+      .hero-booking-wrap .guest-button,
+      .hero-booking-wrap .quick-request-btn {
+        min-height: 30px !important;
+        height: 30px !important;
+      }
       .hero-booking-wrap .field-block,
       .hero-booking-wrap .guest-button {
-        min-height: 62px;
-        padding: 8px 14px;
+        padding: 4px 8px !important;
       }
-
       .hero-booking-wrap .quick-request-btn {
-        min-height: 58px;
-        font-size: 1.25rem;
-      }
-
-      .saying-word[style] {
-        font-size: clamp(.95rem, 7.4vw, 2.85rem) !important;
-      }
-
-      .saying-word.font-great-vibes[style] {
-        font-size: clamp(1.1rem, 8vw, 3rem) !important;
+        font-size: .62rem !important;
       }
     }
+
 
   </style>
 </head>
