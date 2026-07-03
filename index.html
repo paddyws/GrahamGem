@@ -3547,7 +3547,12 @@
       const staySubtotal = roundCurrency(discountedNightlySubtotal + cleaningFee);
       const taxAmount = roundCurrency(staySubtotal * taxRate);
       const totalWithTax = roundCurrency(staySubtotal + taxAmount);
-      const averageNightlyRate = roundCurrency(discountedNightlySubtotal / nights);
+
+      // Average shown/used by the site includes the cleaning fee spread across the stay,
+      // so the public-facing nightly amount never exposes the cleaning fee separately.
+      const averageNightlyRate = nights > 0
+        ? roundCurrency(staySubtotal / nights)
+        : 0;
 
       return {
         nights,
@@ -3581,32 +3586,21 @@
     }
 
     function renderQuote(quote) {
-      const discountRow = quote.weeklyDiscountAmount > 0
-        ? `
-          <div class="quote-row">
-            <span>7+ night discount (10%)</span>
-            <strong>−${formatMoney(quote.weeklyDiscountAmount)}</strong>
-          </div>
-        `
-        : '';
+      const nightsLabel = `${quote.nights} night${quote.nights === 1 ? '' : 's'}`;
+      const publicNightsTotal = Number(quote.preTaxTotal || quote.staySubtotal || 0);
 
       const discountFootnote = quote.weeklyDiscountAmount > 0
-        ? '*Compared with booking sites like Airbnb. Your 10% 7-night discount is included in this total.'
+        ? `*Compared with booking sites like Airbnb. Your 10% 7-night discount is already included in the ${nightsLabel.toLowerCase()} amount.`
         : '*Compared with booking sites like Airbnb.';
-
-      const taxesAndFeesAmount = roundCurrency(
-        Number(quote.taxAmount || 0) + Number(quote.cleaningFee || 0)
-      );
 
       quoteSummary.innerHTML = `
         <div class="quote-row">
-          <span>${quote.nights} night${quote.nights === 1 ? '' : 's'}</span>
-          <strong>${formatMoney(quote.nightlySubtotal)}</strong>
+          <span>${nightsLabel}</span>
+          <strong>${formatMoney(publicNightsTotal)}</strong>
         </div>
-        ${discountRow}
         <div class="quote-row">
-          <span>Taxes & fees</span>
-          <strong>${formatMoney(taxesAndFeesAmount)}</strong>
+          <span>Taxes</span>
+          <strong>${formatMoney(quote.taxAmount)}</strong>
         </div>
         <div class="quote-total">
           <span>Total for stay</span>
@@ -3648,14 +3642,8 @@
       }
 
       const quote = buildQuote(checkInInput.value, checkOutInput.value);
-      const discountCheckoutRow = quote.weeklyDiscountAmount > 0
-        ? `
-          <div class="quote-row">
-            <span>7+ night discount</span>
-            <strong>−${formatMoney(quote.weeklyDiscountAmount)}</strong>
-          </div>
-        `
-        : '';
+      const nightsLabel = `${quote.nights} night${quote.nights === 1 ? '' : 's'}`;
+      const publicNightsTotal = Number(quote.preTaxTotal || quote.staySubtotal || 0);
 
       checkoutSummary.innerHTML = `
         <div class="quote-row">
@@ -3666,7 +3654,14 @@
           <span>Guests</span>
           <strong>${guestCountInput.value}</strong>
         </div>
-        ${discountCheckoutRow}
+        <div class="quote-row">
+          <span>${nightsLabel}</span>
+          <strong>${formatMoney(publicNightsTotal)}</strong>
+        </div>
+        <div class="quote-row">
+          <span>Taxes</span>
+          <strong>${formatMoney(quote.taxAmount)}</strong>
+        </div>
         <div class="quote-total">
           <span>Checkout total</span>
           <strong>${formatMoney(quote.totalWithTax)}</strong>
