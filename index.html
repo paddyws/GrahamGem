@@ -2524,7 +2524,7 @@
 
     let ratesByDate = {};
     let defaultNightlyRate = 400;
-    let cleaningFee = 250;
+    let cleaningFee = 0;
     let taxRate = 0.1275;
     let minimumNights = 3;
 
@@ -3132,7 +3132,7 @@
       blockedDateSet = new Set(data.blockedDates || []);
       ratesByDate = data.ratesByDate || {};
       defaultNightlyRate = Number(data.defaultNightlyRate || 400);
-      cleaningFee = Number(data.cleaningFee || 250);
+      cleaningFee = Number(data.cleaningFee || 0);
       taxRate = Number(data.taxRate || 0.1275);
       minimumNights = Number(data.minimumNights || 3);
 
